@@ -1,0 +1,6 @@
+tmp/
+.build/
+.DS_Store
+__pycache__/
+*.log
+node_modules/

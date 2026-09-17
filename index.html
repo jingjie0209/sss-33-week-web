@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#176b70">
+  <title>SSS 儿歌学习计划</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://img.youtube.com">
+  <link rel="stylesheet" href="styles.css?v=20260916-02">
+  <link rel="stylesheet" href="integration.css?v=20260915-02">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand-block">
+        <span class="brand-mark">SSS</span>
+        <div><strong>儿歌学习计划</strong><small>99 首 · 33 周</small></div>
+      </div>
+      <nav aria-label="主要菜单">
+        <button class="nav-item" data-view="today"><span class="nav-icon" aria-hidden="true">◷</span><span>今日学习</span></button>
+        <button class="nav-item" data-view="weekly-plan"><span class="nav-icon" aria-hidden="true">周</span><span>周计划</span></button>
+        <button class="nav-item" data-view="records"><span class="nav-icon" aria-hidden="true">▦</span><span>整体进度表</span></button>
+        <button class="nav-item active" data-view="checkin">
+          <span class="nav-icon" aria-hidden="true">✓</span><span>33周SSS儿歌计划表</span>
+        </button>
+        <button class="nav-item" data-view="details">
+          <span class="nav-icon" aria-hidden="true">≡</span><span>SSS儿歌和句型对应表</span>
+        </button>
+        <button class="nav-item" data-view="patterns">
+          <span class="nav-icon" aria-hidden="true">≋</span><span>核心句型</span>
+        </button>
+        <button class="nav-item" data-view="random-sentence"><span class="nav-icon" aria-hidden="true">⚄</span><span>随机组句</span></button>
+        <button class="nav-item" data-view="noun-cards">
+          <span class="nav-icon" aria-hidden="true">◇</span><span>名词</span>
+        </button>
+        <button class="nav-item" data-view="verbs"><span class="nav-icon" aria-hidden="true">V</span><span>动词</span></button>
+        <button class="nav-item" data-view="adjectives"><span class="nav-icon" aria-hidden="true">A</span><span>形容词</span></button>
+        <button class="nav-item" data-view="things-cards"><span class="nav-icon" aria-hidden="true">▧</span><span>万物贴</span></button>
+        <button class="nav-item" data-view="parent-speech"><span class="nav-icon" aria-hidden="true">口</span><span>亲子口语</span></button>
+        <button class="nav-item" data-view="posy-pip"><span class="nav-icon" aria-hidden="true">P</span><span>波西和皮普</span></button>
+        <button class="nav-item" data-view="noun-repeat"><span class="nav-icon" aria-hidden="true">↻</span><span>复述</span></button>
+        <button class="nav-item" data-view="games"><span class="nav-icon" aria-hidden="true">✦</span><span>游戏库</span></button>
+        <button class="nav-item" data-view="challenge"><span class="nav-icon" aria-hidden="true">★</span><span>闯关与奖励</span></button>
+        <button class="nav-item" data-view="reading"><span class="nav-icon" aria-hidden="true">▤</span><span>亲子阅读</span></button>
+        <button class="nav-item" data-view="parent"><span class="nav-icon" aria-hidden="true">⚙</span><span>家长设置</span></button>
+      </nav>
+      <div class="sidebar-progress">
+        <span>歌曲进度</span><strong id="sidebar-progress-value">0/99</strong>
+        <div class="progress-track"><i id="sidebar-progress-bar"></i></div>
+      </div>
+    </aside>
+
+    <main>
+      <header class="mobile-header">
+        <button id="menu-toggle" class="icon-button" aria-label="打开菜单">☰</button>
+        <strong>SSS 儿歌学习计划</strong>
+      </header>
+      <section id="checkin-view" class="view active"></section>
+      <section id="today-view" class="view"></section>
+      <section id="weekly-plan-view" class="view"></section>
+      <section id="details-view" class="view"></section>
+      <section id="patterns-view" class="view"></section>
+      <section id="random-sentence-view" class="view"></section>
+      <section id="noun-cards-view" class="view"></section>
+      <section id="noun-pattern-view" class="view"></section>
+      <section id="things-cards-view" class="view"></section>
+      <section id="parent-speech-view" class="view"></section>
+      <section id="posy-pip-view" class="view"></section>
+      <section id="records-view" class="view"></section>
+      <section id="noun-repeat-view" class="view"></section>
+      <section id="song-breakdown-view" class="view"></section>
+      <section id="verbs-view" class="view"></section>
+      <section id="adjectives-view" class="view"></section>
+      <section id="content-pack-view" class="view"></section>
+      <section id="noun-checkin-view" class="view"></section>
+      <section id="verb-checkin-view" class="view"></section>
+      <section id="adjective-checkin-view" class="view"></section>
+      <section id="things-checkin-view" class="view"></section>
+      <section id="song-view" class="view"></section>
+      <section id="games-view" class="view"></section>
+      <section id="challenge-view" class="view"></section>
+      <section id="reading-view" class="view"></section>
+      <section id="parent-view" class="view"></section>
+    </main>
+  </div>
+  <div id="scrim" class="scrim"></div>
+  <script src="data.js"></script>
+  <script src="pattern-data.js"></script>
+  <script src="noun-detail-data.js"></script>
+  <script src="noun-card-data.js"></script>
+  <script src="checkin-data.js"></script>
+  <script src="verb-card-data.js"></script>
+  <script src="adjective-card-data.js?v=20260914-01"></script>
+  <script src="card-extensions.js?v=20260915-01"></script>
+  <script src="things-card-data.js?v=20260914-02"></script>
+  <script src="things-card-meta.js?v=20260916-01"></script>
+  <script src="parent-speech-data.js?v=20260914-01"></script>
+  <script src="posy-pip-data.js?v=20260915-05"></script>
+  <script src="posy-pip-share-manifest.js?v=20260915-05"></script>
+  <script src="noun-repeat-data.js?v=20260914-01"></script>
+  <script src="games-data.js?v=20260915-02"></script>
+  <script src="app.js?v=20260916-01"></script>
+  <script src="integration.js?v=20260915-06"></script>
+</body>
+</html>
