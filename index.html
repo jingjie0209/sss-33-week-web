@@ -7,7 +7,7 @@
   <title>SSS 儿歌学习计划</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://img.youtube.com">
-  <link rel="stylesheet" href="styles.css?v=20260916-02">
+  <link rel="stylesheet" href="styles.css?v=20260917-02">
   <link rel="stylesheet" href="integration.css?v=20260915-02">
 </head>
 <body>
@@ -18,12 +18,12 @@
         <div><strong>儿歌学习计划</strong><small>99 首 · 33 周</small></div>
       </div>
       <nav aria-label="主要菜单">
-        <button class="nav-item" data-view="today"><span class="nav-icon" aria-hidden="true">◷</span><span>今日学习</span></button>
+        <button class="nav-item active" data-view="today"><span class="nav-icon" aria-hidden="true">◷</span><span>今日学习</span></button>
         <button class="nav-item" data-view="weekly-plan"><span class="nav-icon" aria-hidden="true">周</span><span>周计划</span></button>
         <button class="nav-item" data-view="records"><span class="nav-icon" aria-hidden="true">▦</span><span>整体进度表</span></button>
-        <button class="nav-item active" data-view="checkin">
+        <a class="nav-item" href="33week-plan.html" target="_blank" rel="noopener" aria-label="打开33周SSS儿歌计划表独立应用">
           <span class="nav-icon" aria-hidden="true">✓</span><span>33周SSS儿歌计划表</span>
-        </button>
+        </a>
         <button class="nav-item" data-view="details">
           <span class="nav-icon" aria-hidden="true">≡</span><span>SSS儿歌和句型对应表</span>
         </button>
@@ -56,7 +56,7 @@
         <button id="menu-toggle" class="icon-button" aria-label="打开菜单">☰</button>
         <strong>SSS 儿歌学习计划</strong>
       </header>
-      <section id="checkin-view" class="view active"></section>
+      <section id="checkin-view" class="view"></section>
       <section id="today-view" class="view"></section>
       <section id="weekly-plan-view" class="view"></section>
       <section id="details-view" class="view"></section>
@@ -100,7 +100,7 @@
   <script src="posy-pip-share-manifest.js?v=20260915-05"></script>
   <script src="noun-repeat-data.js?v=20260914-01"></script>
   <script src="games-data.js?v=20260915-02"></script>
-  <script src="app.js?v=20260916-01"></script>
+  <script src="app.js?v=20260917-02"></script>
   <script src="integration.js?v=20260915-06"></script>
 </body>
 </html>

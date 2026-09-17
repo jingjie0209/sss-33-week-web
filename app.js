@@ -1015,7 +1015,6 @@ function renderSong(sheet) {
   const activeView = document.querySelector(".view.active")?.id.replace("-view", "") || "details";
   if (activeView !== "song") previousView = activeView;
   const thumbnail = youtubeThumbnail(song.videoUrl);
-  const videoLink = youtubeWatchUrl(song.videoUrl);
   const relatedSongs = songs
     .filter((item) => item.sheet !== song.sheet && themeCategory(item.theme) === themeCategory(song.theme))
     .sort((a, b) => (a.week || 999) - (b.week || 999));
@@ -1025,7 +1024,6 @@ function renderSong(sheet) {
       <div class="song-hero-content"><p class="song-kicker">${song.week ? `第 ${song.week} 周 · ${escapeHtml(themeCategory(song.theme))}` : escapeHtml(song.category)}</p><h1>${escapeHtml(song.title)}</h1><p>${escapeHtml(song.meta)}</p><div class="hero-actions"><button class="button" data-toggle-sheet="${escapeHtml(song.sheet)}">${isDone(song) ? "标记为待打卡" : "标记为已完成"}</button></div></div>
     </section>
     <section class="song-facts" aria-label="歌曲基础信息"><div><span>内容类型</span><strong>SSS儿歌</strong></div><div><span>主题</span><strong>${escapeHtml(themeCategory(song.theme))}</strong></div><div><span>学习状态</span><strong>${escapeHtml(currentStatus(song))}</strong></div><div><span>核心词汇</span><strong>${song.words.length} 个</strong></div><div><span>TPR</span><strong>${song.tpr.length} 条</strong></div><div><span>匹配句型</span><strong>${song.patterns.length} 条</strong></div></section>
-    ${song.videoUrl ? `<section class="video-module"><a class="video-cover${thumbnail ? "" : " no-thumbnail"}" href="${escapeHtml(videoLink)}" target="_blank" rel="noopener" aria-label="播放 ${escapeHtml(song.title)} 视频">${thumbnail ? `<img src="${thumbnail}" alt="${escapeHtml(song.title)} 视频封面" onerror="this.closest('.video-cover').classList.add('no-thumbnail'); this.remove();">` : ""}<span class="video-fallback">▶ 播放视频</span><span class="play-mark" aria-hidden="true">▶</span></a><div class="video-copy"><span class="module-label">歌曲视频</span><h2>${escapeHtml(song.title)}</h2><p>打开视频，边看边唱。</p><a class="button" href="${escapeHtml(videoLink)}" target="_blank" rel="noopener">播放视频</a></div></section>` : ""}
     <div class="detail-layout"><div class="detail-main">
       <section class="module"><div class="module-head"><h2>完整歌词</h2><span>${song.lyrics.length} 行</span></div>${song.lyrics.length ? `<ol class="lyrics">${song.lyrics.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ol>` : `<div class="empty">暂无歌词</div>`}</section>
       <section class="module"><div class="module-head"><h2>核心词汇</h2><span>${song.words.length} 个</span></div>${song.words.length ? `<table class="content-table"><thead><tr><th class="index-column">序号</th><th>英文</th><th>音标</th><th>中文词义</th></tr></thead><tbody>${song.words.map((word, index) => `<tr><td class="index-column">${index + 1}</td><td><strong>${escapeHtml(word.english)}</strong></td><td>${escapeHtml(word.ipa)}</td><td>${escapeHtml(word.meaning)}</td></tr>`).join("")}</tbody></table>` : `<div class="empty">暂无核心词汇</div>`}</section>

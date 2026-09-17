@@ -72,14 +72,72 @@ button { cursor: pointer; }
 .empty { padding: 54px 20px; text-align: center; color: var(--muted); background: #fff; border: 1px solid var(--line); border-radius: 9px; }
 .page-foot { margin-top: 26px; color: var(--muted); font-size: 12px; line-height: 1.75; }
 .page-foot p { margin: 0 0 6px; }
+.detail-shell { display: none; }
+.detail-shell.active { display: block; }
+.planner-view.hidden, .hero.hidden, .filters.hidden, .result-note.hidden { display: none; }
+.back-button { display: inline-flex; align-items: center; border: 0; background: none; color: var(--brand); padding: 0; margin-bottom: 18px; font-weight: 700; }
+.song-hero { position: relative; min-height: 240px; padding: 30px; border-radius: 9px; overflow: hidden; color: white; background: var(--brand-deep); display: flex; align-items: flex-end; }
+.song-hero.has-image { background-size: cover; background-position: center; }
+.song-hero.has-image::after { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, rgba(10,48,51,.93), rgba(10,48,51,.35)); }
+.song-hero-content { position: relative; z-index: 1; max-width: 780px; }
+.song-kicker { margin: 0 0 8px; color: #bfe2df; font-size: 13px; font-weight: 700; }
+.song-hero h1 { margin: 0; font-size: 34px; }
+.song-hero p { color: #d9ecea; line-height: 1.55; }
+.hero-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+.button { min-height: 40px; border: 1px solid transparent; border-radius: 6px; padding: 9px 14px; background: var(--yellow); color: #3e310e; font-weight: 700; display: inline-flex; align-items: center; }
+.song-facts { margin: 0; padding: 22px 4px; display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); border-bottom: 1px solid var(--line); }
+.song-facts div { padding: 0 22px; border-right: 1px solid var(--line); }
+.song-facts div:last-child { border-right: 0; }
+.song-facts span { display: block; margin-bottom: 5px; color: var(--muted); font-size: 12px; }
+.song-facts strong { display: block; font-size: 14px; line-height: 1.45; }
+.index-column { width: 64px; text-align: center !important; color: var(--muted); }
+.detail-layout { display: grid; grid-template-columns: minmax(0, 1fr); gap: 18px; margin-top: 18px; }
+.detail-main { min-width: 0; }
+.module { margin-bottom: 14px; background: white; border: 1px solid var(--line); border-radius: 9px; overflow: hidden; }
+.module-head { padding: 13px 16px; border-bottom: 1px solid var(--line); display: flex; justify-content: space-between; align-items: center; }
+.module-head h2 { margin: 0; font-size: 16px; }
+.module-head span { color: var(--muted); font-size: 12px; }
+.lyrics { margin: 0; padding: 8px 18px 12px 50px; columns: 2; column-gap: 34px; }
+.lyrics li { break-inside: avoid; padding: 7px 0; border-bottom: 1px solid #edf1f0; line-height: 1.45; }
+.content-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.content-table th, .content-table td { padding: 11px 15px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: top; }
+.content-table th { background: var(--yellow-soft); color: #634c13; }
+.multiline { white-space: pre-line; }
+.related-module { margin-top: 18px; padding-top: 22px; border-top: 1px solid var(--line); }
+.related-head { margin-bottom: 14px; display: flex; align-items: end; justify-content: space-between; }
+.related-head h2 { margin: 5px 0 0; font-size: 20px; }
+.related-head > span { color: var(--muted); font-size: 12px; }
+.related-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.related-song { min-width: 0; padding: 0; display: grid; grid-template-columns: 116px minmax(0, 1fr); overflow: hidden; text-align: left; color: var(--ink); background: white; border: 1px solid var(--line); border-radius: 9px; cursor: pointer; }
+.related-song:hover { border-color: var(--brand); box-shadow: 0 4px 14px rgba(19,73,76,.09); }
+.related-cover { min-height: 108px; display: block; background: var(--brand-soft); background-position: center; background-size: cover; color: var(--muted); font-size: 12px; }
+.related-info { min-width: 0; padding: 13px; display: flex; align-items: flex-start; flex-direction: column; gap: 7px; }
+.related-info small { color: var(--muted); font-size: 11px; }
+.related-info strong { width: 100%; overflow: hidden; text-overflow: ellipsis; font-size: 14px; line-height: 1.35; white-space: nowrap; }
+.song-practice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.song-practice-card { padding: 16px; border: 1px solid var(--line); border-radius: 9px; background: #fbfcfb; }
+.song-practice-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.song-practice-head span { color: var(--brand); font-weight: 800; }
+.song-practice-head small { color: var(--muted); text-align: right; }
+.song-practice-head em { font-style: normal; opacity: .78; }
+.song-practice-pattern { display: inline-flex; align-items: center; min-height: 26px; padding: 3px 9px; border-radius: 999px; background: var(--brand-soft); color: var(--brand-deep); font-size: 12px; font-weight: 800; }
+.song-practice-card dl { margin: 0; }
+.song-practice-card dl div { display: grid; grid-template-columns: 28px minmax(0, 1fr); gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
+.song-practice-card dt { color: var(--brand); font-weight: 800; }
+.song-practice-card dd { margin: 0; font-weight: 700; line-height: 1.55; }
+.song-practice-card p { margin: 10px 0 0; color: var(--muted); line-height: 1.65; }
 @media (max-width: 1120px) {
   .week-head, .week-row { grid-template-columns: 92px 128px repeat(3, minmax(170px, 1fr)) 66px; }
+  .song-facts { grid-template-columns: repeat(3, minmax(0, 1fr)); row-gap: 20px; }
+  .song-facts div:nth-child(3n) { border-right: 0; }
 }
 @media (max-width: 900px) {
   .filters { grid-template-columns: minmax(150px, 1fr) minmax(190px, 1.4fr); }
   .week-head { display: none; }
   .week-list { overflow-x: auto; }
   .week-row { min-width: 930px; }
+  .detail-layout { grid-template-columns: 1fr; }
+  .related-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 @media (max-width: 640px) {
   .filters { position: static; grid-template-columns: 1fr; }
@@ -88,6 +146,15 @@ button { cursor: pointer; }
   .stat { flex: 1 1 calc(50% - 10px); min-width: 0; }
   .week-list { overflow: visible; }
   .week-row { grid-template-columns: 1fr; min-width: 0; }
+  .song-hero { padding: 24px 20px; min-height: 220px; }
+  .song-hero h1 { font-size: 27px; }
+  .lyrics { columns: 1; }
+  .song-facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .song-facts div:nth-child(2n) { border-right: 0; }
+  .related-grid { grid-template-columns: 1fr; }
+  .song-practice-grid { grid-template-columns: 1fr; }
+  .song-practice-head { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .song-practice-head small { text-align: left; }
   .week-cell { min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
   .week-cell:last-child { border-bottom: 0; }
   .week-label { background: #f0f6f5; }
@@ -103,7 +170,6 @@ button { cursor: pointer; }
       <span class="brand-mark">SSS</span>
       <div class="brand-copy"><strong>33周SSS儿歌计划表</strong><small>每周 3 首 · 共 <span id="brand-total">99</span> 首 · 33 周</small></div>
     </div>
-    <a class="site-link" href="index.html" target="_blank" rel="noopener">打开完整学习站 ↗</a>
   </div>
 </header>
 
@@ -131,28 +197,34 @@ button { cursor: pointer; }
 
   <p id="week-result-note" class="result-note"></p>
 
-  <div class="week-head" aria-hidden="true">
-    <span>周次</span><span>主题</span><span>第 1 首</span><span>第 2 首</span><span>第 3 首</span><span>本周进度</span>
-  </div>
-  <div id="week-list" class="week-list"></div>
+  <div id="planner-view" class="planner-view">
+    <div id="week-head" class="week-head" aria-hidden="true">
+      <span>周次</span><span>主题</span><span>第 1 首</span><span>第 2 首</span><span>第 3 首</span><span>本周进度</span>
+    </div>
+    <div id="week-list" class="week-list"></div>
 
-  <footer class="page-foot">
-    <p>打卡进度保存在本机浏览器，与「完整学习站」共用同一份记录（同一浏览器、同一打开方式）。</p>
-    <p>数据来源：Susan 33 周 SSS 儿歌计划 · 共 <span id="foot-total">99</span> 首。</p>
-  </footer>
+    <footer class="page-foot">
+      <p>打卡进度保存在本机浏览器，与「完整学习站」共用同一份记录（同一浏览器、同一打开方式）。</p>
+      <p>数据来源：Susan 33 周 SSS 儿歌计划 · 共 <span id="foot-total">99</span> 首。</p>
+    </footer>
+  </div>
+
+  <section id="song-detail-view" class="detail-shell" aria-live="polite"></section>
 </main>
 
-<script id="week-data" type="application/json">{"generatedAt":"2026-09-17","categories":["社交与表达","动作与指令","基础认知","动物世界","数字与数量","食物与饮食","生活习惯","交通工具","天气与自然","经典童谣","圣诞节","万圣节与冬季"],"weeks":[{"week":1,"label":"第1周","theme":"问候与告别","category":"社交与表达","songs":[{"title":"hello","sheet":"hello 091"},{"title":"hello hello Can you clap your hands?","sheet":"hello hello Can you clap yo 056"},{"title":"see you later","sheet":"see you later 057"}]},{"week":2,"label":"第2周","theme":"喜欢与友谊","category":"社交与表达","songs":[{"title":"I like you","sheet":"I like you 070"},{"title":"the more we get together","sheet":"the more we get together 016"},{"title":"skidamarink a dink I love you","sheet":"skidamarink a dink I love y 028"}]},{"week":3,"label":"第3周","theme":"情绪与表达","category":"社交与表达","songs":[{"title":"my happy song","sheet":"my happy song 015"},{"title":"this is a happy face","sheet":"this is a happy face 003"},{"title":"Can you make a happy face?","sheet":"Can you make a happy face 053"}]},{"week":4,"label":"第4周","theme":"动作启蒙","category":"动作与指令","songs":[{"title":"open shut them","sheet":"open shut them 009"},{"title":"follow me","sheet":"follow me 061"},{"title":"walking walking","sheet":"walking walking 043"}]},{"week":5,"label":"第5周","theme":"身体与动作","category":"动作与指令","songs":[{"title":"one little finger","sheet":"one little finger 063"},{"title":"head shoulders knees and toes","sheet":"head shoulders knees and to 076"},{"title":"with my heart","sheet":"with my heart 011"}]},{"week":6,"label":"第6周","theme":"跟随指令","category":"动作与指令","songs":[{"title":"wag your tail","sheet":"wag your tail 065"},{"title":"make a circle","sheet":"make a circle 092"},{"title":"pass the beanbag","sheet":"pass the beanbag 075"}]},{"week":7,"label":"第7周","theme":"动作与能力","category":"动作与指令","songs":[{"title":"we all fall down","sheet":"we all fall down 062"},{"title":"if you’re happy and you know it","sheet":"if you’re happy and you kno 074"},{"title":"yes, I can","sheet":"yes, I can 054"}]},{"week":8,"label":"第8周","theme":"躲藏与观察","category":"动作与指令","songs":[{"title":"peekaboo","sheet":"peekaboo 012"},{"title":"peekaboo I love you","sheet":"peekaboo I love you 029"},{"title":"hide and seek","sheet":"hide and seek 066"}]},{"week":9,"label":"第9周","theme":"课堂习惯","category":"动作与指令","songs":[{"title":"line up","sheet":"line up 067"},{"title":"clean up","sheet":"clean up 068"},{"title":"bye bye goodbye","sheet":"bye bye goodbye 051"}]},{"week":10,"label":"第10周","theme":"颜色认知","category":"基础认知","songs":[{"title":"I see something blue","sheet":"I see something blue 006"},{"title":"What's your favorite color?","sheet":"What's your favorite color 007"},{"title":"red yellow green blue","sheet":"red yellow green blue 008"}]},{"week":11,"label":"第11周","theme":"形状与字母","category":"基础认知","songs":[{"title":"the shape song 1,2","sheet":"the shape song 1,2 052"},{"title":"the alphabet song","sheet":"the alphabet song 072"},{"title":"mystery box","sheet":"mystery box 041"}]},{"week":12,"label":"第12周","theme":"提问与表达","category":"社交与表达","songs":[{"title":"What's this? What's that?","sheet":"What's this What's that 005"},{"title":"say cheese!","sheet":"say cheese 035"},{"title":"I can't remember the words to this song","sheet":"I can't remember the words 055"}]},{"week":13,"label":"第13周","theme":"动物启蒙","category":"动物世界","songs":[{"title":"I have a pet","sheet":"I have a pet 017"},{"title":"what do you hear","sheet":"what do you hear 038"},{"title":"let’s go to the zoo","sheet":"let’s go to the zoo 069"}]},{"week":14,"label":"第14周","theme":"森林动物","category":"动物世界","songs":[{"title":"walking in the jungle","sheet":"walking in the jungle 001"},{"title":"walking in the forest","sheet":"walking in the forest 002"},{"title":"the bear went over the mountain","sheet":"the bear went over the moun 013"}]},{"week":15,"label":"第15周","theme":"昆虫观察","category":"动物世界","songs":[{"title":"the itsy betsy spider","sheet":"the itsy betsy spider 010"},{"title":"here is the beehive","sheet":"here is the beehive 077"},{"title":"the bees go buzzing","sheet":"the bees go buzzing 090"}]},{"week":16,"label":"第16周","theme":"海洋动物","category":"动物世界","songs":[{"title":"10 little fishies","sheet":"10 little fishies 019"},{"title":"there is a hole in the bottom of the sea","sheet":"there is a hole in the bott 018"},{"title":"baby shark","sheet":"baby shark 098"}]},{"week":17,"label":"第17周","theme":"动物与数数","category":"动物世界","songs":[{"title":"five little monkeys","sheet":"five little monkeys 085"},{"title":"the ants go marching one by one","sheet":"the ants go marching one by 034"},{"title":"Alice the camel","sheet":"Alice the camel 022"}]},{"week":18,"label":"第18周","theme":"身体与数数","category":"数字与数量","songs":[{"title":"my teddy bear","sheet":"my teddy bear 021"},{"title":"how many fingers","sheet":"how many fingers 020"},{"title":"the bananas song","sheet":"the bananas song 082"}]},{"week":19,"label":"第19周","theme":"数字与数量","category":"数字与数量","songs":[{"title":"ten in the bed","sheet":"ten in the bed 088"},{"title":"six in the bed","sheet":"six in the bed 086"},{"title":"five little pumpkins","sheet":"five little pumpkins 047"}]},{"week":20,"label":"第20周","theme":"食物喜好","category":"食物与饮食","songs":[{"title":"Do you like broccoli?","sheet":"Do you like broccoli 023"},{"title":"Do you like spaghetti?","sheet":"Do you like spaghetti 024"},{"title":"Do you like pickles?","sheet":"Do you like pickles 025"}]},{"week":21,"label":"第21周","theme":"食物与饥饿","category":"食物与饮食","songs":[{"title":"Do you like lasagna?","sheet":"Do you like lasagna 026"},{"title":"Are you hungry?","sheet":"Are you hungry 095"},{"title":"apples and bananas","sheet":"apples and bananas 099"}]},{"week":22,"label":"第22周","theme":"食物与经典童谣","category":"食物与饮食","songs":[{"title":"the muffin man","sheet":"the muffin man 073"},{"title":"hot cross buns","sheet":"hot cross buns 039"},{"title":"a sailor went to sea","sheet":"a sailor went to sea 014"}]},{"week":23,"label":"第23周","theme":"清洁与如厕","category":"生活习惯","songs":[{"title":"the bath song","sheet":"the bath song 050"},{"title":"brush your teeth","sheet":"brush your teeth 097"},{"title":"sitting on the potty","sheet":"sitting on the potty 036"}]},{"week":24,"label":"第24周","theme":"穿衣与睡眠","category":"生活习惯","songs":[{"title":"this is the way we get dressed","sheet":"this is the way we get dres 059"},{"title":"this is the way we go to bed","sheet":"this is the way we go to be 060"},{"title":"are you sleeping","sheet":"are you sleeping 046"}]},{"week":25,"label":"第25周","theme":"交通工具","category":"交通工具","songs":[{"title":"driving in my car","sheet":"driving in my car 044"},{"title":"fire truck","sheet":"fire truck 037"},{"title":"the wheels on the bus","sheet":"the wheels on the bus 084"}]},{"week":26,"label":"第26周","theme":"天气与自然","category":"天气与自然","songs":[{"title":"rain rain go away","sheet":"rain rain go away 058"},{"title":"little snowflake","sheet":"little snowflake 040"},{"title":"I love the mountains","sheet":"I love the mountains 027"}]},{"week":27,"label":"第27周","theme":"经典童谣一","category":"经典童谣","songs":[{"title":"Mary had a little lamb","sheet":"Mary had a little lamb 093"},{"title":"the farmer in the dell","sheet":"the farmer in the dell 087"},{"title":"Humpty Dumpty","sheet":"Humpty Dumpty 083"}]},{"week":28,"label":"第28周","theme":"经典童谣二","category":"经典童谣","songs":[{"title":"Jack & Jill","sheet":"Jack & Jill 094"},{"title":"take me out to the ball game","sheet":"take me out to the ball gam 081"},{"title":"What do you like to do?","sheet":"What do you like to do 071"}]},{"week":29,"label":"第29周","theme":"韵律歌曲","category":"经典童谣","songs":[{"title":"down by the bay","sheet":"down by the bay 033"},{"title":"down by the bay 1, 2, 3","sheet":"down by the bay 1, 2, 3 078"},{"title":"down by the spooky bay Halloween song","sheet":"down by the spooky bay Hall 079"}]},{"week":30,"label":"第30周","theme":"圣诞韵律","category":"圣诞节","songs":[{"title":"jingle bells","sheet":"jingle bells 045"},{"title":"jingle jingle little bell","sheet":"jingle jingle little bell 049"},{"title":"up on the housetop","sheet":"up on the housetop 089"}]},{"week":31,"label":"第31周","theme":"圣诞老人","category":"圣诞节","songs":[{"title":"Santa's on his way","sheet":"Santa's on his way 031"},{"title":"Santa where are you?","sheet":"Santa where are you 042"},{"title":"What do you want for Christmas?","sheet":"What do you want for Christ 030"}]},{"week":32,"label":"第32周","theme":"圣诞主题","category":"圣诞节","songs":[{"title":"10 little elves","sheet":"10 little elves 048"},{"title":"at the North Pole","sheet":"at the North Pole 080"},{"title":"silent night","sheet":"silent night 096"}]},{"week":33,"label":"第33周","theme":"万圣节与冬季","category":"万圣节与冬季","songs":[{"title":"Halloween","sheet":"Halloween 032"},{"title":"jack-o'-lantern","sheet":"jack-o'-lantern 064"},{"title":"little snowman","sheet":"little snowman 004"}]}]}</script>
+<script id="week-plan-data" type="application/json">{"generatedAt":"2026-09-17","categories":["社交与表达","动作与指令","基础认知","动物世界","数字与数量","食物与饮食","生活习惯","交通工具","天气与自然","经典童谣","圣诞节","万圣节与冬季"],"weeks":[{"week":1,"label":"第1周","theme":"问候与告别","category":"社交与表达","songs":[{"title":"hello","sheet":"hello 091"},{"title":"hello hello Can you clap your hands?","sheet":"hello hello Can you clap yo 056"},{"title":"see you later","sheet":"see you later 057"}]},{"week":2,"label":"第2周","theme":"喜欢与友谊","category":"社交与表达","songs":[{"title":"I like you","sheet":"I like you 070"},{"title":"the more we get together","sheet":"the more we get together 016"},{"title":"skidamarink a dink I love you","sheet":"skidamarink a dink I love y 028"}]},{"week":3,"label":"第3周","theme":"情绪与表达","category":"社交与表达","songs":[{"title":"my happy song","sheet":"my happy song 015"},{"title":"this is a happy face","sheet":"this is a happy face 003"},{"title":"Can you make a happy face?","sheet":"Can you make a happy face 053"}]},{"week":4,"label":"第4周","theme":"动作启蒙","category":"动作与指令","songs":[{"title":"open shut them","sheet":"open shut them 009"},{"title":"follow me","sheet":"follow me 061"},{"title":"walking walking","sheet":"walking walking 043"}]},{"week":5,"label":"第5周","theme":"身体与动作","category":"动作与指令","songs":[{"title":"one little finger","sheet":"one little finger 063"},{"title":"head shoulders knees and toes","sheet":"head shoulders knees and to 076"},{"title":"with my heart","sheet":"with my heart 011"}]},{"week":6,"label":"第6周","theme":"跟随指令","category":"动作与指令","songs":[{"title":"wag your tail","sheet":"wag your tail 065"},{"title":"make a circle","sheet":"make a circle 092"},{"title":"pass the beanbag","sheet":"pass the beanbag 075"}]},{"week":7,"label":"第7周","theme":"动作与能力","category":"动作与指令","songs":[{"title":"we all fall down","sheet":"we all fall down 062"},{"title":"if you’re happy and you know it","sheet":"if you’re happy and you kno 074"},{"title":"yes, I can","sheet":"yes, I can 054"}]},{"week":8,"label":"第8周","theme":"躲藏与观察","category":"动作与指令","songs":[{"title":"peekaboo","sheet":"peekaboo 012"},{"title":"peekaboo I love you","sheet":"peekaboo I love you 029"},{"title":"hide and seek","sheet":"hide and seek 066"}]},{"week":9,"label":"第9周","theme":"课堂习惯","category":"动作与指令","songs":[{"title":"line up","sheet":"line up 067"},{"title":"clean up","sheet":"clean up 068"},{"title":"bye bye goodbye","sheet":"bye bye goodbye 051"}]},{"week":10,"label":"第10周","theme":"颜色认知","category":"基础认知","songs":[{"title":"I see something blue","sheet":"I see something blue 006"},{"title":"What's your favorite color?","sheet":"What's your favorite color 007"},{"title":"red yellow green blue","sheet":"red yellow green blue 008"}]},{"week":11,"label":"第11周","theme":"形状与字母","category":"基础认知","songs":[{"title":"the shape song 1,2","sheet":"the shape song 1,2 052"},{"title":"the alphabet song","sheet":"the alphabet song 072"},{"title":"mystery box","sheet":"mystery box 041"}]},{"week":12,"label":"第12周","theme":"提问与表达","category":"社交与表达","songs":[{"title":"What's this? What's that?","sheet":"What's this What's that 005"},{"title":"say cheese!","sheet":"say cheese 035"},{"title":"I can't remember the words to this song","sheet":"I can't remember the words 055"}]},{"week":13,"label":"第13周","theme":"动物启蒙","category":"动物世界","songs":[{"title":"I have a pet","sheet":"I have a pet 017"},{"title":"what do you hear","sheet":"what do you hear 038"},{"title":"let’s go to the zoo","sheet":"let’s go to the zoo 069"}]},{"week":14,"label":"第14周","theme":"森林动物","category":"动物世界","songs":[{"title":"walking in the jungle","sheet":"walking in the jungle 001"},{"title":"walking in the forest","sheet":"walking in the forest 002"},{"title":"the bear went over the mountain","sheet":"the bear went over the moun 013"}]},{"week":15,"label":"第15周","theme":"昆虫观察","category":"动物世界","songs":[{"title":"the itsy betsy spider","sheet":"the itsy betsy spider 010"},{"title":"here is the beehive","sheet":"here is the beehive 077"},{"title":"the bees go buzzing","sheet":"the bees go buzzing 090"}]},{"week":16,"label":"第16周","theme":"海洋动物","category":"动物世界","songs":[{"title":"10 little fishies","sheet":"10 little fishies 019"},{"title":"there is a hole in the bottom of the sea","sheet":"there is a hole in the bott 018"},{"title":"baby shark","sheet":"baby shark 098"}]},{"week":17,"label":"第17周","theme":"动物与数数","category":"动物世界","songs":[{"title":"five little monkeys","sheet":"five little monkeys 085"},{"title":"the ants go marching one by one","sheet":"the ants go marching one by 034"},{"title":"Alice the camel","sheet":"Alice the camel 022"}]},{"week":18,"label":"第18周","theme":"身体与数数","category":"数字与数量","songs":[{"title":"my teddy bear","sheet":"my teddy bear 021"},{"title":"how many fingers","sheet":"how many fingers 020"},{"title":"the bananas song","sheet":"the bananas song 082"}]},{"week":19,"label":"第19周","theme":"数字与数量","category":"数字与数量","songs":[{"title":"ten in the bed","sheet":"ten in the bed 088"},{"title":"six in the bed","sheet":"six in the bed 086"},{"title":"five little pumpkins","sheet":"five little pumpkins 047"}]},{"week":20,"label":"第20周","theme":"食物喜好","category":"食物与饮食","songs":[{"title":"Do you like broccoli?","sheet":"Do you like broccoli 023"},{"title":"Do you like spaghetti?","sheet":"Do you like spaghetti 024"},{"title":"Do you like pickles?","sheet":"Do you like pickles 025"}]},{"week":21,"label":"第21周","theme":"食物与饥饿","category":"食物与饮食","songs":[{"title":"Do you like lasagna?","sheet":"Do you like lasagna 026"},{"title":"Are you hungry?","sheet":"Are you hungry 095"},{"title":"apples and bananas","sheet":"apples and bananas 099"}]},{"week":22,"label":"第22周","theme":"食物与经典童谣","category":"食物与饮食","songs":[{"title":"the muffin man","sheet":"the muffin man 073"},{"title":"hot cross buns","sheet":"hot cross buns 039"},{"title":"a sailor went to sea","sheet":"a sailor went to sea 014"}]},{"week":23,"label":"第23周","theme":"清洁与如厕","category":"生活习惯","songs":[{"title":"the bath song","sheet":"the bath song 050"},{"title":"brush your teeth","sheet":"brush your teeth 097"},{"title":"sitting on the potty","sheet":"sitting on the potty 036"}]},{"week":24,"label":"第24周","theme":"穿衣与睡眠","category":"生活习惯","songs":[{"title":"this is the way we get dressed","sheet":"this is the way we get dres 059"},{"title":"this is the way we go to bed","sheet":"this is the way we go to be 060"},{"title":"are you sleeping","sheet":"are you sleeping 046"}]},{"week":25,"label":"第25周","theme":"交通工具","category":"交通工具","songs":[{"title":"driving in my car","sheet":"driving in my car 044"},{"title":"fire truck","sheet":"fire truck 037"},{"title":"the wheels on the bus","sheet":"the wheels on the bus 084"}]},{"week":26,"label":"第26周","theme":"天气与自然","category":"天气与自然","songs":[{"title":"rain rain go away","sheet":"rain rain go away 058"},{"title":"little snowflake","sheet":"little snowflake 040"},{"title":"I love the mountains","sheet":"I love the mountains 027"}]},{"week":27,"label":"第27周","theme":"经典童谣一","category":"经典童谣","songs":[{"title":"Mary had a little lamb","sheet":"Mary had a little lamb 093"},{"title":"the farmer in the dell","sheet":"the farmer in the dell 087"},{"title":"Humpty Dumpty","sheet":"Humpty Dumpty 083"}]},{"week":28,"label":"第28周","theme":"经典童谣二","category":"经典童谣","songs":[{"title":"Jack & Jill","sheet":"Jack & Jill 094"},{"title":"take me out to the ball game","sheet":"take me out to the ball gam 081"},{"title":"What do you like to do?","sheet":"What do you like to do 071"}]},{"week":29,"label":"第29周","theme":"韵律歌曲","category":"经典童谣","songs":[{"title":"down by the bay","sheet":"down by the bay 033"},{"title":"down by the bay 1, 2, 3","sheet":"down by the bay 1, 2, 3 078"},{"title":"down by the spooky bay Halloween song","sheet":"down by the spooky bay Hall 079"}]},{"week":30,"label":"第30周","theme":"圣诞韵律","category":"圣诞节","songs":[{"title":"jingle bells","sheet":"jingle bells 045"},{"title":"jingle jingle little bell","sheet":"jingle jingle little bell 049"},{"title":"up on the housetop","sheet":"up on the housetop 089"}]},{"week":31,"label":"第31周","theme":"圣诞老人","category":"圣诞节","songs":[{"title":"Santa's on his way","sheet":"Santa's on his way 031"},{"title":"Santa where are you?","sheet":"Santa where are you 042"},{"title":"What do you want for Christmas?","sheet":"What do you want for Christ 030"}]},{"week":32,"label":"第32周","theme":"圣诞主题","category":"圣诞节","songs":[{"title":"10 little elves","sheet":"10 little elves 048"},{"title":"at the North Pole","sheet":"at the North Pole 080"},{"title":"silent night","sheet":"silent night 096"}]},{"week":33,"label":"第33周","theme":"万圣节与冬季","category":"万圣节与冬季","songs":[{"title":"Halloween","sheet":"Halloween 032"},{"title":"jack-o'-lantern","sheet":"jack-o'-lantern 064"},{"title":"little snowman","sheet":"little snowman 004"}]}]}</script>
 <script>
 let DATA = { weeks: [], categories: [] };
 let isTemplateSource = false;
 try {
-  DATA = JSON.parse(document.getElementById("week-data").textContent);
+  DATA = JSON.parse(document.getElementById("week-plan-data").textContent);
 } catch (error) {
   isTemplateSource = true;
 }
 if (!Array.isArray(DATA.weeks) || !DATA.weeks.length) isTemplateSource = true;
 </script>
+<script src="data.js"></script>
+<script src="pattern-data.js"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const loadState = () => {
@@ -184,6 +256,168 @@ const statusBadge = (status) => `<span class="status ${status === "已完成" ? 
 const allSheets = DATA.weeks.flatMap((week) => week.songs.map((song) => song.sheet));
 const TOTAL = allSheets.length;
 const $ = (id) => document.getElementById(id);
+const { songs } = window.SSS_WEB_DATA;
+const songBySheet = new Map(songs.map((item) => [item.sheet, item]));
+const THEME_GROUPS = {
+  "社交与表达": ["问候与告别", "喜欢与友谊", "情绪与表达", "提问与表达"],
+  "动作与指令": ["动作启蒙", "身体与动作", "跟随指令", "动作与能力", "躲藏与观察", "课堂习惯"],
+  "基础认知": ["颜色认知", "形状与字母"],
+  "动物世界": ["动物启蒙", "森林动物", "昆虫观察", "海洋动物", "动物与数数"],
+  "数字与数量": ["身体与数数", "数字与数量"],
+  "食物与饮食": ["食物喜好", "食物与饥饿", "食物与经典童谣"],
+  "生活习惯": ["清洁与如厕", "穿衣与睡眠"],
+  "交通工具": ["交通工具"],
+  "天气与自然": ["天气与自然"],
+  "经典童谣": ["经典童谣一", "经典童谣二", "韵律歌曲"],
+  "圣诞节": ["圣诞韵律", "圣诞老人", "圣诞主题"],
+  "万圣节与冬季": ["万圣节与冬季"],
+};
+const themeCategory = (theme) => Object.entries(THEME_GROUPS).find(([, themes]) => themes.includes(theme))?.[0] || theme || "未分类";
+const cleanExample = (value) => String(value ?? "")
+  .split(/\r?\n/)
+  .map((line) => line.trim())
+  .filter((line) => line && !/^[\p{Script=Han}\s]+$/u.test(line))
+  .join("\n");
+const youtubeThumbnail = (url) => {
+  const match = String(url || "").match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
+  return match ? `https://i.ytimg.com/vi/${match[1]}/hqdefault.jpg` : "";
+};
+function toIng(phrase) {
+  const [verb, ...rest] = phrase.split(" ");
+  const irregular = { lie: "lying", pee: "peeing" };
+  let ing = irregular[verb];
+  if (!ing && /ie$/.test(verb)) ing = `${verb.slice(0, -2)}ying`;
+  if (!ing && /[^aeiou]e$/.test(verb)) ing = `${verb.slice(0, -1)}ing`;
+  if (!ing && /^(dig|sit|run|swim|stir|mop|pop)$/.test(verb)) ing = `${verb}${verb.slice(-1)}ing`;
+  if (!ing) ing = `${verb}ing`;
+  return [ing, ...rest].join(" ");
+}
+function songPracticeRows(song) {
+  const lib = window.SSS_PATTERN_LIBRARY || [];
+  const clean = (value) => String(value ?? "").split(/\r?\n/).map((line) => line.trim()).filter((line) => line && !/^[\p{Script=Han}\s]+$/u.test(line));
+  const cap = (value) => value ? value.charAt(0).toUpperCase() + value.slice(1) : value;
+  const article = (word) => /^[aeiou]/i.test(word) ? "an" : "a";
+  const subjectWord = (word) => word.english.replace(/^(my|your|the)\s+/i, "").trim();
+  const item = (pattern, word, question, answer, translation) => ({
+    type: pattern.type, pattern: pattern.pattern, word: word.english, meaning: word.meaning,
+    question, answer, translation,
+  });
+  const rows = [];
+  song.patterns.forEach((songPattern) => {
+    const number = Number(String(songPattern.pattern || "").match(/(\d+)\s*\./)?.[1]);
+    const pattern = lib.find((row) => row.type === songPattern.type && row.number === number);
+    if (!pattern) return;
+    song.words.forEach((word) => {
+      const value = subjectWord(word);
+      const doing = toIng(value);
+      const obj = `${article(value)} ${value}`;
+      if (pattern.type === "名词卡") {
+        const nounMap = {
+          1: ["What's this?", `It's ${obj}.`, `这是什么？这是${word.meaning}。`],
+          2: ["What's this?", `This is ${obj}.`, `这是什么？这是${word.meaning}。`],
+          3: ["What's that?", `That is ${obj}.`, `那是什么？那是${word.meaning}。`],
+          4: [`What is ${value}?`, `${cap(value)} is ${value}.`, `什么是${word.meaning}？${word.meaning}就是${value}。`],
+          5: [`What is ${value}?`, `${cap(value)} is ${value}.`, `什么是${word.meaning}？${word.meaning}就是${value}。`],
+          7: [`What is big?`, `${cap(value)} is big.`, `什么很大？${word.meaning}很大。`],
+          8: [`What is small?`, `${cap(value)} is small.`, `什么很小？${word.meaning}很小。`],
+          10: ["What can you see?", `I can see ${obj}.`, `你能看见什么？我能看见${word.meaning}。`],
+          11: ["What can you see?", `I can see ${obj}.`, `你能看见什么？我能看见${word.meaning}。`],
+          12: [`Whose ${value} is it?`, `It is my ${value}.`, `这是谁的${word.meaning}？这是我的。`],
+          13: ["Who is it?", `It is my ${value}.`, `它是谁？它是我的${word.meaning}。`],
+          16: ["What can you see?", `There is ${obj}.`, `你能看见什么？有一个${word.meaning}。`],
+          17: ["What's in the sea?", `There is ${obj} in the sea.`, `海里有什么？海里有一个${word.meaning}。`],
+          20: [`How many ${value}s do you have?`, `I have ${article(value)} ${value}.`, `你有多少个${word.meaning}？我有一个。`],
+          22: [`What does your dad have?`, `My dad has ${article(value)} ${value}.`, `爸爸有什么？爸爸有一个${word.meaning}。`],
+          24: [`Do you like ${value}?`, `Yes, I like ${value}.`, `你喜欢${word.meaning}吗？是的，我喜欢。`],
+          28: [`Do you love ${value}?`, `Yes, I love ${value}.`, `你喜爱${word.meaning}吗？是的，我喜爱。`],
+          32: ["What do you want?", `I want ${obj}.`, `你想要什么？我想要${word.meaning}。`],
+          37: ["What do you want to eat?", `I want to eat ${obj}.`, `你想吃什么？我想吃${word.meaning}。`],
+          38: ["What are you wearing?", `I am wearing ${obj}.`, `你穿着什么？我穿着${word.meaning}。`],
+          39: ["What is he wearing?", `He is wearing ${obj}.`, `他穿着什么？他穿着${word.meaning}。`],
+          41: [`Can you drink ${value}?`, `No, I can't drink ${value}.`, `你能喝${word.meaning}吗？不，我不能。`],
+          42: [`What do you look at?`, `Look at the ${value}!`, `你看什么？看这个${word.meaning}！`],
+          43: [`What do you listen to?`, `Listen to the ${value}!`, `你听什么？听这个${word.meaning}！`],
+          44: ["What can you hear?", `I can hear the ${value}.`, `你能听见什么？我能听见${word.meaning}。`],
+          45: [`What's hot?`, `The ${value} is hot.`, `什么很烫？${word.meaning}很烫。`],
+          46: [`What's cold?`, `The ${value} is cold.`, `什么很冷？${word.meaning}很冷。`],
+          47: ["What's on the table?", `The ${value} is on the table.`, `桌上有什么？桌上有${word.meaning}。`],
+          48: ["What's in the freezer?", `The ${value} is in the freezer.`, `冰箱里有什么？冰箱里有${word.meaning}。`],
+          49: ["What's under your bed?", `The ${value} is under my bed.`, `床下有什么？床下有${word.meaning}。`],
+        };
+        if (nounMap[number]) { const [q, a, t] = nounMap[number]; rows.push(item(pattern, word, q, a, t)); }
+        return;
+      }
+      if (pattern.type === "动词卡") {
+        const verbMap = {
+          1: ["What are you doing?", `I am ${doing}.`, `你正在做什么？我正在${word.meaning}。`],
+          2: ["What are you doing?", `I am ${doing}.`, `你正在做什么？我正在${word.meaning}。`],
+          5: ["What's it doing?", `It is ${doing}.`, `它正在做什么？它正在${word.meaning}。`],
+          8: [`Can you ${value}?`, `Yes, I can ${value}.`, `你会${word.meaning}吗？是的，我会。`],
+          9: [`Can you ${value}?`, `No, I can't ${value}.`, `你会${word.meaning}吗？不，我不会。`],
+          12: [`Can I ${value} now?`, `Yes, you can ${value} now.`, `我现在可以${word.meaning}吗？可以。`],
+          14: [`Do you want to ${value}?`, `No, I don't want to ${value}.`, `你想${word.meaning}吗？不，我不想。`],
+          15: [`What does it want to do?`, `It wants to ${value}.`, `它想做什么？它想${word.meaning}。`],
+          16: [`Do you ${value} every day?`, `Yes, I ${value} every day.`, `你每天都${word.meaning}吗？是的。`],
+          18: ["What should I do?", `${cap(value)}!`, `我该做什么？请${word.meaning}！`],
+          20: ["What shall we do?", `Let's ${value}!`, `我们做什么？我们一起${word.meaning}吧！`],
+          21: [`Do you like ${doing}?`, `Yes, I like ${doing}.`, `你喜欢${word.meaning}吗？是的，我喜欢。`],
+          22: [`Do you hate ${doing}?`, `Yes, I hate ${doing}.`, `你讨厌${word.meaning}吗？是的，我讨厌。`],
+          26: ["What are you going to do?", `I'm going to ${value}.`, `你打算做什么？我打算${word.meaning}。`],
+          28: [`Do you know how to ${value}?`, `No, I don't know how to ${value}.`, `你知道怎么${word.meaning}吗？不，我不知道。`],
+          29: [`How do I do it?`, `${cap(value)} fast!`, `我该怎么做？快快地${word.meaning}！`],
+          30: [`How do I do it?`, `${cap(value)} slowly!`, `我该怎么做？慢慢地${word.meaning}！`],
+          31: [`How do I do it?`, `${cap(value)} quietly!`, `我该怎么做？安静地${word.meaning}！`],
+          32: [`How do I do it?`, `Don't ${value} too loudly!`, `我该怎么做？不要太大声地${word.meaning}！`],
+          33: ["What did you do yesterday?", `I ${value}ed yesterday.`, `你昨天做什么了？我昨天${word.meaning}了。`],
+          37: [`Have you ${value}ed?`, `Yes, I have ${value}ed.`, `你已经${word.meaning}了吗？是的。`],
+          50: [`What does it never do?`, `It never ${value}s.`, `它从来不做什么？它从来不${word.meaning}。`],
+          52: [`Is ${doing} good for you?`, `Yes, ${doing} is good for me.`, `${word.meaning}对你有好处吗？有。`],
+          54: ["What's it doing?", `It is ${doing} on the desk.`, `它在做什么？它在桌上${word.meaning}。`],
+          55: ["What's it doing?", `It is ${doing} under the table.`, `它在做什么？它在桌子下${word.meaning}。`],
+          56: ["What's it doing?", `It is ${doing} on the grass.`, `它在做什么？它在草地上${word.meaning}。`],
+          57: ["What's it doing?", `It is ${doing} around the flowers.`, `它在做什么？它在花丛边${word.meaning}。`],
+          58: ["What's it doing?", `It is ${doing} on the sofa.`, `它在做什么？它在沙发上${word.meaning}。`],
+          59: ["What's it doing?", `It is ${doing} on the bus.`, `它在做什么？它在公交车上${word.meaning}。`],
+          61: ["What are they doing?", `They are ${doing} on the bed.`, `它们在做什么？它们在床上${word.meaning}。`],
+          62: ["What's it doing?", `It is ${doing} in the building.`, `它在做什么？它在楼里${word.meaning}。`],
+          63: ["What's it doing?", `It is ${doing} through the window.`, `它在做什么？它在窗边${word.meaning}。`],
+          64: ["What's it doing?", `It is ${doing} behind the door.`, `它在做什么？它在门后${word.meaning}。`],
+          65: ["What's it doing?", `It is ${doing} on the boat.`, `它在做什么？它在船上${word.meaning}。`],
+          66: ["What's it doing?", `It is ${doing} in the sea.`, `它在做什么？它在海里${word.meaning}。`],
+          67: [`What can you do?`, `I can ${value} under the sun.`, `你能做什么？我能在太阳下${word.meaning}。`],
+          68: ["What are they doing?", `They are ${doing} on the moon.`, `它们在做什么？它们在月亮上${word.meaning}。`],
+        };
+        if (verbMap[number]) { const [q, a, t] = verbMap[number]; rows.push(item(pattern, word, q, a, t)); }
+        return;
+      }
+      const genericAdjMap = {
+        1: ["What's it like?", `It's ${value}.`, `它是什么样的？它是${word.meaning.replace(/的$/, "")}的。`],
+        3: ["What does your dad have?", `My dad has ${article(value)} ${value}.`, `爸爸有什么？爸爸有一个${word.meaning}。`],
+        4: ["What do you like?", `I like ${obj}.`, `你喜欢什么？我喜欢${word.meaning}。`],
+        9: ["What should we do?", `Be careful with the ${value}!`, `我们该注意什么？小心${word.meaning}！`],
+        39: ["Which one is longer?", `The ${value} is longer.`, `哪个更长？${word.meaning}更长。`],
+        41: ["How is the food?", `The ${value} is yummy.`, `食物怎么样？这个${word.meaning}很好吃。`],
+        42: ["How is the food?", `The ${value} is yucky.`, `食物怎么样？这个${word.meaning}不好吃。`],
+        53: ["What's full?", `The ${value} is full.`, `什么满了？${word.meaning}满了。`],
+        57: ["Where can we go?", `We can go to the ${value}.`, `我们可以去哪里？我们可以去${word.meaning}。`],
+        69: [`Is it about ${value}?`, `Yes, it depends on the ${value}.`, `这和${word.meaning}有关吗？是的，要看${word.meaning}。`],
+        99: ["What do they like to eat?", `They like to eat ${value}.`, `它们喜欢吃什么？它们喜欢吃${word.meaning}。`],
+      };
+      if (pattern.type === "形容词卡" && genericAdjMap[number]) { const [q, a, t] = genericAdjMap[number]; rows.push(item(pattern, word, q, a, t)); return; }
+      const adjMap = {
+        17: ["How do you feel?", `I feel ${value}.`, `你感觉怎么样？我感到${word.meaning.replace(/的$/, "")}。`],
+        23: ["How is it now?", `It is ${value}.`, `它现在怎么样？它是${word.meaning.replace(/的$/, "")}的。`],
+        24: ["How are your hands?", `My hands are ${value}.`, `你的手怎么样？我的手很${word.meaning.replace(/的$/, "")}。`],
+        47: ["How is your mom?", `My mom is very ${value}.`, `妈妈怎么样？妈妈很${word.meaning.replace(/的$/, "")}。`],
+        48: ["What happened?", `I got so ${value}.`, `怎么了？我变得很${word.meaning.replace(/的$/, "")}。`],
+        56: [`Can you be ${value}?`, `Yes, I can be ${value}.`, `你能${word.meaning.replace(/的$/, "")}一点吗？可以。`],
+        96: ["How does it smell?", `It smells ${value}.`, `它闻起来怎么样？闻起来${word.meaning.replace(/的$/, "")}。`],
+      };
+      if (pattern.type === "形容词卡" && adjMap[number]) { const [q, a, t] = adjMap[number]; rows.push(item(pattern, word, q, a, t)); }
+    });
+  });
+  return rows.slice(0, 20);
+}
 
 function showTemplateNotice() {
   document.querySelector(".page").innerHTML = `
@@ -221,11 +455,61 @@ function draw() {
       ${week.songs.map((song, index) => {
         if (!week.visible[index]) return `<div class="week-cell"></div>`;
         const current = songStatus(song.sheet);
-        return `<div class="week-cell"><a class="song-button" href="index.html?song=${encodeURIComponent(song.sheet)}" target="_blank" rel="noopener">${escapeHtml(song.title)}</a><div class="song-meta">${statusBadge(current)}<button class="tiny-action" type="button" data-toggle-sheet="${escapeHtml(song.sheet)}">${current === "已完成" ? "取消" : "完成"}</button></div></div>`;
+        return `<div class="week-cell"><button class="song-button" type="button" data-song-sheet="${escapeHtml(song.sheet)}">${escapeHtml(song.title)}</button><div class="song-meta">${statusBadge(current)}<button class="tiny-action" type="button" data-toggle-sheet="${escapeHtml(song.sheet)}">${current === "已完成" ? "取消" : "完成"}</button></div></div>`;
       }).join("")}
       <div class="week-cell progress-cell"><strong>${done}/${week.songs.length}</strong><span>本周</span></div>
     </article>`;
   }).join("") : `<div class="empty">没有匹配的周计划</div>`;
+}
+
+function renderSong(sheet) {
+  const song = songBySheet.get(sheet);
+  if (!song) return;
+  const thumbnail = youtubeThumbnail(song.videoUrl);
+  const relatedSongs = songs
+    .filter((item) => item.sheet !== song.sheet && themeCategory(item.theme) === themeCategory(song.theme))
+    .sort((a, b) => (a.week || 999) - (b.week || 999));
+  const practice = songPracticeRows(song);
+  const current = songStatus(song.sheet);
+  $("song-detail-view").innerHTML = `
+    <button class="back-button" type="button" data-back>← 返回计划表</button>
+    <section class="song-hero ${thumbnail ? "has-image" : ""}" ${thumbnail ? `style="background-image:url('${escapeHtml(thumbnail)}')"` : ""}>
+      <div class="song-hero-content"><p class="song-kicker">${song.week ? `第 ${song.week} 周 · ${escapeHtml(themeCategory(song.theme))}` : escapeHtml(song.category)}</p><h1>${escapeHtml(song.title)}</h1><p>${escapeHtml(song.meta)}</p><div class="hero-actions"><button class="button" type="button" data-toggle-sheet="${escapeHtml(song.sheet)}">${current === "已完成" ? "标记为待打卡" : "标记为已完成"}</button></div></div>
+    </section>
+    <section class="song-facts" aria-label="歌曲基础信息"><div><span>内容类型</span><strong>SSS儿歌</strong></div><div><span>主题</span><strong>${escapeHtml(themeCategory(song.theme))}</strong></div><div><span>学习状态</span><strong>${escapeHtml(current)}</strong></div><div><span>核心词汇</span><strong>${song.words.length} 个</strong></div><div><span>TPR</span><strong>${song.tpr.length} 条</strong></div><div><span>匹配句型</span><strong>${song.patterns.length} 条</strong></div></section>
+    <div class="detail-layout"><div class="detail-main">
+      <section class="module"><div class="module-head"><h2>完整歌词</h2><span>${song.lyrics.length} 行</span></div>${song.lyrics.length ? `<ol class="lyrics">${song.lyrics.map((line) => `<li>${escapeHtml(line)}</li>`).join("")}</ol>` : `<div class="empty">暂无歌词</div>`}</section>
+      <section class="module"><div class="module-head"><h2>核心词汇</h2><span>${song.words.length} 个</span></div>${song.words.length ? `<table class="content-table"><thead><tr><th class="index-column">序号</th><th>英文</th><th>音标</th><th>中文词义</th></tr></thead><tbody>${song.words.map((word, index) => `<tr><td class="index-column">${index + 1}</td><td><strong>${escapeHtml(word.english)}</strong></td><td>${escapeHtml(word.ipa)}</td><td>${escapeHtml(word.meaning)}</td></tr>`).join("")}</tbody></table>` : `<div class="empty">暂无核心词汇</div>`}</section>
+      <section class="module"><div class="module-head"><h2>TPR</h2><span>歌词原句直接提取</span></div>${song.tpr.length ? `<table class="content-table"><thead><tr><th>步骤</th><th>歌词原句</th><th>中文翻译</th></tr></thead><tbody>${song.tpr.map((item) => `<tr><td>${escapeHtml(item.step)}</td><td>${escapeHtml(item.lyric)}</td><td>${escapeHtml(item.translation)}</td></tr>`).join("")}</tbody></table>` : `<div class="empty">歌词中无明确 TPR 动作句</div>`}</section>
+      <section class="module"><div class="module-head"><h2>匹配基础句型</h2><span>${song.patterns.length} 条</span></div>${song.patterns.length ? `<table class="content-table"><thead><tr><th>类型</th><th>基础句型</th><th>详细句型</th></tr></thead><tbody>${song.patterns.map((item) => `<tr><td>${escapeHtml(item.type)}</td><td>${escapeHtml(item.pattern)}</td><td class="multiline">${escapeHtml(cleanExample(item.example))}</td></tr>`).join("")}</tbody></table>` : `<div class="empty">暂无匹配句型</div>`}</section>
+      ${practice.length ? `<section class="module song-practice-module"><div class="module-head"><h2>句型 × 核心词汇完整问答</h2><span>结合本首歌核心词汇练习</span></div><div class="song-practice-grid">${practice.map((row, index) => `<article class="song-practice-card"><div class="song-practice-head"><span>问答 ${index + 1}</span><small>${escapeHtml(row.type.replace("卡", ""))} · ${escapeHtml(row.word)} <em>${escapeHtml(row.meaning)}</em></small></div><div class="song-practice-pattern">${escapeHtml(row.pattern)}</div><dl><div><dt>Q</dt><dd>${escapeHtml(row.question)}</dd></div><div><dt>A</dt><dd>${escapeHtml(row.answer)}</dd></div></dl><p>${escapeHtml(row.translation)}</p></article>`).join("")}</div></section>` : ""}
+    </div></div>
+    <section class="related-module"><div class="related-head"><div><h2>相关歌曲</h2></div><span>${relatedSongs.length} 首</span></div>${relatedSongs.length ? `<div class="related-grid">${relatedSongs.map((item) => {
+      const cover = youtubeThumbnail(item.videoUrl);
+      return `<button class="related-song" type="button" data-song-sheet="${escapeHtml(item.sheet)}"><span class="related-cover ${cover ? "has-cover" : "no-cover"}" ${cover ? `style="background-image:url('${escapeHtml(cover)}')"` : ""}>无封面</span><span class="related-info"><small>第 ${item.week || "--"} 周 · ${escapeHtml(themeCategory(item.theme))}</small><strong>${escapeHtml(item.title)}</strong>${statusBadge(songStatus(item.sheet))}</span></button>`;
+    }).join("")}</div>` : `<div class="empty">暂无相关歌曲</div>`}</section>`;
+}
+
+function showSong(sheet) {
+  renderSong(sheet);
+  $("planner-view").setAttribute("class", "planner-view hidden");
+  $("week-head").setAttribute("class", "week-head hidden");
+  $("week-result-note").setAttribute("class", "result-note hidden");
+  document.querySelector(".hero").setAttribute("class", "hero hidden");
+  document.querySelector(".filters").setAttribute("class", "filters hidden");
+  $("song-detail-view").setAttribute("class", "detail-shell active");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+function showPlanner() {
+  $("song-detail-view").setAttribute("class", "detail-shell");
+  $("song-detail-view").innerHTML = "";
+  $("planner-view").setAttribute("class", "planner-view");
+  $("week-head").setAttribute("class", "week-head");
+  $("week-result-note").setAttribute("class", "result-note");
+  document.querySelector(".hero").setAttribute("class", "hero");
+  document.querySelector(".filters").setAttribute("class", "filters");
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function initThemeOptions() {
@@ -244,9 +528,30 @@ function toggleSong(sheet) {
 }
 
 $("week-list").addEventListener("click", (event) => {
+  const songButton = event.target.closest("[data-song-sheet]");
+  if (songButton) {
+    showSong(songButton.dataset.songSheet);
+    return;
+  }
   const button = event.target.closest("[data-toggle-sheet]");
   if (!button) return;
   toggleSong(button.dataset.toggleSheet);
+});
+
+$("song-detail-view").addEventListener("click", (event) => {
+  if (event.target.closest("[data-back]")) {
+    showPlanner();
+    return;
+  }
+  const songButton = event.target.closest("[data-song-sheet]");
+  if (songButton) {
+    showSong(songButton.dataset.songSheet);
+    return;
+  }
+  const button = event.target.closest("[data-toggle-sheet]");
+  if (!button) return;
+  toggleSong(button.dataset.toggleSheet);
+  renderSong(button.dataset.toggleSheet);
 });
 ["week-theme", "week-song-search", "week-status"].forEach((id) => {
   const field = $(id);
