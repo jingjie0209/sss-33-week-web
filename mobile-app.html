@@ -208,16 +208,22 @@ function drawToday(){
     return `<article class="today-hero" data-hero-index="${index}"><div class="today-kicker"><span>${esc(song.label||week.label)} · ${esc(song.theme||week.theme)}</span><span>${esc(song.category||week.category)}</span></div><h2>${esc(song.title)}</h2><p>${esc(info?.meta||'')}</p><div class="today-actions">${badge(status(song.sheet))}<button class="toggle ${allDone?'is-done':''}" type="button" data-toggle="${esc(song.sheet)}">${allDone?'取消打卡':'标记完成'}</button></div></article>`;
   }).join('');
   const dots=week.songs.map((song,index)=>`<button class="today-dot ${index===0?'active':''}" type="button" data-dot="${index}" aria-label="切换到第 ${index+1} 首儿歌"></button>`).join('');
-  const first=bySheet.get(week.songs[0].sheet);
-  $('todayList').innerHTML=`<div class="today-track">${heroes}</div><div class="today-dots">${dots}</div>${card('儿歌','完整歌词',first?.lyrics||[],(line,i)=>`<div class="lyric"><b>${i+1}</b><span>${esc(line)}</span></div>`)}${card('名词','核心词汇',first?.words||[],w=>`<div class="word"><div class="word-top"><strong>${esc(w.english)}</strong><small>${esc(w.ipa)}</small></div><div class="meaning">${esc(w.meaning)}</div></div>`)}${card('TPR','动作指令',(first?.tpr||[]).filter(t=>t.lyric),t=>`<div class="tpr"><small>${esc(t.step)}</small><p>${esc(t.lyric)}</p><em>${esc(t.translation)}</em></div>`)}${card('句型','匹配基础句型',first?.patterns||[],p=>`<div class="qa"><small>${esc(p.type)}</small><p>${esc(p.pattern)}</p></div>`)}`;
+  $('todayList').innerHTML=`<div class="today-track">${heroes}</div><div class="today-dots">${dots}</div><div id="todayDetails"></div>`;
   const track=$('todayList').querySelector('.today-track');
+  const details=$('todayDetails');
+  const renderDetails=(index)=>{
+    const song=week.songs[index], info=bySheet.get(song.sheet);
+    details.innerHTML=card('儿歌','完整歌词',info?.lyrics||[],(line,i)=>`<div class="lyric"><b>${i+1}</b><span>${esc(line)}</span></div>`)+card('名词','核心词汇',info?.words||[],w=>`<div class="word"><div class="word-top"><strong>${esc(w.english)}</strong><small>${esc(w.ipa)}</small></div><div class="meaning">${esc(w.meaning)}</div></div>`)+card('TPR','动作指令',(info?.tpr||[]).filter(t=>t.lyric),t=>`<div class="tpr"><small>${esc(t.step)}</small><p>${esc(t.lyric)}</p><em>${esc(t.translation)}</em></div>`)+card('句型','匹配基础句型',info?.patterns||[],p=>`<div class="qa"><small>${esc(p.type)}</small><p>${esc(p.pattern)}</p></div>`);
+  };
   track.addEventListener('scroll',()=>{
-    const index=Math.round(track.scrollLeft/track.clientWidth);
+    const index=Math.min(week.songs.length-1,Math.max(0,Math.round(track.scrollLeft/track.clientWidth)));
     $('todayList').querySelectorAll('.today-dot').forEach((dot,i)=>dot.classList.toggle('active',i===index));
+    renderDetails(index);
   },{passive:true});
   $('todayList').querySelectorAll('[data-dot]').forEach(dot=>dot.addEventListener('click',()=>{
     track.scrollTo({left:Number(dot.dataset.dot)*track.clientWidth,behavior:'smooth'});
   }));
+  renderDetails(0);
 }
 function drawTop(){const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)),d=sheets.filter(done).length;$('songStat').textContent=`已完成 ${d}/${sheets.length} 首`;$('stickWeek').textContent=`坚持第 ${currentWeekNumber()} 周`;$('rateStat').textContent=`${sheets.length?Math.round(d/sheets.length*100):0}%`;$('progressBar').style.width=`${sheets.length?d/sheets.length*100:0}%`;}
 function renderAll(){drawToday();drawTop();drawList();drawStats();}
