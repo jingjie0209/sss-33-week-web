@@ -244,8 +244,6 @@ if (!Array.isArray(DATA.weeks) || !DATA.weeks.length) isTemplateSource = true;
 </script>
 <script src="data.js"></script>
 <script src="pattern-data.js"></script>
-<script src="noun-card-data.js"></script>
-<script src="verb-card-data.js"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const loadState = () => {
@@ -279,11 +277,22 @@ const TOTAL = allSheets.length;
 const $ = (id) => document.getElementById(id);
 const { songs } = window.SSS_WEB_DATA;
 const songBySheet = new Map(songs.map((item) => [item.sheet, item]));
+const patternNumber = (pattern) => Number(String(pattern.pattern || "").match(/(\d+)\s*\./)?.[1]);
+const songPatternIds = songs.flatMap((song) => (song.patterns || []).map((pattern) => {
+  const number = patternNumber(pattern);
+  return number ? `${pattern.type}#${number}` : "";
+})).filter(Boolean);
+const collectSongCardNumbers = (type) => new Set(
+  songs.flatMap((song) => (song.patterns || [])
+    .filter((pattern) => pattern.type === type)
+    .map(patternNumber)
+    .filter(Boolean))
+);
 const tprItems = songs.flatMap((song) => song.tpr || []);
 const TOTAL_TPR = tprItems.length;
-const TOTAL_NOUNS = (window.SSS_NOUN_CARDS || []).length;
-const TOTAL_VERBS = (window.SUSAN_VERB_CARDS || []).length;
-const TOTAL_PATTERNS = (window.SSS_PATTERN_LIBRARY || []).length;
+const TOTAL_NOUNS = collectSongCardNumbers("名词卡").size;
+const TOTAL_VERBS = collectSongCardNumbers("动词卡").size;
+const TOTAL_PATTERNS = new Set(songPatternIds).size;
 const THEME_GROUPS = {
   "社交与表达": ["问候与告别", "喜欢与友谊", "情绪与表达", "提问与表达"],
   "动作与指令": ["动作启蒙", "身体与动作", "跟随指令", "动作与能力", "躲藏与观察", "课堂习惯"],
@@ -489,7 +498,7 @@ function renderStats() {
   const donePatterns = new Set();
   doneSongs.forEach((song) => {
     song.patterns?.forEach((pattern) => {
-      const number = Number(String(pattern.pattern || "").match(/(\d+)\s*\./)?.[1]);
+      const number = patternNumber(pattern);
       if (pattern.type === "名词卡" && number) doneNouns.add(number);
       if (pattern.type === "动词卡" && number) doneVerbs.add(number);
       if (number) donePatterns.add(`${pattern.type}#${number}`);
