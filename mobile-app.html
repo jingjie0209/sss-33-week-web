@@ -15,12 +15,13 @@ button,input{font:inherit}button{cursor:pointer}
 .mobile-head{position:sticky;top:0;z-index:20;background:linear-gradient(120deg,#0d494e,#176b70 62%,#1e848c);color:#fff;padding:max(18px,env(safe-area-inset-top)) 18px 16px;border-radius:0 0 18px 18px}
 .mobile-head small{display:block;color:#bfe2df;font-size:11px;font-weight:800;letter-spacing:.12em}
 .mobile-head h1{margin:5px 0 12px;font-size:21px}
+.head-search{position:relative;margin:-2px 0 12px}.head-search svg{position:absolute;left:14px;top:50%;width:15px;height:15px;transform:translateY(-50%);color:#5f8385;pointer-events:none}
 .mobile-stats{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}
 .mstat{padding:9px 10px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(255,255,255,.1)}
 .mstat span,.mstat strong{display:block}.mstat span{color:#c9e3e1;font-size:10px}.mstat strong{margin-top:2px;font-size:17px}
 .mobile-progress{height:5px;margin-top:12px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}.mobile-progress i{display:block;height:100%;width:0;background:var(--yellow);transition:width .25s}
-.tools{padding:14px 16px 6px;display:grid;gap:8px}
-.search{width:100%;height:40px;padding:0 12px;border:1px solid #cbd8d6;border-radius:10px;background:#fff;outline:none}.search:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(23,107,112,.12)}
+.tools{padding:14px 16px 6px}
+.search{width:100%;height:41px;padding:0 16px 0 40px;border:1px solid rgba(255,255,255,.24);border-radius:99px;background:rgba(255,255,255,.16);color:#fff;outline:none}.search::placeholder{color:#c9e3e1}.search:focus{border-color:rgba(255,255,255,.55);background:rgba(255,255,255,.24);box-shadow:0 0 0 3px rgba(255,255,255,.12)}
 .chips{display:flex;gap:7px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
 .chip{flex:none;min-height:31px;padding:0 11px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}.chip.active{border-color:var(--brand);background:var(--soft);color:var(--deep)}
 .content{padding:4px 16px 90px}
@@ -71,6 +72,10 @@ button,input{font:inherit}button{cursor:pointer}
     <header class="mobile-head">
       <small>SSS · 33 WEEKS</small>
       <h1>SSS儿歌小程序</h1>
+      <div class="head-search">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.6-3.6"></path></svg>
+        <input id="search" class="search" type="search" placeholder="搜索儿歌、主题或分类" autocomplete="off">
+      </div>
       <div class="mobile-stats">
         <div class="mstat"><span>已完成歌曲</span><strong id="songStat">0/99</strong></div>
         <div class="mstat"><span>周数</span><strong>33</strong></div>
@@ -79,7 +84,6 @@ button,input{font:inherit}button{cursor:pointer}
       <div class="mobile-progress"><i id="progressBar"></i></div>
     </header>
     <div class="tools">
-      <input id="search" class="search" type="search" placeholder="搜索儿歌、主题或分类" autocomplete="off">
       <div id="chips" class="chips"></div>
     </div>
     <main class="content">
