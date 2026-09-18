@@ -28,16 +28,24 @@ button { cursor: pointer; }
 .site-link { flex: none; padding: 9px 14px; border: 1px solid #cbd8d6; border-radius: 7px; background: #fff; color: var(--brand-deep); font-size: 13px; font-weight: 700; text-decoration: none; }
 .site-link:hover { border-color: var(--brand); background: var(--brand-soft); }
 .page { max-width: 1320px; margin: 0 auto; padding: 22px clamp(16px, 3vw, 40px) 80px; }
-.hero { position: relative; overflow: hidden; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; padding: 24px 26px 30px; border-radius: 12px; background: linear-gradient(120deg, #0d494e, #176b70 55%, #1e848c); color: #fff; box-shadow: var(--shadow); }
+.hero { position: relative; overflow: hidden; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 18px; padding: 24px 26px 32px; border-radius: 12px; background: linear-gradient(120deg, #0d494e, #176b70 55%, #1e848c); color: #fff; box-shadow: var(--shadow); }
 .hero-copy { min-width: 0; }
 .hero-kicker { margin: 0; color: #9fd2ce; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
 .hero h1 { margin: 7px 0 9px; font-size: 28px; line-height: 1.2; }
 .hero-desc { margin: 0; max-width: 640px; color: #cfe6e4; font-size: 13.5px; line-height: 1.6; }
 .hero-stats { display: flex; flex-wrap: wrap; gap: 10px; }
 .stat { min-width: 112px; padding: 11px 14px; border: 1px solid rgba(255,255,255,.26); border-radius: 9px; background: rgba(255,255,255,.12); }
+.hero-stats > .stat:nth-child(1), .hero-stats > .stat:nth-child(2) { flex: 1 1 128px; }
+.hero-stats > .stat:nth-child(3) { flex: 1.35 1 158px; }
+.stat-wide { flex: 1 1 100%; padding: 10px 0 0; border: 0; background: transparent; }
+.stat-wide > span { display: block; margin-bottom: 8px; color: #d9ecea; font-size: 12px; font-weight: 800; }
+.resource-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
 .stat span, .stat strong { display: block; }
 .stat span { color: #c9e3e1; font-size: 11px; }
 .stat strong { margin-top: 4px; font-size: 20px; }
+.resource-stat { padding: 10px 12px; border: 1px solid rgba(255,255,255,.24); border-radius: 8px; background: rgba(255,255,255,.1); }
+.resource-stat span { display: block; color: #c9e3e1; font-size: 11px; }
+.resource-stat strong { display: block; margin-top: 3px; color: #fff; font-size: 18px; }
 .hero-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 6px; background: rgba(255,255,255,.2); }
 .hero-progress i { display: block; width: 0; height: 100%; background: var(--yellow); transition: width .25s ease; }
 .filters { position: sticky; top: 0; z-index: 12; display: grid; grid-template-columns: minmax(160px, 200px) minmax(220px, 1fr) minmax(130px, 160px) auto; gap: 12px; align-items: end; margin: 18px 0 14px; padding: 14px; border: 1px solid var(--line); border-radius: 10px; background: rgba(245,247,246,.96); backdrop-filter: blur(8px); }
@@ -144,6 +152,8 @@ button { cursor: pointer; }
   .hero { padding: 20px 18px 26px; }
   .hero h1 { font-size: 23px; }
   .stat { flex: 1 1 calc(50% - 10px); min-width: 0; }
+  .hero-stats > .stat:nth-child(1), .hero-stats > .stat:nth-child(2), .hero-stats > .stat:nth-child(3) { flex: 1 1 calc(50% - 10px); }
+  .resource-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .week-list { overflow: visible; }
   .week-row { grid-template-columns: 1fr; min-width: 0; }
   .song-hero { padding: 24px 20px; min-height: 220px; }
@@ -184,6 +194,15 @@ button { cursor: pointer; }
       <div class="stat"><span>计划周数</span><strong>33</strong></div>
       <div class="stat"><span>已完成歌曲</span><strong id="stat-done">0/99</strong></div>
       <div class="stat"><span>完成率</span><strong id="stat-rate">0%</strong></div>
+      <div class="stat stat-wide">
+        <span>学习资源总量与完成量</span>
+        <div class="resource-stats">
+          <div class="resource-stat"><span>名称</span><strong id="stat-nouns">0/0</strong></div>
+          <div class="resource-stat"><span>动词</span><strong id="stat-verbs">0/0</strong></div>
+          <div class="resource-stat"><span>TPR指令</span><strong id="stat-tpr">0/0</strong></div>
+          <div class="resource-stat"><span>核心句型</span><strong id="stat-patterns">0/0</strong></div>
+        </div>
+      </div>
     </div>
     <div class="hero-progress"><i id="hero-bar"></i></div>
   </section>
@@ -258,6 +277,18 @@ const TOTAL = allSheets.length;
 const $ = (id) => document.getElementById(id);
 const { songs } = window.SSS_WEB_DATA;
 const songBySheet = new Map(songs.map((item) => [item.sheet, item]));
+const { nouns: nounPatterns, verbs: verbPatterns } = songs.reduce((totals, song) => {
+  (song.patterns || []).forEach((pattern) => {
+    if (pattern.type === "名词卡") totals.nouns += 1;
+    if (pattern.type === "动词卡") totals.verbs += 1;
+  });
+  return totals;
+}, { nouns: 0, verbs: 0 });
+const tprItems = songs.flatMap((song) => song.tpr || []);
+const TOTAL_TPR = tprItems.length;
+const TOTAL_NOUNS = nounPatterns;
+const TOTAL_VERBS = verbPatterns;
+const TOTAL_PATTERNS = nounPatterns + verbPatterns;
 const THEME_GROUPS = {
   "社交与表达": ["问候与告别", "喜欢与友谊", "情绪与表达", "提问与表达"],
   "动作与指令": ["动作启蒙", "身体与动作", "跟随指令", "动作与能力", "躲藏与观察", "课堂习惯"],
@@ -450,6 +481,27 @@ function renderStats() {
   $("stat-done").textContent = `${done}/${TOTAL}`;
   $("stat-rate").textContent = `${TOTAL ? Math.round((done / TOTAL) * 100) : 0}%`;
   $("hero-bar").style.width = `${TOTAL ? (done / TOTAL) * 100 : 0}%`;
+  const doneSheets = new Set(allSheets.filter(isDone));
+  const doneSongs = songs.filter((song) => doneSheets.has(song.sheet));
+  const resourceTotals = {
+    nouns: TOTAL_NOUNS,
+    verbs: TOTAL_VERBS,
+    tpr: TOTAL_TPR,
+    patterns: TOTAL_PATTERNS,
+  };
+  const resourceDone = doneSongs.reduce((totals, song) => {
+    song.patterns?.forEach((pattern) => {
+      if (pattern.type === "名词卡") totals.nouns += 1;
+      if (pattern.type === "动词卡") totals.verbs += 1;
+    });
+    totals.tpr += song.tpr?.length || 0;
+    return totals;
+  }, { nouns: 0, verbs: 0, tpr: 0, patterns: 0 });
+  resourceDone.patterns = resourceDone.nouns + resourceDone.verbs;
+  $("stat-nouns").textContent = `${resourceDone.nouns}/${resourceTotals.nouns}`;
+  $("stat-verbs").textContent = `${resourceDone.verbs}/${resourceTotals.verbs}`;
+  $("stat-tpr").textContent = `${resourceDone.tpr}/${resourceTotals.tpr}`;
+  $("stat-patterns").textContent = `${resourceDone.patterns}/${resourceTotals.patterns}`;
 }
 
 function draw() {
