@@ -798,10 +798,25 @@ function toIng(phrase) {
   let ing = irregular[verb];
   if (!ing && /ie$/.test(verb)) ing = `${verb.slice(0, -2)}ying`;
   if (!ing && /[^aeiou]e$/.test(verb)) ing = `${verb.slice(0, -1)}ing`;
-  if (!ing && /^(dig|sit|run|swim|stir|mop|pop)$/.test(verb)) ing = `${verb}${verb.slice(-1)}ing`;
+  if (!ing && /^(clap|dig|hop|sit|run|stop|swim|stir|mop|pop)$/.test(verb)) ing = `${verb}${verb.slice(-1)}ing`;
   if (!ing) ing = `${verb}ing`;
   return [ing, ...rest].join(" ");
 }
+
+const PRACTICE_ACTION_WORDS = new Set([
+  "buzz", "clean", "clean up", "click", "clap", "come", "count", "crawl", "creep", "cross",
+  "dance", "drive", "eat", "fall", "fall out", "find", "flap", "fly", "follow", "gallop", "get", "hear",
+  "hide", "hold", "hop", "jump", "kiss", "listen", "look", "love", "make", "march", "open", "pass",
+  "peel", "pick up", "play", "point", "put", "ride", "ring", "roll", "roll over", "run", "say", "see",
+  "shout", "show", "shut", "sing", "sit", "skip", "sleep", "smell", "smile", "spin", "splash", "step",
+  "stomp", "stop", "take", "taste", "tiptoe", "touch", "turn", "turn around", "wag", "walk", "wash", "wave",
+]);
+const isPracticeAction = (value) => {
+  const phrase = String(value || "").toLowerCase().trim();
+  if (PRACTICE_ACTION_WORDS.has(phrase)) return true;
+  const words = phrase.split(/\s+/);
+  return words.length > 1 && words.every((word) => PRACTICE_ACTION_WORDS.has(word));
+};
 
 function posyPipPractice(item) {
   const core = (type, number) => (window.SSS_PATTERN_LIBRARY || []).find((row) => row.type === type && row.number === number)?.pattern || "";
@@ -901,6 +916,7 @@ function songPracticeRows(song) {
       const value = subjectWord(word);
       const doing = toIng(value);
       const obj = `${article(value)} ${value}`;
+      if (pattern.type === "动词卡" && !isPracticeAction(value)) return;
       if (pattern.type === "名词卡") {
         const nounMap = {
           1: ["What's this?", `It's ${obj}.`, `这是什么？这是${word.meaning}。`],
@@ -965,7 +981,7 @@ function songPracticeRows(song) {
           54: ["What's it doing?", `It is ${doing} on the desk.`, `它在做什么？它在桌上${word.meaning}。`],
           55: ["What's it doing?", `It is ${doing} under the table.`, `它在做什么？它在桌子下${word.meaning}。`],
           56: ["What's it doing?", `It is ${doing} on the grass.`, `它在做什么？它在草地上${word.meaning}。`],
-          57: ["What's it doing?", `It is ${doing} around the flowers.`, `它在做什么？它在花丛边${word.meaning}。`],
+          57: ["What's it doing?", `It is ${doing}${doing.endsWith(" around") ? "" : " around"} the flowers.`, `它在做什么？它在花丛边${word.meaning}。`],
           58: ["What's it doing?", `It is ${doing} on the sofa.`, `它在做什么？它在沙发上${word.meaning}。`],
           59: ["What's it doing?", `It is ${doing} on the bus.`, `它在做什么？它在公交车上${word.meaning}。`],
           61: ["What are they doing?", `They are ${doing} on the bed.`, `它们在做什么？它们在床上${word.meaning}。`],
