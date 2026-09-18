@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#176b70">
+<meta name="description" content="SSS 33周儿歌计划移动版：按周查看、快速打卡、查看歌词词汇和TPR。">
+<title>SSS儿歌小程序</title>
+<link rel="icon" href="data:,">
+<style>
+:root{--ink:#172e32;--muted:#67797c;--brand:#176b70;--deep:#104e53;--soft:#e8f3f2;--yellow:#f5c451;--line:#dce6e5;--canvas:#f3f6f5;--green:#23775c;}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--canvas);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Arial,"PingFang SC","Microsoft YaHei",sans-serif;-webkit-font-smoothing:antialiased}
+button,input{font:inherit}button{cursor:pointer}
+.app{max-width:560px;margin:0 auto;min-height:100dvh;background:#fff;box-shadow:0 0 32px rgba(20,50,52,.08)}
+.mobile-head{position:sticky;top:0;z-index:20;background:linear-gradient(120deg,#0d494e,#176b70 62%,#1e848c);color:#fff;padding:max(18px,env(safe-area-inset-top)) 18px 16px;border-radius:0 0 18px 18px}
+.mobile-head small{display:block;color:#bfe2df;font-size:11px;font-weight:800;letter-spacing:.12em}
+.mobile-head h1{margin:5px 0 12px;font-size:21px}
+.mobile-stats{display:grid;grid-template-columns:1.2fr 1fr 1fr;gap:8px}
+.mstat{padding:9px 10px;border:1px solid rgba(255,255,255,.2);border-radius:10px;background:rgba(255,255,255,.1)}
+.mstat span,.mstat strong{display:block}.mstat span{color:#c9e3e1;font-size:10px}.mstat strong{margin-top:2px;font-size:17px}
+.mobile-progress{height:5px;margin-top:12px;background:rgba(255,255,255,.2);border-radius:99px;overflow:hidden}.mobile-progress i{display:block;height:100%;width:0;background:var(--yellow);transition:width .25s}
+.tools{padding:14px 16px 6px;display:grid;gap:8px}
+.search{width:100%;height:40px;padding:0 12px;border:1px solid #cbd8d6;border-radius:10px;background:#fff;outline:none}.search:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(23,107,112,.12)}
+.chips{display:flex;gap:7px;overflow-x:auto;padding:4px 2px 8px;scrollbar-width:none}.chips::-webkit-scrollbar{display:none}
+.chip{flex:none;min-height:31px;padding:0 11px;border:1px solid var(--line);border-radius:99px;background:#fff;color:var(--muted);font-size:12px;font-weight:700;white-space:nowrap}.chip.active{border-color:var(--brand);background:var(--soft);color:var(--deep)}
+.content{padding:4px 16px 90px}
+.note{margin:2px 0 8px;color:var(--muted);font-size:11px}
+.week-card{margin-bottom:9px;border:1px solid var(--line);border-radius:13px;background:#fff;overflow:hidden}
+.week-card.done{border-color:#c9e6d9;background:#f7fdfa}
+.week-top{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;background:#f0f6f5;border-bottom:1px solid var(--line)}
+.week-card.done .week-top{background:#e7f5ee}.week-title{font-weight:800}.week-theme{margin-top:3px;color:var(--muted);font-size:11px}
+.week-badge{font-size:11px;color:#657775;background:#fff;border:1px solid var(--line);padding:3px 7px;border-radius:99px}.done .week-badge{color:var(--green)}
+.songs{display:grid}.song-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:11px 12px;border-bottom:1px solid #edf1f0}.song-row:last-child{border-bottom:0}
+.song-name{background:none;border:0;padding:0;text-align:left;font-weight:750;line-height:1.35;color:var(--ink)}.song-name:hover{color:var(--brand)}
+.song-sub{margin-top:3px;font-size:10px;color:var(--muted)}
+.mini-status{font-size:10px;padding:2px 6px;border-radius:5px;background:#edf1f0;color:#657775}.mini-status.done{background:#e4f3ec;color:var(--green)}
+.toggle{height:31px;border:0;border-radius:8px;background:var(--soft);color:var(--deep);font-size:11px;font-weight:800;padding:0 9px}
+.toggle.is-done{background:#e4f3ec;color:var(--green)}
+.empty{padding:38px 18px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:13px}
+.detail{display:none}.detail.active{display:block}
+.detail-bar{position:sticky;top:0;z-index:21;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:max(12px,env(safe-area-inset-top)) 16px 12px;background:#fff;border-bottom:1px solid var(--line)}
+.back{border:0;background:none;color:var(--brand);font-weight:800}.detail-actions{display:flex;align-items:center;gap:8px}.detail-actions .toggle{height:34px;padding:0 12px}
+.detail-head{padding:16px;background:linear-gradient(120deg,#0d494e,#176b70 58%,#1e848c);color:#fff}.detail-head small{color:#bfe2df;font-size:11px}.detail-head h2{margin:5px 0 8px;font-size:22px;line-height:1.25}.detail-head p{margin:0;color:#d9ecea;font-size:12px}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}.facts div{padding:10px 5px;border-right:1px solid var(--line);text-align:center}.facts div:last-child{border-right:0}.facts span{display:block;color:var(--muted);font-size:10px}.facts strong{display:block;margin-top:2px;font-size:14px}
+.section{border-bottom:1px solid var(--line);background:#fff}.section-head{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line)}.section-head h3{margin:0;font-size:15px}.section-head small{color:var(--muted);font-size:11px}
+.section-body{padding:4px 16px 14px}
+.lyric{display:flex;gap:9px;padding:7px 0;border-bottom:1px dashed #e7eeed;font-size:13px;line-height:1.5}.lyric:last-child{border:0}.lyric b{color:#8ba0a3;font-size:11px;min-width:18px;padding-top:2px}
+.word,.tpr,.qa{padding:9px 0;border-bottom:1px solid #edf1f0}.word:last-child,.tpr:last-child,.qa:last-child{border-bottom:0}
+.word-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}.word-top strong{font-size:14px}.word-top small{color:var(--brand);font-size:11px;font-weight:700}
+.meaning{margin-top:3px;color:var(--muted);font-size:12px}
+.tpr small{color:var(--brand);font-weight:800;font-size:11px}.tpr p{margin:3px 0 2px;font-size:13px;font-weight:700}.tpr em{color:var(--muted);font-style:normal;font-size:12px}
+.qa small{color:var(--brand);font-weight:800;font-size:10px}.qa p{margin:4px 0 0;font-size:13px;font-weight:750}.qa .trans{margin-top:3px;color:var(--muted);font-size:11px;font-weight:400}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px 16px}.stat-card{padding:13px;border:1px solid var(--line);border-radius:12px;background:#fbfdfc}.stat-card span{color:var(--muted);font-size:11px}.stat-card strong{display:block;margin-top:4px;font-size:22px}.stat-card small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
+.tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;background:rgba(255,255,255,.94);border-top:1px solid var(--line);backdrop-filter:blur(14px);padding:6px max(8px,env(safe-area-inset-bottom))}
+.tabbar-inner{display:grid;grid-template-columns:repeat(3,1fr);width:min(100%,560px)}
+.tab{border:0;background:none;padding:7px 0;color:#7d8f92;font-size:10px;font-weight:800;display:grid;justify-items:center;gap:2px}.tab i{display:block;width:18px;height:18px;border-radius:6px;background:#d8e4e3}.tab.active{color:var(--brand)}.tab.active i{background:var(--brand)}
+.main{display:none}.main.active{display:block}.hidden{display:none!important}
+@media (min-width:560px){.mobile-head{border-radius:0 0 22px 22px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div id="listRoot" class="main active">
+    <header class="mobile-head">
+      <small>SSS · 33 WEEKS</small>
+      <h1>SSS儿歌小程序</h1>
+      <div class="mobile-stats">
+        <div class="mstat"><span>已完成歌曲</span><strong id="songStat">0/99</strong></div>
+        <div class="mstat"><span>周数</span><strong>33</strong></div>
+        <div class="mstat"><span>完成率</span><strong id="rateStat">0%</strong></div>
+      </div>
+      <div class="mobile-progress"><i id="progressBar"></i></div>
+    </header>
+    <div class="tools">
+      <input id="search" class="search" type="search" placeholder="搜索儿歌、主题或分类" autocomplete="off">
+      <div id="chips" class="chips"></div>
+    </div>
+    <main class="content">
+      <p id="note" class="note"></p>
+      <div id="weeks"></div>
+    </main>
+  </div>
+
+  <div id="songRoot" class="main detail"></div>
+
+  <div id="statsRoot" class="main">
+    <header class="mobile-head"><small>PROGRESS</small><h1>学习统计</h1></header>
+    <div class="stats-grid" id="resourceStats"></div>
+    <p class="note" style="padding:0 16px 90px">统计口径：只统计 99 首儿歌中实际出现的卡片和 TPR；完成量按已打卡儿歌覆盖的资源去重。</p>
+  </div>
+</div>
+
+<nav class="tabbar"><div class="tabbar-inner">
+  <button class="tab active" type="button" data-view="listRoot"><i></i>计划</button>
+  <button class="tab" type="button" data-view="statsRoot"><i></i>统计</button>
+</div></nav>
+
+<script id="week-data" type="application/json">{"generatedAt":"2026-09-17","categories":["社交与表达","动作与指令","基础认知","动物世界","数字与数量","食物与饮食","生活习惯","交通工具","天气与自然","经典童谣","圣诞节","万圣节与冬季"],"weeks":[{"week":1,"label":"第1周","theme":"问候与告别","category":"社交与表达","songs":[{"title":"hello","sheet":"hello 091"},{"title":"hello hello Can you clap your hands?","sheet":"hello hello Can you clap yo 056"},{"title":"see you later","sheet":"see you later 057"}]},{"week":2,"label":"第2周","theme":"喜欢与友谊","category":"社交与表达","songs":[{"title":"I like you","sheet":"I like you 070"},{"title":"the more we get together","sheet":"the more we get together 016"},{"title":"skidamarink a dink I love you","sheet":"skidamarink a dink I love y 028"}]},{"week":3,"label":"第3周","theme":"情绪与表达","category":"社交与表达","songs":[{"title":"my happy song","sheet":"my happy song 015"},{"title":"this is a happy face","sheet":"this is a happy face 003"},{"title":"Can you make a happy face?","sheet":"Can you make a happy face 053"}]},{"week":4,"label":"第4周","theme":"动作启蒙","category":"动作与指令","songs":[{"title":"open shut them","sheet":"open shut them 009"},{"title":"follow me","sheet":"follow me 061"},{"title":"walking walking","sheet":"walking walking 043"}]},{"week":5,"label":"第5周","theme":"身体与动作","category":"动作与指令","songs":[{"title":"one little finger","sheet":"one little finger 063"},{"title":"head shoulders knees and toes","sheet":"head shoulders knees and to 076"},{"title":"with my heart","sheet":"with my heart 011"}]},{"week":6,"label":"第6周","theme":"跟随指令","category":"动作与指令","songs":[{"title":"wag your tail","sheet":"wag your tail 065"},{"title":"make a circle","sheet":"make a circle 092"},{"title":"pass the beanbag","sheet":"pass the beanbag 075"}]},{"week":7,"label":"第7周","theme":"动作与能力","category":"动作与指令","songs":[{"title":"we all fall down","sheet":"we all fall down 062"},{"title":"if you’re happy and you know it","sheet":"if you’re happy and you kno 074"},{"title":"yes, I can","sheet":"yes, I can 054"}]},{"week":8,"label":"第8周","theme":"躲藏与观察","category":"动作与指令","songs":[{"title":"peekaboo","sheet":"peekaboo 012"},{"title":"peekaboo I love you","sheet":"peekaboo I love you 029"},{"title":"hide and seek","sheet":"hide and seek 066"}]},{"week":9,"label":"第9周","theme":"课堂习惯","category":"动作与指令","songs":[{"title":"line up","sheet":"line up 067"},{"title":"clean up","sheet":"clean up 068"},{"title":"bye bye goodbye","sheet":"bye bye goodbye 051"}]},{"week":10,"label":"第10周","theme":"颜色认知","category":"基础认知","songs":[{"title":"I see something blue","sheet":"I see something blue 006"},{"title":"What's your favorite color?","sheet":"What's your favorite color 007"},{"title":"red yellow green blue","sheet":"red yellow green blue 008"}]},{"week":11,"label":"第11周","theme":"形状与字母","category":"基础认知","songs":[{"title":"the shape song 1,2","sheet":"the shape song 1,2 052"},{"title":"the alphabet song","sheet":"the alphabet song 072"},{"title":"mystery box","sheet":"mystery box 041"}]},{"week":12,"label":"第12周","theme":"提问与表达","category":"社交与表达","songs":[{"title":"What's this? What's that?","sheet":"What's this What's that 005"},{"title":"say cheese!","sheet":"say cheese 035"},{"title":"I can't remember the words to this song","sheet":"I can't remember the words 055"}]},{"week":13,"label":"第13周","theme":"动物启蒙","category":"动物世界","songs":[{"title":"I have a pet","sheet":"I have a pet 017"},{"title":"what do you hear","sheet":"what do you hear 038"},{"title":"let’s go to the zoo","sheet":"let’s go to the zoo 069"}]},{"week":14,"label":"第14周","theme":"森林动物","category":"动物世界","songs":[{"title":"walking in the jungle","sheet":"walking in the jungle 001"},{"title":"walking in the forest","sheet":"walking in the forest 002"},{"title":"the bear went over the mountain","sheet":"the bear went over the moun 013"}]},{"week":15,"label":"第15周","theme":"昆虫观察","category":"动物世界","songs":[{"title":"the itsy betsy spider","sheet":"the itsy betsy spider 010"},{"title":"here is the beehive","sheet":"here is the beehive 077"},{"title":"the bees go buzzing","sheet":"the bees go buzzing 090"}]},{"week":16,"label":"第16周","theme":"海洋动物","category":"动物世界","songs":[{"title":"10 little fishies","sheet":"10 little fishies 019"},{"title":"there is a hole in the bottom of the sea","sheet":"there is a hole in the bott 018"},{"title":"baby shark","sheet":"baby shark 098"}]},{"week":17,"label":"第17周","theme":"动物与数数","category":"动物世界","songs":[{"title":"five little monkeys","sheet":"five little monkeys 085"},{"title":"the ants go marching one by one","sheet":"the ants go marching one by 034"},{"title":"Alice the camel","sheet":"Alice the camel 022"}]},{"week":18,"label":"第18周","theme":"身体与数数","category":"数字与数量","songs":[{"title":"my teddy bear","sheet":"my teddy bear 021"},{"title":"how many fingers","sheet":"how many fingers 020"},{"title":"the bananas song","sheet":"the bananas song 082"}]},{"week":19,"label":"第19周","theme":"数字与数量","category":"数字与数量","songs":[{"title":"ten in the bed","sheet":"ten in the bed 088"},{"title":"six in the bed","sheet":"six in the bed 086"},{"title":"five little pumpkins","sheet":"five little pumpkins 047"}]},{"week":20,"label":"第20周","theme":"食物喜好","category":"食物与饮食","songs":[{"title":"Do you like broccoli?","sheet":"Do you like broccoli 023"},{"title":"Do you like spaghetti?","sheet":"Do you like spaghetti 024"},{"title":"Do you like pickles?","sheet":"Do you like pickles 025"}]},{"week":21,"label":"第21周","theme":"食物与饥饿","category":"食物与饮食","songs":[{"title":"Do you like lasagna?","sheet":"Do you like lasagna 026"},{"title":"Are you hungry?","sheet":"Are you hungry 095"},{"title":"apples and bananas","sheet":"apples and bananas 099"}]},{"week":22,"label":"第22周","theme":"食物与经典童谣","category":"食物与饮食","songs":[{"title":"the muffin man","sheet":"the muffin man 073"},{"title":"hot cross buns","sheet":"hot cross buns 039"},{"title":"a sailor went to sea","sheet":"a sailor went to sea 014"}]},{"week":23,"label":"第23周","theme":"清洁与如厕","category":"生活习惯","songs":[{"title":"the bath song","sheet":"the bath song 050"},{"title":"brush your teeth","sheet":"brush your teeth 097"},{"title":"sitting on the potty","sheet":"sitting on the potty 036"}]},{"week":24,"label":"第24周","theme":"穿衣与睡眠","category":"生活习惯","songs":[{"title":"this is the way we get dressed","sheet":"this is the way we get dres 059"},{"title":"this is the way we go to bed","sheet":"this is the way we go to be 060"},{"title":"are you sleeping","sheet":"are you sleeping 046"}]},{"week":25,"label":"第25周","theme":"交通工具","category":"交通工具","songs":[{"title":"driving in my car","sheet":"driving in my car 044"},{"title":"fire truck","sheet":"fire truck 037"},{"title":"the wheels on the bus","sheet":"the wheels on the bus 084"}]},{"week":26,"label":"第26周","theme":"天气与自然","category":"天气与自然","songs":[{"title":"rain rain go away","sheet":"rain rain go away 058"},{"title":"little snowflake","sheet":"little snowflake 040"},{"title":"I love the mountains","sheet":"I love the mountains 027"}]},{"week":27,"label":"第27周","theme":"经典童谣一","category":"经典童谣","songs":[{"title":"Mary had a little lamb","sheet":"Mary had a little lamb 093"},{"title":"the farmer in the dell","sheet":"the farmer in the dell 087"},{"title":"Humpty Dumpty","sheet":"Humpty Dumpty 083"}]},{"week":28,"label":"第28周","theme":"经典童谣二","category":"经典童谣","songs":[{"title":"Jack & Jill","sheet":"Jack & Jill 094"},{"title":"take me out to the ball game","sheet":"take me out to the ball gam 081"},{"title":"What do you like to do?","sheet":"What do you like to do 071"}]},{"week":29,"label":"第29周","theme":"韵律歌曲","category":"经典童谣","songs":[{"title":"down by the bay","sheet":"down by the bay 033"},{"title":"down by the bay 1, 2, 3","sheet":"down by the bay 1, 2, 3 078"},{"title":"down by the spooky bay Halloween song","sheet":"down by the spooky bay Hall 079"}]},{"week":30,"label":"第30周","theme":"圣诞韵律","category":"圣诞节","songs":[{"title":"jingle bells","sheet":"jingle bells 045"},{"title":"jingle jingle little bell","sheet":"jingle jingle little bell 049"},{"title":"up on the housetop","sheet":"up on the housetop 089"}]},{"week":31,"label":"第31周","theme":"圣诞老人","category":"圣诞节","songs":[{"title":"Santa's on his way","sheet":"Santa's on his way 031"},{"title":"Santa where are you?","sheet":"Santa where are you 042"},{"title":"What do you want for Christmas?","sheet":"What do you want for Christ 030"}]},{"week":32,"label":"第32周","theme":"圣诞主题","category":"圣诞节","songs":[{"title":"10 little elves","sheet":"10 little elves 048"},{"title":"at the North Pole","sheet":"at the North Pole 080"},{"title":"silent night","sheet":"silent night 096"}]},{"week":33,"label":"第33周","theme":"万圣节与冬季","category":"万圣节与冬季","songs":[{"title":"Halloween","sheet":"Halloween 032"},{"title":"jack-o'-lantern","sheet":"jack-o'-lantern 064"},{"title":"little snowman","sheet":"little snowman 004"}]}]}</script>
+<script src="data.js"></script>
+<script src="pattern-data.js"></script>
+<script>
+const $=id=>document.getElementById(id), esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const KEY='sss-33-week-progress-v1'; let state; try{state=JSON.parse(localStorage.getItem(KEY)||'{}')||{}}catch(e){state={}}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(state))}catch(e){}};
+const norm=v=>String(v??'').normalize('NFKC').toLowerCase().replace(/[\s\p{P}\p{S}]+/gu,'');
+const status=sheet=>{const s=state[sheet];return(typeof s==='object'&&s?s.status:s)==='已完成'?'已完成':'待打卡'};
+const done=sheet=>status(sheet)==='已完成';
+const badge=s=>`<span class="mini-status ${s==='已完成'?'done':''}">${s}</span>`;
+const source=JSON.parse($('week-data').textContent);
+const PLAN=source.weeks,CATS=source.categories,songs=window.SSS_WEB_DATA.songs,bySheet=new Map(songs.map(x=>[x.sheet,x]));
+$('week-data').textContent='';
+const popNum=p=>Number(String(p.pattern||'').match(/(\d+)\s*\./)?.[1]);
+const allPatternIds=songs.flatMap(s=>(s.patterns||[]).map(p=>{const n=popNum(p);return n?`${p.type}#${n}`:''})).filter(Boolean);
+const cardNums=type=>new Set(songs.flatMap(s=>(s.patterns||[]).filter(p=>p.type===type).map(popNum).filter(Boolean)));
+const totals={nouns:cardNums('名词卡').size,verbs:cardNums('动词卡').size,patterns:new Set(allPatternIds).size,tpr:songs.reduce((n,s)=>n+(s.tpr?.length||0),0)};
+const thumb=url=>String(url||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
+let chip='',q='';
+function drawChips(){ $('chips').innerHTML=`<button class="chip ${!chip?'active':''}" data-cat="">全部</button>`+CATS.map(c=>`<button class="chip ${chip===c?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');}
+function drawList(){
+  const list=PLAN.map(w=>({...w,visible:w.songs.map(s=>(!q||norm(s.title+w.theme+w.category).includes(norm(q)))&&(!chip||w.category===chip))})).filter(w=>w.visible.some(Boolean));
+  const count=list.reduce((n,w)=>n+w.visible.filter(Boolean).length,0);
+  $('note').textContent=`${list.length} 个周计划 · ${count} 首儿歌`;
+  $('weeks').innerHTML=list.length?list.map(w=>{
+    const d=w.songs.filter(s=>done(s.sheet)).length, all=d===w.songs.length;
+    return `<article class="week-card ${all?'done':''}"><div class="week-top"><div><div class="week-title">${esc(w.label)} · ${esc(w.theme)}</div><div class="week-theme">${esc(w.category)}</div></div><span class="week-badge">${d}/${w.songs.length}</span></div>${w.songs.map((s,i)=>{if(!w.visible[i])return '';const st=status(s.sheet),info=bySheet.get(s.sheet),words=info?.words?.length||0,code=thumb(info?.videoUrl);return `<div class="song-row"><button class="song-name" type="button" data-open="${esc(s.sheet)}">${esc(s.title)}<div class="song-sub">${words} 个核心词汇 ${code?'· 有封面':''}</div></button><div style="display:flex;align-items:center;gap:6px">${badge(st)}<button class="toggle ${st==='已完成'?'is-done':''}" type="button" data-toggle="${esc(s.sheet)}">${st==='已完成'?'取消':'完成'}</button></div></div>`}).join('')}</article>`;
+  }).join(''):'<div class="empty">没有匹配的儿歌</div>';
+}
+function drawStats(){
+  const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)), ds=new Set(sheets.filter(done)), dsongs=songs.filter(s=>ds.has(s.sheet));
+  const nouns=new Set(),verbs=new Set(),pats=new Set();
+  dsongs.forEach(s=>(s.patterns||[]).forEach(p=>{const n=popNum(p);if(!n)return;if(p.type==='名词卡')nouns.add(n);if(p.type==='动词卡')verbs.add(n);pats.add(`${p.type}#${n}`)}));
+  const vals=[['名词',nouns.size,totals.nouns],['动词',verbs.size,totals.verbs],['核心句型',pats.size,totals.patterns],['TPR指令',dsongs.reduce((n,s)=>n+(s.tpr?.length||0),0),totals.tpr]];
+  $('resourceStats').innerHTML=vals.map(([label,d,t])=>`<div class="stat-card"><span>${label}</span><strong>${d}/${t}</strong><small>${t?Math.round(d/t*100):0}% 完成</small></div>`).join('');
+}
+function drawTop(){const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)),d=sheets.filter(done).length;$('songStat').textContent=`${d}/${sheets.length}`;$('rateStat').textContent=`${sheets.length?Math.round(d/sheets.length*100):0}%`;$('progressBar').style.width=`${sheets.length?d/sheets.length*100:0}%`;}
+function renderAll(){drawTop();drawList();drawStats();}
+function openSong(sheet){
+  const s=bySheet.get(sheet); if(!s)return;
+  const code=thumb(s.videoUrl), cover=code?`https://i.ytimg.com/vi/${code}/hqdefault.jpg`:'';
+  $('songRoot').innerHTML=`<div class="detail-bar"><button class="back" type="button" data-back>← 返回</button><div class="detail-actions">${badge(status(sheet))}<button class="toggle ${done(sheet)?'is-done':''}" type="button" data-toggle="${esc(sheet)}">${status(sheet)==='已完成'?'取消打卡':'标记完成'}</button></div></div><div class="detail-head"><small>第 ${s.week||'--'} 周 · ${esc(s.theme||'')}</small><h2>${esc(s.title)}</h2><p>${esc(s.category||'')} · ${esc(s.meta||'')}</p></div><div class="facts"><div><span>词汇</span><strong>${s.words?.length||0}</strong></div><div><span>TPR</span><strong>${s.tpr?.length||0}</strong></div><div><span>句型</span><strong>${s.patterns?.length||0}</strong></div><div><span>歌词</span><strong>${s.lyrics?.length||0}</strong></div></div>${cover?`<div style="height:190px;background:url('${cover}') center/cover"></div>`:''}<section class="section"><div class="section-head"><h3>核心词汇</h3><small>${s.words?.length||0} 个</small></div><div class="section-body">${(s.words||[]).map(w=>`<div class="word"><div class="word-top"><strong>${esc(w.english)}</strong><small>${esc(w.ipa)}</small></div><div class="meaning">${esc(w.meaning)}</div></div>`).join('')||'<div class="empty">暂无</div>'}</div></section><section class="section"><div class="section-head"><h3>TPR指令</h3><small>${s.tpr?.length||0} 条</small></div><div class="section-body">${(s.tpr||[]).map(t=>`<div class="tpr"><small>${esc(t.step)}</small><p>${esc(t.lyric)}</p><em>${esc(t.translation)}</em></div>`).join('')||'<div class="empty">暂无</div>'}</div></section><section class="section"><div class="section-head"><h3>匹配句型</h3><small>${s.patterns?.length||0} 条</small></div><div class="section-body">${(s.patterns||[]).map(p=>`<div class="qa"><small>${esc(p.type)}</small><p>${esc(p.pattern)}</p></div>`).join('')||'<div class="empty">暂无</div>'}</div></section><section class="section"><div class="section-head"><h3>完整歌词</h3><small>${s.lyrics?.length||0} 行</small></div><div class="section-body">${(s.lyrics||[]).map((l,i)=>`<div class="lyric"><b>${i+1}</b><span>${esc(l)}</span></div>`).join('')||'<div class="empty">暂无</div>'}</div></section><div style="height:84px"></div>`;
+  $('listRoot').classList.add('hidden'); $('statsRoot').classList.add('hidden'); $('songRoot').classList.remove('hidden'); $('songRoot').classList.add('active'); document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view==='songRoot')); window.scrollTo({top:0});
+}
+function show(view){ document.querySelectorAll('.main').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.main').forEach(x=>x.classList.add('hidden')); const target=$(view); target.classList.remove('hidden'); target.classList.add('active'); document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===view)); if(view!=='songRoot'){if(view==='listRoot')drawList();if(view==='statsRoot')drawStats();} window.scrollTo({top:0}); }
+$('search').addEventListener('input',e=>{q=e.target.value;drawList()});
+$('chips').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;chip=b.dataset.cat;drawChips();drawList()});
+document.body.addEventListener('click',e=>{
+  const open=e.target.closest('[data-open]'); if(open)return openSong(open.dataset.open);
+  const toggle=e.target.closest('[data-toggle]'); if(toggle){const sheet=toggle.dataset.toggle;state[sheet]=!done(sheet)?{status:'已完成',completedAt:new Date().toISOString()}:{status:'待打卡',completedAt:''};save();renderAll();if(!$('songRoot').classList.contains('hidden'))openSong(sheet);return;}
+  const tab=e.target.closest('.tab'); if(tab)return show(tab.dataset.view);
+  if(e.target.closest('[data-back]'))return show('listRoot');
+});
+drawChips();renderAll();
+</script>
+</body>
+</html>
