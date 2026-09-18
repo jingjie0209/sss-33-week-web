@@ -244,6 +244,8 @@ if (!Array.isArray(DATA.weeks) || !DATA.weeks.length) isTemplateSource = true;
 </script>
 <script src="data.js"></script>
 <script src="pattern-data.js"></script>
+<script src="noun-card-data.js"></script>
+<script src="verb-card-data.js"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const loadState = () => {
@@ -277,18 +279,11 @@ const TOTAL = allSheets.length;
 const $ = (id) => document.getElementById(id);
 const { songs } = window.SSS_WEB_DATA;
 const songBySheet = new Map(songs.map((item) => [item.sheet, item]));
-const { nouns: nounPatterns, verbs: verbPatterns } = songs.reduce((totals, song) => {
-  (song.patterns || []).forEach((pattern) => {
-    if (pattern.type === "名词卡") totals.nouns += 1;
-    if (pattern.type === "动词卡") totals.verbs += 1;
-  });
-  return totals;
-}, { nouns: 0, verbs: 0 });
 const tprItems = songs.flatMap((song) => song.tpr || []);
 const TOTAL_TPR = tprItems.length;
-const TOTAL_NOUNS = nounPatterns;
-const TOTAL_VERBS = verbPatterns;
-const TOTAL_PATTERNS = nounPatterns + verbPatterns;
+const TOTAL_NOUNS = (window.SSS_NOUN_CARDS || []).length;
+const TOTAL_VERBS = (window.SUSAN_VERB_CARDS || []).length;
+const TOTAL_PATTERNS = (window.SSS_PATTERN_LIBRARY || []).length;
 const THEME_GROUPS = {
   "社交与表达": ["问候与告别", "喜欢与友谊", "情绪与表达", "提问与表达"],
   "动作与指令": ["动作启蒙", "身体与动作", "跟随指令", "动作与能力", "躲藏与观察", "课堂习惯"],
@@ -489,15 +484,23 @@ function renderStats() {
     tpr: TOTAL_TPR,
     patterns: TOTAL_PATTERNS,
   };
-  const resourceDone = doneSongs.reduce((totals, song) => {
+  const doneNouns = new Set();
+  const doneVerbs = new Set();
+  const donePatterns = new Set();
+  doneSongs.forEach((song) => {
     song.patterns?.forEach((pattern) => {
-      if (pattern.type === "名词卡") totals.nouns += 1;
-      if (pattern.type === "动词卡") totals.verbs += 1;
+      const number = Number(String(pattern.pattern || "").match(/(\d+)\s*\./)?.[1]);
+      if (pattern.type === "名词卡" && number) doneNouns.add(number);
+      if (pattern.type === "动词卡" && number) doneVerbs.add(number);
+      if (number) donePatterns.add(`${pattern.type}#${number}`);
     });
-    totals.tpr += song.tpr?.length || 0;
-    return totals;
-  }, { nouns: 0, verbs: 0, tpr: 0, patterns: 0 });
-  resourceDone.patterns = resourceDone.nouns + resourceDone.verbs;
+  });
+  const resourceDone = {
+    nouns: doneNouns.size,
+    verbs: doneVerbs.size,
+    tpr: doneSongs.reduce((sum, song) => sum + (song.tpr?.length || 0), 0),
+    patterns: donePatterns.size,
+  };
   $("stat-nouns").textContent = `${resourceDone.nouns}/${resourceTotals.nouns}`;
   $("stat-verbs").textContent = `${resourceDone.verbs}/${resourceTotals.verbs}`;
   $("stat-tpr").textContent = `${resourceDone.tpr}/${resourceTotals.tpr}`;
