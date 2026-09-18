@@ -55,7 +55,7 @@ button,input{font:inherit}button{cursor:pointer}
 .tabbar-inner{display:grid;grid-template-columns:repeat(2,1fr);width:min(100%,560px)}
 .tab{border:0;background:none;padding:7px 0;color:#7d8f92;font-size:10px;font-weight:800;display:grid;justify-items:center;gap:2px}.tab i{display:block;width:18px;height:18px;border-radius:6px;background:#d8e4e3}.tab.active{color:var(--brand)}.tab.active i{background:var(--brand)}
 .main{display:none}.main.active{display:block}.hidden{display:none!important}
-.today-list{display:grid;gap:9px}.today-hero{padding:15px;border-radius:14px;background:linear-gradient(135deg,#0d494e,#176b70 60%,#1e848c);color:#fff}.today-kicker{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#bfe2df;font-size:11px;font-weight:800}.today-hero h2{margin:7px 0 8px;font-size:21px;line-height:1.3}.today-hero p{margin:0;color:#d9ecea;font-size:12px}.today-actions{margin-top:12px;display:flex;gap:8px}.today-actions .toggle{height:34px;padding:0 12px;border-radius:9px;background:rgba(255,255,255,.16);color:#fff}.today-actions .toggle.is-done{background:var(--yellow);color:#3e310e}
+.today-list{position:relative}.today-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;scrollbar-width:none}.today-track::-webkit-scrollbar{display:none}.today-hero{flex:0 0 calc(100% - 4px);min-width:calc(100% - 4px);scroll-snap-align:center;padding:15px;border-radius:14px;background:linear-gradient(135deg,#0d494e,#176b70 60%,#1e848c);color:#fff;box-shadow:0 8px 22px rgba(16,78,83,.14)}.today-kicker{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#bfe2df;font-size:11px;font-weight:800}.today-hero h2{margin:7px 0 8px;font-size:21px;line-height:1.3}.today-hero p{margin:0;color:#d9ecea;font-size:12px}.today-actions{margin-top:12px;display:flex;gap:8px}.today-actions .toggle{height:34px;padding:0 12px;border-radius:9px;background:rgba(255,255,255,.16);color:#fff}.today-actions .toggle.is-done{background:var(--yellow);color:#3e310e}.today-dots{display:flex;justify-content:center;gap:5px;margin-top:-2px}.today-dot{width:6px;height:6px;border-radius:99px;background:#c8d8d7;border:0;padding:0}.today-dot.active{width:18px;background:var(--brand)}
 .today-card{border:1px solid var(--line);border-radius:13px;background:#fff;overflow:hidden}.today-card-head{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--line);background:#f7faf9}.today-card-head h3{margin:0;font-size:14px}.today-card-head small{color:var(--muted);font-size:11px}.today-card-body{padding:4px 12px 12px}
 @media (min-width:560px){.mobile-head{border-radius:0 0 22px 22px}}
 </style>
@@ -63,7 +63,7 @@ button,input{font:inherit}button{cursor:pointer}
 <body>
 <div class="app">
   <div id="todayRoot" class="main active">
-    <header class="mobile-head"><small>TODAY</small><h1>今日学习</h1><div class="mobile-stats"><div class="mstat"><span>今日进度</span><strong id="todayStat">0/1</strong></div><div class="mstat"><span>总进度</span><strong id="todayTotal">1%</strong></div><div class="mstat"><span>周</span><strong id="todayWeek">1</strong></div></div><div class="mobile-progress"><i id="todayBar"></i></div></header>
+    <header class="mobile-head"><small>THIS WEEK</small><h1>本周学习</h1><div class="mobile-stats"><div class="mstat"><span>本周进度</span><strong id="todayStat">0/3</strong></div><div class="mstat"><span>总进度</span><strong id="todayTotal">1%</strong></div><div class="mstat"><span>周</span><strong id="todayWeek">1</strong></div></div><div class="mobile-progress"><i id="todayBar"></i></div></header>
     <main class="content"><div id="todayList" class="today-list"></div></main>
   </div>
 
@@ -139,19 +139,33 @@ function drawStats(){
   const vals=[['名词',nouns.size,totals.nouns],['动词',verbs.size,totals.verbs],['核心句型',pats.size,totals.patterns],['TPR指令',dsongs.reduce((n,s)=>n+(s.tpr?.length||0),0),totals.tpr]];
   $('resourceStats').innerHTML=vals.map(([label,d,t])=>`<div class="stat-card"><span>${label}</span><strong>${d}/${t}</strong><small>${t?Math.round(d/t*100):0}% 完成</small></div>`).join('');
 }
-function todaySong(){
-  const flat=PLAN.flatMap(w=>w.songs.map(s=>({...s,week:w.week,label:w.label,theme:w.theme,category:w.category})));
-  return flat.find(s=>!done(s.sheet))||flat[flat.length-1];
+function currentWeek(){
+  const enriched=PLAN.map(w=>({...w,doneCount:w.songs.filter(s=>done(s.sheet)).length}));
+  return enriched.find(w=>w.doneCount<w.songs.length)||enriched[enriched.length-1];
 }
 function drawToday(){
-  const song=todaySong(), info=bySheet.get(song.sheet), allDone=done(song.sheet);
-  $('todayStat').textContent=allDone?'1/1':'0/1';
-  $('todayWeek').textContent=song.week||'--';
+  const week=currentWeek();
+  $('todayStat').textContent=`${week.doneCount}/${week.songs.length}`;
+  $('todayWeek').textContent=week.week||'--';
   const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)), ds=sheets.filter(done).length;
   $('todayTotal').textContent=`${sheets.length?Math.round(ds/sheets.length*100):0}%`;
   $('todayBar').style.width=`${sheets.length?ds/sheets.length*100:0}%`;
-  const card=(title,sub,items,render)=>`<section class="today-card"><div class="today-card-head"><h3>${title}</h3><small>${sub}</small></div><div class="today-card-body">${items.length?items.map(render).join(''):'<div class="empty">暂无</div>'}</div></section>`;
-  $('todayList').innerHTML=`<article class="today-hero"><div class="today-kicker"><span>${esc(song.label)} · ${esc(song.theme)}</span><span>${esc(song.category)}</span></div><h2>${esc(song.title)}</h2><p>${info?.meta||''}</p><div class="today-actions">${badge(status(song.sheet))}<button class="toggle ${allDone?'is-done':''}" type="button" data-toggle="${esc(song.sheet)}">${allDone?'取消打卡':'标记完成'}</button><button class="toggle" type="button" data-open="${esc(song.sheet)}">查看全部</button></div></article>${card('儿歌','完整歌词',info?.lyrics||[],(line,i)=>`<div class="lyric"><b>${i+1}</b><span>${esc(line)}</span></div>`)}${card('名词','核心词汇',info?.words||[],w=>`<div class="word"><div class="word-top"><strong>${esc(w.english)}</strong><small>${esc(w.ipa)}</small></div><div class="meaning">${esc(w.meaning)}</div></div>`)}${card('TPR','动作指令',info?.tpr||[],t=>`<div class="tpr"><small>${esc(t.step)}</small><p>${esc(t.lyric)}</p><em>${esc(t.translation)}</em></div>`)}${card('句型','匹配基础句型',info?.patterns||[],p=>`<div class="qa"><small>${esc(p.type)}</small><p>${esc(p.pattern)}</p></div>`)}`;
+  const card=(title,sub,items,render)=>items.length?`<section class="today-card"><div class="today-card-head"><h3>${title}</h3><small>${sub}</small></div><div class="today-card-body">${items.map(render).join('')}</div></section>`:'';
+  const heroes=week.songs.map((song,index)=>{
+    const info=bySheet.get(song.sheet), allDone=done(song.sheet), tpr=(info?.tpr||[]).filter(t=>t.lyric);
+    return `<article class="today-hero" data-hero-index="${index}"><div class="today-kicker"><span>${esc(song.label||week.label)} · ${esc(song.theme||week.theme)}</span><span>${esc(song.category||week.category)}</span></div><h2>${esc(song.title)}</h2><p>${esc(info?.meta||'')}</p><div class="today-actions">${badge(status(song.sheet))}<button class="toggle ${allDone?'is-done':''}" type="button" data-toggle="${esc(song.sheet)}">${allDone?'取消打卡':'标记完成'}</button><button class="toggle" type="button" data-open="${esc(song.sheet)}">查看全部</button></div></article>`;
+  }).join('');
+  const dots=week.songs.map((song,index)=>`<button class="today-dot ${index===0?'active':''}" type="button" data-dot="${index}" aria-label="切换到第 ${index+1} 首儿歌"></button>`).join('');
+  const first=bySheet.get(week.songs[0].sheet);
+  $('todayList').innerHTML=`<div class="today-track">${heroes}</div><div class="today-dots">${dots}</div>${card('儿歌','完整歌词',first?.lyrics||[],(line,i)=>`<div class="lyric"><b>${i+1}</b><span>${esc(line)}</span></div>`)}${card('名词','核心词汇',first?.words||[],w=>`<div class="word"><div class="word-top"><strong>${esc(w.english)}</strong><small>${esc(w.ipa)}</small></div><div class="meaning">${esc(w.meaning)}</div></div>`)}${card('TPR','动作指令',(first?.tpr||[]).filter(t=>t.lyric),t=>`<div class="tpr"><small>${esc(t.step)}</small><p>${esc(t.lyric)}</p><em>${esc(t.translation)}</em></div>`)}${card('句型','匹配基础句型',first?.patterns||[],p=>`<div class="qa"><small>${esc(p.type)}</small><p>${esc(p.pattern)}</p></div>`)}`;
+  const track=$('todayList').querySelector('.today-track');
+  track.addEventListener('scroll',()=>{
+    const index=Math.round(track.scrollLeft/track.clientWidth);
+    $('todayList').querySelectorAll('.today-dot').forEach((dot,i)=>dot.classList.toggle('active',i===index));
+  },{passive:true});
+  $('todayList').querySelectorAll('[data-dot]').forEach(dot=>dot.addEventListener('click',()=>{
+    track.scrollTo({left:Number(dot.dataset.dot)*track.clientWidth,behavior:'smooth'});
+  }));
 }
 function drawTop(){const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)),d=sheets.filter(done).length;$('songStat').textContent=`${d}/${sheets.length}`;$('rateStat').textContent=`${sheets.length?Math.round(d/sheets.length*100):0}%`;$('progressBar').style.width=`${sheets.length?d/sheets.length*100:0}%`;}
 function renderAll(){drawToday();drawTop();drawList();drawStats();}
