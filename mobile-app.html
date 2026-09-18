@@ -31,11 +31,12 @@ button,input{font:inherit}button{cursor:pointer}
 .week-top{display:flex;align-items:center;justify-content:space-between;padding:11px 12px;background:#f0f6f5;border-bottom:1px solid var(--line)}
 .week-card.done .week-top{background:#e7f5ee}.week-title{font-weight:800}.week-theme{margin-top:3px;color:var(--muted);font-size:11px}
 .week-badge{font-size:11px;color:#657775;background:#fff;border:1px solid var(--line);padding:3px 7px;border-radius:99px}.done .week-badge{color:var(--green)}
-.songs{display:grid}.song-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:center;padding:11px 12px;border-bottom:1px solid #edf1f0}.song-row:last-child{border-bottom:0}
+.songs{display:grid}.song-row{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:9px;align-items:center;padding:11px 12px;border-bottom:1px solid #edf1f0}.song-row:last-child{border-bottom:0}
+.song-index{width:22px;height:22px;display:grid;place-items:center;border-radius:7px;background:var(--soft);color:var(--deep);font-size:11px;font-weight:800}.song-row.completed .song-index{background:#e4f3ec;color:var(--green)}
 .song-name{background:none;border:0;padding:0;text-align:left;font-weight:750;line-height:1.35;color:var(--ink)}.song-name:hover{color:var(--brand)}
 .song-sub{margin-top:3px;font-size:10px;color:var(--muted)}
 .mini-status{font-size:10px;padding:2px 6px;border-radius:5px;background:#edf1f0;color:#657775}.mini-status.done{background:#e4f3ec;color:var(--green)}
-.toggle{height:31px;border:0;border-radius:8px;background:var(--soft);color:var(--deep);font-size:11px;font-weight:800;padding:0 9px}
+.toggle{height:31px;border:0;border-radius:99px;background:var(--soft);color:var(--deep);font-size:11px;font-weight:800;padding:0 11px}
 .toggle.is-done{background:#e4f3ec;color:var(--green)}
 .empty{padding:38px 18px;text-align:center;color:var(--muted);background:#fff;border:1px solid var(--line);border-radius:13px}
 .detail{display:none}.detail.active{display:block}
@@ -125,15 +126,18 @@ const allPatternIds=songs.flatMap(s=>(s.patterns||[]).map(p=>{const n=popNum(p);
 const cardNums=type=>new Set(songs.flatMap(s=>(s.patterns||[]).filter(p=>p.type===type).map(popNum).filter(Boolean)));
 const totals={nouns:cardNums('名词卡').size,verbs:cardNums('动词卡').size,patterns:new Set(allPatternIds).size,tpr:songs.reduce((n,s)=>n+(s.tpr?.length||0),0)};
 const thumb=url=>String(url||'').match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/)?.[1];
-let chip='',q='';
-function drawChips(){ $('chips').innerHTML=`<button class="chip ${!chip?'active':''}" data-cat="">全部</button>`+CATS.map(c=>`<button class="chip ${chip===c?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');}
+let chip='',q='',statusFilter='';
+function drawChips(){
+  const statusChips=[['','全部状态'],['已完成','已完成'],['待打卡','未完成']];
+  $('chips').innerHTML=statusChips.map(([value,label])=>`<button class="chip ${statusFilter===value?'active':''}" data-status="${value}">${label}</button>`).join('')+CATS.map(c=>`<button class="chip ${chip===c?'active':''}" data-cat="${esc(c)}">${esc(c)}</button>`).join('');
+}
 function drawList(){
-  const list=PLAN.map(w=>({...w,visible:w.songs.map(s=>(!q||norm(s.title+w.theme+w.category).includes(norm(q)))&&(!chip||w.category===chip))})).filter(w=>w.visible.some(Boolean));
+  const list=PLAN.map(w=>({...w,visible:w.songs.map(s=>(!q||norm(s.title+w.theme+w.category).includes(norm(q)))&&(!chip||w.category===chip)&&(!statusFilter||status(s.sheet)===statusFilter))})).filter(w=>w.visible.some(Boolean));
   const count=list.reduce((n,w)=>n+w.visible.filter(Boolean).length,0);
   $('note').textContent=`${list.length} 个周计划 · ${count} 首儿歌`;
   $('weeks').innerHTML=list.length?list.map(w=>{
     const d=w.songs.filter(s=>done(s.sheet)).length, all=d===w.songs.length;
-    return `<article class="week-card ${all?'done':''}"><div class="week-top"><div><div class="week-title">${esc(w.label)} · ${esc(w.theme)}</div><div class="week-theme">${esc(w.category)}</div></div><span class="week-badge">${d}/${w.songs.length}</span></div>${w.songs.map((s,i)=>{if(!w.visible[i])return '';const st=status(s.sheet),info=bySheet.get(s.sheet),words=info?.words?.length||0,code=thumb(info?.videoUrl);return `<div class="song-row"><button class="song-name" type="button" data-open="${esc(s.sheet)}">${esc(s.title)}<div class="song-sub">${words} 个核心词汇 ${code?'· 有封面':''}</div></button><div style="display:flex;align-items:center;gap:6px">${badge(st)}<button class="toggle ${st==='已完成'?'is-done':''}" type="button" data-toggle="${esc(s.sheet)}">${st==='已完成'?'取消':'完成'}</button></div></div>`}).join('')}</article>`;
+    return `<article class="week-card ${all?'done':''}"><div class="week-top"><div><div class="week-title">${esc(w.label)} · ${esc(w.theme)}</div><div class="week-theme">${esc(w.category)}</div></div><span class="week-badge">${d}/${w.songs.length}</span></div>${w.songs.map((s,i)=>{if(!w.visible[i])return '';const st=status(s.sheet),info=bySheet.get(s.sheet),words=info?.words?.length||0;return `<div class="song-row ${st==='已完成'?'completed':''}"><span class="song-index">${i+1}</span><button class="song-name" type="button" data-open="${esc(s.sheet)}">${esc(s.title)}<div class="song-sub">${words} 个核心词汇</div></button><button class="toggle ${st==='已完成'?'is-done':''}" type="button" data-toggle="${esc(s.sheet)}">${st==='已完成'?'已完成':'完成'}</button></div>`}).join('')}</article>`;
   }).join(''):'<div class="empty">没有匹配的儿歌</div>';
 }
 function drawStats(){
@@ -181,7 +185,11 @@ function openSong(sheet){
 }
 function show(view){ document.querySelectorAll('.main').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.main').forEach(x=>x.classList.add('hidden')); const target=$(view); target.classList.remove('hidden'); target.classList.add('active'); document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===view)); if(view!=='songRoot'){if(view==='listRoot')drawList();if(view==='statsRoot')drawStats();} window.scrollTo({top:0}); }
 $('search').addEventListener('input',e=>{q=e.target.value;drawList()});
-$('chips').addEventListener('click',e=>{const b=e.target.closest('[data-cat]');if(!b)return;chip=b.dataset.cat;drawChips();drawList()});
+$('chips').addEventListener('click',e=>{
+  const statusChip=e.target.closest('[data-status]');
+  if(statusChip){statusFilter=statusChip.dataset.status;drawChips();drawList();return;}
+  const b=e.target.closest('[data-cat]');if(!b)return;chip=b.dataset.cat;drawChips();drawList();
+});
 document.body.addEventListener('click',e=>{
   const open=e.target.closest('[data-open]'); if(open)return openSong(open.dataset.open);
   const toggle=e.target.closest('[data-toggle]'); if(toggle){const sheet=toggle.dataset.toggle;state[sheet]=!done(sheet)?{status:'已完成',completedAt:new Date().toISOString()}:{status:'待打卡',completedAt:''};save();renderAll();if(!$('songRoot').classList.contains('hidden'))openSong(sheet);return;}
