@@ -74,6 +74,11 @@ button,input{font:inherit}button{cursor:pointer}
 .today-list{position:relative}.today-track{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;padding:2px 2px 10px;scrollbar-width:none}.today-track::-webkit-scrollbar{display:none}.today-hero{flex:0 0 calc(100% - 4px);min-width:calc(100% - 4px);scroll-snap-align:center;padding:15px;border-radius:14px;background:linear-gradient(135deg,#0d494e,#176b70 60%,#1e848c);color:#fff;box-shadow:0 8px 22px rgba(16,78,83,.14)}.today-kicker{display:flex;justify-content:space-between;align-items:center;gap:8px;color:#bfe2df;font-size:11px;font-weight:800}.today-hero h2{margin:7px 0 8px;font-size:21px;line-height:1.3}.today-hero p{margin:0;color:#d9ecea;font-size:12px}.today-actions{margin-top:12px;display:flex;align-items:center;gap:8px}.today-actions .toggle{height:34px;padding:0 12px;border-radius:9px;background:rgba(255,255,255,.16);color:#fff}.today-actions .toggle.is-done{background:var(--yellow);color:#3e310e}.today-dots{display:flex;justify-content:center;gap:5px;margin-top:-2px}.today-dot{width:6px;height:6px;border-radius:99px;background:#c8d8d7;border:0;padding:0}.today-dot.active{width:18px;background:var(--brand)}
 .today-card{border:1px solid var(--line);border-radius:13px;background:#fff;overflow:hidden}.today-card-head{display:flex;justify-content:space-between;align-items:center;padding:12px;border-bottom:1px solid var(--line);background:#f7faf9}.today-card-head h3{margin:0;font-size:14px}.today-card-head small{color:var(--muted);font-size:11px}.today-card-body{padding:4px 12px 12px}
 .print-list{display:grid;gap:9px;padding:14px 16px 90px}.print-card{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:11px;align-items:center;padding:13px;border:1px solid var(--line);border-radius:13px;background:#fff;text-align:left;color:var(--ink)}.print-card:hover{border-color:var(--brand);box-shadow:0 5px 16px rgba(19,73,76,.09)}.print-icon{width:40px;height:40px;display:grid;place-items:center;border-radius:11px;background:var(--soft);color:var(--deep);font-size:18px}.print-card strong{display:block;font-size:14px}.print-card small{display:block;margin-top:3px;color:var(--muted);font-size:11px}.print-action{color:var(--brand);font-weight:800;font-size:12px}
+.profile-list{display:grid;gap:10px;padding:14px 16px 90px}
+.profile-card{padding:14px;border:1px solid var(--line);border-radius:14px;background:#fff;display:grid;gap:12px}
+.profile-row{display:flex;align-items:center;gap:12px}.avatar{width:56px;height:56px;border-radius:50%;background:var(--soft);display:grid;place-items:center;overflow:hidden;color:var(--deep);font-size:22px}.avatar img{width:100%;height:100%;object-fit:cover}
+.profile-name{font-weight:800;font-size:16px}.profile-sub{margin-top:3px;color:var(--muted);font-size:11px}
+.login-button{height:42px;border:0;border-radius:10px;background:var(--brand);color:#fff;font-weight:800}.logout-button{height:38px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--muted);font-weight:700}
 .pdf-overlay{position:fixed;inset:0;z-index:70;display:none;align-items:end;justify-content:center;background:rgba(10,35,38,.48)}.pdf-overlay.show{display:flex}.pdf-sheet{width:min(100%,560px);background:#fff;border-radius:18px 18px 0 0;padding:18px 16px max(18px,env(safe-area-inset-bottom))}.pdf-sheet h3{margin:0 0 5px;font-size:17px}.pdf-sheet p{margin:0 0 14px;color:var(--muted);font-size:12px}.pdf-actions{display:grid;gap:9px}.pdf-action{height:46px;border:0;border-radius:12px;background:var(--soft);color:var(--deep);font-weight:800}.pdf-action.primary{background:var(--brand);color:#fff}.pdf-close{height:42px;border:0;background:none;color:var(--muted);font-weight:800}
 @media print{
   body{background:#fff}.app{box-shadow:none;max-width:none}.tabbar,.tools,.content,.mobile-head,.detail,.main{display:none!important}
@@ -94,7 +99,7 @@ button,input{font:inherit}button{cursor:pointer}
   </div>
 
   <div id="listRoot" class="main active">
-    <header class="mobile-head">
+<header class="mobile-head">
       <small>SSS · 33 WEEKS</small>
       <h1>SSS儿歌小程序</h1>
       <div class="head-search">
@@ -105,6 +110,7 @@ button,input{font:inherit}button{cursor:pointer}
       <div class="mobile-stats"><div class="mstat"><span>已完成歌曲</span><strong id="songStat">0/99</strong></div><div class="mstat"><span>坚持进度</span><strong id="stickWeek">第 1 周</strong></div><div class="mstat"><span>完成率</span><strong id="rateStat">0%</strong></div></div>
       <div class="mobile-progress"><i id="progressBar"></i></div>
     </header>
+    <div class="tools" style="padding-bottom:0"><button class="print-card" type="button" data-print="planFullPoster"><span class="print-icon">🖼</span><span><strong>打印33周完整计划海报</strong><small>A4 纵向 · 33 周总览大字海报版</small></span><span class="print-action">生成 PDF</span></button></div>
     <div class="tools">
       <div id="chips" class="chips"></div>
     </div>
@@ -125,6 +131,11 @@ button,input{font:inherit}button{cursor:pointer}
     </div>
   </div>
 
+  <div id="profileRoot" class="main">
+    <header class="mobile-head"><small>PROFILE</small><h1>我的</h1></header>
+    <div class="profile-list"><div class="profile-card" id="profileCard"></div></div>
+  </div>
+
   <div id="statsRoot" class="main">
     <header class="mobile-head"><small>PROGRESS</small><h1>学习统计</h1></header>
     <div class="stats-grid" id="resourceStats"></div>
@@ -135,7 +146,7 @@ button,input{font:inherit}button{cursor:pointer}
 <nav class="tabbar"><div class="tabbar-inner">
   <button class="tab active" type="button" data-view="todayRoot"><i></i>今日</button>
   <button class="tab" type="button" data-view="listRoot"><i></i>计划</button>
-  <button class="tab" type="button" data-view="printRoot"><i></i>打印</button>
+  <button class="tab" type="button" data-view="profileRoot"><i></i>我的</button>
 </div></nav>
 <div id="printArea" aria-hidden="true"></div>
 <div id="pdfOverlay" class="pdf-overlay"><div class="pdf-sheet"><h3 id="pdfTitle">正在生成 PDF</h3><p id="pdfStatus">正在按 A4 排版生成，请稍候。</p><div class="pdf-actions"><button class="pdf-action primary" id="pdfOpen" type="button">打开 / 保存 PDF</button><button class="pdf-action" id="pdfShare" type="button">分享 PDF</button><button class="pdf-close" id="pdfClose" type="button">关闭</button></div></div></div>
@@ -178,8 +189,17 @@ function drawList(){
   $('note').textContent=`${list.length} 个周计划 · ${count} 首儿歌`;
   $('weeks').innerHTML=list.length?list.map(w=>{
     const d=w.songs.filter(s=>done(s.sheet)).length, all=d===w.songs.length;
-    return `<article class="week-card ${all?'done':''}"><div class="week-top"><div><div class="week-title">${esc(w.label)} · ${esc(w.theme)}</div><div class="week-theme">${esc(w.category)}</div></div><span class="week-badge">${d}/${w.songs.length}</span></div>${w.songs.map((s,i)=>{if(!w.visible[i])return '';const st=status(s.sheet),info=bySheet.get(s.sheet),words=info?.words?.length||0;return `<div class="song-row ${st==='已完成'?'completed':''}"><span class="song-index">${i+1}</span><button class="song-name" type="button" data-open="${esc(s.sheet)}">${esc(s.title)}<div class="song-sub">${words} 个核心词汇</div></button><button class="toggle ${st==='已完成'?'is-done':''}" type="button" data-toggle="${esc(s.sheet)}">${st==='已完成'?'已完成':'完成'}</button></div>`}).join('')}</article>`;
+  return `<article class="week-card ${all?'done':''}"><div class="week-top"><div><div class="week-title">${esc(w.label)} · ${esc(w.theme)}</div><div class="week-theme">${esc(w.category)}</div></div><div style="display:flex;align-items:center;gap:8px"><button class="toggle" type="button" data-poster="${w.week}">打印主题海报</button><span class="week-badge">${d}/${w.songs.length}</span></div></div>${w.songs.map((s,i)=>{if(!w.visible[i])return '';const st=status(s.sheet),info=bySheet.get(s.sheet),words=info?.words?.length||0;return `<div class="song-row ${st==='已完成'?'completed':''}"><span class="song-index">${i+1}</span><button class="song-name" type="button" data-open="${esc(s.sheet)}">${esc(s.title)}<div class="song-sub">${words} 个核心词汇</div></button><button class="toggle ${st==='已完成'?'is-done':''}" type="button" data-toggle="${esc(s.sheet)}">${st==='已完成'?'已完成':'完成'}</button></div>`}).join('')}</article>`;
   }).join(''):'<div class="empty">没有匹配的儿歌</div>';
+}
+function drawProfile(){
+  let user=null; try{user=JSON.parse(localStorage.getItem('sss-profile-v1')||'null')}catch(e){}
+  const card=$('profileCard');
+  if(!user){
+    card.innerHTML=`<div class="profile-row"><div class="avatar">🙂</div><div><div class="profile-name">未登录</div><div class="profile-sub">登录后可保存昵称和头像（仅保存在本机）</div></div></div><button class="login-button" type="button" id="profileLogin">微信授权登录</button>`;
+    return;
+  }
+  card.innerHTML=`<div class="profile-row"><div class="avatar">${user.avatar?`<img src="${esc(user.avatar)}" alt="">`:esc((user.nickname||'小').slice(0,1))}</div><div><div class="profile-name">${esc(user.nickname||'SSS 用户')}</div><div class="profile-sub">已完成 ${PLAN.flatMap(w=>w.songs).filter(s=>done(s.sheet)).length}/99 首 · 坚持第 ${currentWeekNumber()} 周</div></div></div><button class="logout-button" type="button" id="profileLogout">退出登录</button>`;
 }
 function drawStats(){
   const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)), ds=new Set(sheets.filter(done)), dsongs=songs.filter(s=>ds.has(s.sheet));
@@ -246,6 +266,21 @@ function drawToday(){
 }
 function drawTop(){const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)),d=sheets.filter(done).length;$('songStat').textContent=`已完成 ${d}/${sheets.length} 首`;$('stickWeek').textContent=`坚持第 ${currentWeekNumber()} 周`;$('rateStat').textContent=`${sheets.length?Math.round(d/sheets.length*100):0}%`;$('progressBar').style.width=`${sheets.length?d/sheets.length*100:0}%`;}
 function renderAll(){drawToday();drawTop();drawList();drawStats();}
+function isWeChat(){return /MicroMessenger/i.test(navigator.userAgent)}
+function showProfile(){
+  const card=$('profileCard');
+  if(isWeChat() && window.wx && typeof window.wx.login==='function'){
+    try{
+      window.wx.login({success:()=>{try{window.wx.getUserProfile&&window.wx.getUserProfile({desc:'用于展示头像昵称',success:res=>{localStorage.setItem('sss-profile-v1',JSON.stringify({nickname:res.userInfo.nickName,avatar:res.userInfo.avatarUrl}));drawProfile();},fail:()=>{alert('微信授权未完成，请在普通浏览器中继续使用本地登录。');}});}catch(e){alert('当前微信环境未提供 getUserProfile，请在普通浏览器中使用本地登录。');}},fail:()=>{alert('微信登录失败，请在普通浏览器中使用本地登录。');}});
+    }catch(e){alert('微信登录不可用，请在普通浏览器中使用本地登录。');}
+    return;
+  }
+  const nickname=prompt('请输入昵称：','SSS 家长');
+  if(nickname===null)return;
+  const avatar=prompt('请输入头像图片 URL（可留空）：','');
+  localStorage.setItem('sss-profile-v1',JSON.stringify({nickname:nickname||'SSS 用户',avatar:avatar||''}));
+  drawProfile();
+}
 function currentWeekNumber(){return currentWeek().week||1;}
 function printHTML(title,subtitle,body,landscape=false){
   const width=landscape?1123:794, height=landscape?794:1123;
@@ -280,6 +315,7 @@ async function makePdf(kind){
     if(kind==='wall'){title='33周打卡墙';subtitle=`每周 3 首 · 已完成 ${doneCount}/99 首`;landscape=true;const cells=PLAN.map(w=>{const n=w.songs.filter(s=>done(s.sheet)).length;return `<div class="print-cell ${n===w.songs.length?'done':''}">${w.week}</div>`}).join('');body=`<div class="print-grid">${cells}</div>`}
     if(kind==='theme'){title=`第 ${week.week} 周 · ${week.theme} 主题卡`;subtitle=week.category;const words=week.songs.flatMap(s=>bySheet.get(s.sheet)?.words||[]).slice(0,8);body=`<div class="print-theme"><h2>本周 3 首儿歌</h2><ul>${week.songs.map(s=>`<li>${esc(s.title)}</li>`).join('')}</ul></div><div class="print-theme"><h2>本周核心词汇</h2><ul>${words.map(w=>`<li>${esc(w.english)} · ${esc(w.meaning)}</li>`).join('')}</ul></div><div class="print-theme"><h2>本周亲子口语 3 句</h2><ul><li>Let's listen to this song!</li><li>Can you do it with me?</li><li>Great job! You did it!</li></ul></div>`}
     if(kind==='plan'){title='33周SSS儿歌计划表';subtitle=`共 33 周 · 99 首 · 已完成 ${doneCount}/99 首`;const rows=PLAN.map(w=>`<tr><td>${w.week}</td><td>${esc(w.theme)}</td><td>${esc(w.category)}</td><td><ul style="margin:0;padding-left:16px">${w.songs.map(s=>`<li>${esc(s.title)}</li>`).join('')}</ul></td><td>${w.songs.filter(s=>done(s.sheet)).length}/3</td></tr>`).join('');body=`<table class="print-table"><thead><tr><th>周</th><th>主题</th><th>分类</th><th>儿歌</th><th>进度</th></tr></thead><tbody>${rows}</tbody></table>`}
+    if(kind==='planFullPoster'){title='33周SSS儿歌计划海报';subtitle=`共 33 周 · 99 首 · 已完成 ${doneCount}/99 首`;const cells=PLAN.map(w=>`<div class="print-theme" style="margin:0 0 4mm;padding:4mm 6mm"><h2 style="font-size:18px;margin:0 0 2mm">第 ${w.week} 周 · ${esc(w.theme)}</h2><ul style="margin:0;padding-left:16px;line-height:1.6">${w.songs.map(s=>`<li>${esc(s.title)}</li>`).join('')}</ul></div>`).join('');body=`<div style="display:grid;grid-template-columns:1fr 1fr;gap:4mm">${cells}</div>`}
     const canvas=await printHTML(title,subtitle,body,landscape);
     const pdf=new window.jspdf.jsPDF({orientation:landscape?'landscape':'portrait',unit:'mm',format:'a4',compress:true});
     const pw=landscape?297:210, ph=landscape?210:297, iw=pw-16, ih=canvas.height*iw/canvas.width, ihFinal=Math.min(ih,ph-16);
@@ -354,6 +390,10 @@ $('chips').addEventListener('click',e=>{
   const b=e.target.closest('[data-cat]');if(!b)return;chip=b.dataset.cat;drawChips();drawList();
 });
 document.body.addEventListener('click',e=>{
+  const poster=e.target.closest('[data-poster]');
+  if(poster){const weekNo=Number(poster.dataset.poster);const week=PLAN.find(w=>w.week===weekNo);const info=bySheet.get(week.songs[0].sheet);const words=week.songs.flatMap(s=>bySheet.get(s.sheet)?.words||[]).slice(0,8);const body=`<div class="print-theme"><h2>本周 3 首儿歌</h2><ul>${week.songs.map(s=>`<li>${esc(s.title)}</li>`).join('')}</ul></div><div class="print-theme"><h2>本周核心词汇</h2><ul>${words.map(w=>`<li>${esc(w.english)} · ${esc(w.meaning)}</li>`).join('')}</ul></div><div class="print-theme"><h2>本周亲子口语 3 句</h2><ul><li>Let's listen to this song!</li><li>Can you do it with me?</li><li>Great job! You did it!</li></ul></div><p class="print-subtitle">资料来源：${esc(info?.meta||'')} · A4 纵向</p>`;printHTML(`第 ${weekNo} 周 · ${week.theme} 主题海报`,week.category,body,false);return;}
+});
+document.body.addEventListener('click',e=>{
   const open=e.target.closest('[data-open]'); if(open)return openSong(open.dataset.open);
   const toggle=e.target.closest('[data-toggle]'); if(toggle){
     const sheet=toggle.dataset.toggle, completing=!done(sheet);
@@ -363,13 +403,15 @@ document.body.addEventListener('click',e=>{
     return;
   }
   const tab=e.target.closest('.tab'); if(tab)return show(tab.dataset.view);
+  if(e.target.closest('#profileLogin'))return showProfile();
+  if(e.target.closest('#profileLogout')){localStorage.removeItem('sss-profile-v1');drawProfile();return;}
   const printButton=e.target.closest('[data-print]'); if(printButton)return makePdf(printButton.dataset.print);
   if(e.target.closest('#pdfOpen')){if(lastPdf.url){const a=document.createElement('a');a.href=lastPdf.url;a.download=lastPdf.name;a.click();}return;}
   if(e.target.closest('#pdfShare')){if(lastPdf.blob&&navigator.share){navigator.share({files:[new File([lastPdf.blob],lastPdf.name,{type:'application/pdf'})],title:lastPdf.name}).catch(()=>{});}else if(lastPdf.url){window.open(lastPdf.url,'_blank');}return;}
   if(e.target.closest('#pdfClose')){$('pdfOverlay').classList.remove('show');return;}
   if(e.target.closest('[data-back]'))return show('listRoot');
 });
-drawChips();renderAll();drawStreak();show('todayRoot');
+drawChips();renderAll();drawProfile();drawStreak();show('todayRoot');
 </script>
 </body>
 </html>
