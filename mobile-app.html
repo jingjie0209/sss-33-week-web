@@ -172,6 +172,7 @@ const done=sheet=>status(sheet)==='已完成';
 const badge=s=>`<span class="mini-status ${s==='已完成'?'done':''}">${s}</span>`;
 const source=JSON.parse($('week-data').textContent);
 const PLAN=source.weeks,CATS=source.categories,songs=window.SSS_WEB_DATA.songs,bySheet=new Map(songs.map(x=>[x.sheet,x]));
+const COVER_IDS=new Set([11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,33,34,35,36,37,38,39,40,41,42,43,44,46,47,49,50,51,52,53,54,55,56,57,58,59]);
 function toIng(phrase){const [verb,...rest]=String(phrase||'').split(' ');const irregular={lie:'lying',pee:'peeing'};let ing=irregular[verb];if(!ing&&/ie$/.test(verb))ing=`${verb.slice(0,-2)}ying`;if(!ing&&/[^aeiou]e$/.test(verb))ing=`${verb.slice(0,-1)}ing`;if(!ing&&/^(clap|dig|hop|sit|run|stop|swim|stir|mop|pop)$/.test(verb))ing=`${verb}${verb.slice(-1)}ing`;if(!ing)ing=`${verb}ing`;return [ing,...rest].join(' ');}
 $('week-data').textContent='';
 const popNum=p=>Number(String(p.pattern||'').match(/(\d+)\s*\./)?.[1]);
@@ -356,7 +357,9 @@ function openSong(sheet){
     return `<div class="qa"><small>${esc(p.type)} ${number?number+'.':''}</small><p>${esc(p.pattern)}</p>${zhFor[number]?`<div class="trans">${esc(zhFor[number])}</div>`:''}${body.length?`<ul class="qa-examples">${body.map(([k,v])=>`<li><b>${k}:</b> ${esc(v)}</li>`).join('')}</ul>`:''}${swaps.length?`<ul class="qa-examples"><li><b>替换词：</b>${swaps.map(esc).join(' / ')}<br><span style="color:#67797c">${esc(swapZh)}</span></li></ul>`:''}${examples.length?`<ul class="qa-examples">${examples.map(x=>`<li>${x}</li>`).join('')}${exampleZh?`<li><span style="color:#67797c">${esc(exampleZh)}</span></li>`:''}</ul>`:''}</div>`;
   };
   const coverHTML=(localCover,remote)=>{
-    return `<img class="cover-art" src="${esc(localCover)}" onerror="this.onerror=null;${remote?`this.style.backgroundImage='url(${esc(remote)})';`:''}">`;
+    const id=parseInt(s.id,10);
+    if(!COVER_IDS.has(id))return '';
+    return `<img class="cover-art" src="${esc(localCover)}">`;
   };
   const tprRows=(s.tpr||[]).filter(t=>t.lyric);
   const transHTML=(p)=>{
