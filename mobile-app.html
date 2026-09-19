@@ -48,6 +48,7 @@ button,input{font:inherit}button{cursor:pointer}
 .back{border:0;background:none;color:var(--brand);font-weight:800}.detail-actions{display:flex;align-items:center;gap:8px}.detail-actions .toggle{height:34px;padding:0 12px}
 .detail-head{padding:16px;background:linear-gradient(120deg,#0d494e,#176b70 58%,#1e848c);color:#fff}.detail-head small{color:#bfe2df;font-size:11px}.detail-head h2{margin:5px 0 8px;font-size:22px;line-height:1.25}.detail-head p{margin:0;color:#d9ecea;font-size:12px}
 .cover-art{height:190px;background:var(--brand-soft);background-position:center;background-size:cover}
+.cover-art{width:100%;object-fit:cover;display:block}
 .facts{display:grid;grid-template-columns:repeat(4,1fr);border-bottom:1px solid var(--line)}.facts div{padding:10px 5px;border-right:1px solid var(--line);text-align:center}.facts div:last-child{border-right:0}.facts span{display:block;color:var(--muted);font-size:10px}.facts strong{display:block;margin-top:2px;font-size:14px}
 .section{border-bottom:1px solid var(--line);background:#fff}.section-head{display:flex;justify-content:space-between;align-items:center;padding:13px 16px;border-bottom:1px solid var(--line)}.section-head h3{margin:0;font-size:15px}.section-head small{color:var(--muted);font-size:11px}
 .section-body{padding:4px 16px 14px}
@@ -333,6 +334,7 @@ async function makePdf(kind){
 function openSong(sheet){
   const s=bySheet.get(sheet); if(!s)return;
   const code=thumb(s.videoUrl), cover=code?`https://i.ytimg.com/vi/${code}/hqdefault.jpg`:'';
+  const localCover=`assets/thumbnails/${parseInt(s.id,10)}.jpg`;
   const wordCard=(w)=>{
     return `<div class="word-card"><strong>${esc(w.english)}</strong><small>${esc(w.ipa)}</small><em>${esc(w.meaning)}</em></div>`;
   };
@@ -352,6 +354,9 @@ function openSong(sheet){
     const exampleZh=number===12?'如果你想去睡觉，你会怎么问？我现在可以睡觉吗？':number===57?'看，这里有美丽的花。在花丛边你能做什么？ / 熊猫在花丛边做什么？ / 熊猫在花丛边跳舞。':'';
     const zhFor={12:'我可以……吗？ / 是的，你可以。',57:'它在做什么？ / 它正在……花丛边。'};
     return `<div class="qa"><small>${esc(p.type)} ${number?number+'.':''}</small><p>${esc(p.pattern)}</p>${zhFor[number]?`<div class="trans">${esc(zhFor[number])}</div>`:''}${body.length?`<ul class="qa-examples">${body.map(([k,v])=>`<li><b>${k}:</b> ${esc(v)}</li>`).join('')}</ul>`:''}${swaps.length?`<ul class="qa-examples"><li><b>替换词：</b>${swaps.map(esc).join(' / ')}<br><span style="color:#67797c">${esc(swapZh)}</span></li></ul>`:''}${examples.length?`<ul class="qa-examples">${examples.map(x=>`<li>${x}</li>`).join('')}${exampleZh?`<li><span style="color:#67797c">${esc(exampleZh)}</span></li>`:''}</ul>`:''}</div>`;
+  };
+  const coverHTML=(localCover,remote)=>{
+    return `<img class="cover-art" src="${esc(localCover)}" onerror="this.onerror=null;${remote?`this.style.backgroundImage='url(${esc(remote)})';`:''}">`;
   };
   const tprRows=(s.tpr||[]).filter(t=>t.lyric);
   const transHTML=(p)=>{
@@ -379,7 +384,7 @@ function openSong(sheet){
     const i=text.toLowerCase().indexOf(hit);
     return `${esc(text.slice(0,i))}<span class="tpr-action">${esc(text.slice(i,i+hit.length))}</span>${esc(text.slice(i+hit.length))}`;
   };
-  $('songRoot').innerHTML=`<div class="detail-bar"><button class="back" type="button" data-back>← 返回</button><div class="detail-actions">${badge(status(sheet))}<button class="toggle ${done(sheet)?'is-done':''}" type="button" data-toggle="${esc(sheet)}">${status(sheet)==='已完成'?'取消打卡':'标记完成'}</button></div></div><div class="detail-head"><small>第 ${s.week||'--'} 周 · ${esc(s.theme||'')}</small><h2>${esc(s.title)}</h2><p>${esc(s.category||'')} · ${esc(s.meta||'')}</p></div>${cover?`<div class="cover-art" style="background-image:url('${esc(cover)}')"></div>`:''}<div class="facts"><div><span>词汇</span><strong>${s.words?.length||0}</strong></div><div><span>TPR</span><strong>${tprRows.length}</strong></div><div><span>句型</span><strong>${s.patterns?.length||0}</strong></div><div><span>歌词</span><strong>${s.lyrics?.length||0}</strong></div></div><section class="section"><div class="section-head"><h3>完整歌词</h3><small>${s.lyrics?.length||0} 行</small></div><div class="section-body">${(s.lyrics||[]).map((l,i)=>`<div class="lyric"><b>${i+1}</b><span>${esc(l)}</span></div>`).join('')||'<div class="empty">暂无歌词</div>'}</div></section><section class="section"><div class="section-head"><h3>核心词汇</h3><small>${s.words?.length||0} 个</small></div><div class="word-grid">${(s.words||[]).map(wordCard).join('')||'<div class="empty">暂无词汇</div>'}</div></section><section class="section"><div class="section-head"><h3>TPR动作</h3><small>${tprRows.length} 条</small></div><div class="section-body">${tprRows.map((t,i)=>`<div class="tpr-row"><b>${i+1}</b><span><strong>${tprAction(t.lyric)}</strong><div class="meaning">${esc(t.translation)}</div></span></div>`).join('')||'<div class="empty">暂无TPR动作</div>'}</div></section><section class="section"><div class="section-head"><h3>匹配句型</h3><small>${s.patterns?.length||0} 条</small></div><div class="section-body">${(s.patterns||[]).map(patternCard).join('')||'<div class="empty">暂无句型</div>'}</div></section><div style="height:84px"></div>`;
+  $('songRoot').dataset.sheet=sheet; $('songRoot').innerHTML=`<div class="detail-bar"><button class="back" type="button" data-back>← 返回</button><div class="detail-actions"><button class="toggle" type="button" id="printDetail">打印本页</button>${badge(status(sheet))}<button class="toggle ${done(sheet)?'is-done':''}" type="button" data-toggle="${esc(sheet)}">${status(sheet)==='已完成'?'取消打卡':'标记完成'}</button></div></div><div class="detail-head"><small>第 ${s.week||'--'} 周 · ${esc(s.theme||'')}</small><h2>${esc(s.title)}</h2><p>${esc(s.category||'')} · ${esc(s.meta||'')}</p></div>${coverHTML(localCover,cover)}<div class="facts"><div><span>词汇</span><strong>${s.words?.length||0}</strong></div><div><span>TPR</span><strong>${tprRows.length}</strong></div><div><span>句型</span><strong>${s.patterns?.length||0}</strong></div><div><span>歌词</span><strong>${s.lyrics?.length||0}</strong></div></div><section class="section"><div class="section-head"><h3>完整歌词</h3><small>${s.lyrics?.length||0} 行</small></div><div class="section-body">${(s.lyrics||[]).map((l,i)=>`<div class="lyric"><b>${i+1}</b><span>${esc(l)}</span></div>`).join('')||'<div class="empty">暂无歌词</div>'}</div></section><section class="section"><div class="section-head"><h3>核心词汇</h3><small>${s.words?.length||0} 个</small></div><div class="word-grid">${(s.words||[]).map(wordCard).join('')||'<div class="empty">暂无词汇</div>'}</div></section><section class="section"><div class="section-head"><h3>TPR动作</h3><small>${tprRows.length} 条</small></div><div class="section-body">${tprRows.map((t,i)=>`<div class="tpr-row"><b>${i+1}</b><span><strong>${tprAction(t.lyric)}</strong><div class="meaning">${esc(t.translation)}</div></span></div>`).join('')||'<div class="empty">暂无TPR动作</div>'}</div></section><section class="section"><div class="section-head"><h3>匹配句型</h3><small>${s.patterns?.length||0} 条</small></div><div class="section-body">${(s.patterns||[]).map(patternCard).join('')||'<div class="empty">暂无句型</div>'}</div></section><div style="height:84px"></div>`;
   $('listRoot').classList.add('hidden'); $('statsRoot').classList.add('hidden'); $('songRoot').classList.remove('hidden'); $('songRoot').classList.add('active'); document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view==='songRoot')); window.scrollTo({top:0});
 }
 function show(view){ document.querySelectorAll('.main').forEach(x=>x.classList.remove('active')); document.querySelectorAll('.main').forEach(x=>x.classList.add('hidden')); const target=$(view); target.classList.remove('hidden'); target.classList.add('active'); document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.view===view)); if(view!=='songRoot'){if(view==='listRoot')drawList();if(view==='statsRoot')drawStats();} window.scrollTo({top:0}); }
@@ -409,6 +414,13 @@ document.body.addEventListener('click',e=>{
   if(e.target.closest('#pdfOpen')){if(lastPdf.url){const a=document.createElement('a');a.href=lastPdf.url;a.download=lastPdf.name;a.click();}return;}
   if(e.target.closest('#pdfShare')){if(lastPdf.blob&&navigator.share){navigator.share({files:[new File([lastPdf.blob],lastPdf.name,{type:'application/pdf'})],title:lastPdf.name}).catch(()=>{});}else if(lastPdf.url){window.open(lastPdf.url,'_blank');}return;}
   if(e.target.closest('#pdfClose')){$('pdfOverlay').classList.remove('show');return;}
+  if(e.target.closest('#printDetail')){
+    const s=bySheet.get(document.querySelector('#songRoot')?.dataset?.sheet||'');
+    if(!s)return;
+    const title=`第 ${s.week||'--'} 周 · ${s.title}`;
+    const body=`<div class="print-theme"><h2>完整歌词</h2><ul>${(s.lyrics||[]).map(l=>`<li>${esc(l)}</li>`).join('')}</ul></div><div class="print-theme"><h2>核心词汇</h2><ul>${(s.words||[]).map(w=>`<li>${esc(w.english)} ${esc(w.ipa)} · ${esc(w.meaning)}</li>`).join('')}</ul></div><div class="print-theme"><h2>TPR动作</h2><ul>${(s.tpr||[]).filter(t=>t.lyric).map(t=>`<li>${esc(t.lyric)} · ${esc(t.translation)}</li>`).join('')}</ul></div><div class="print-theme"><h2>匹配句型</h2><ul>${(s.patterns||[]).map(p=>`<li>${esc(p.type)} ${esc(p.pattern)}</li>`).join('')}</ul></div>`;
+    printHTML(title,s.meta||'',body,false);return;
+  }
   if(e.target.closest('[data-back]'))return show('listRoot');
 });
 drawChips();renderAll();drawProfile();drawStreak();show('todayRoot');
