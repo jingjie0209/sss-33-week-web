@@ -89,7 +89,6 @@ button,input{font:inherit}button{cursor:pointer}
 <div class="app">
   <div id="todayFeedback" class="today-feedback" aria-hidden="true"><div class="feedback-circle">✓</div><div class="feedback-text">已完成</div></div>
   <div id="todayRoot" class="main active">
-    <header class="mobile-head"><small>THIS WEEK</small><h1>本周学习</h1><div class="mobile-stats"><div class="mstat"><span>已完成</span><strong id="todayTotal">0/99 首</strong></div><div class="mstat"><span>坚持</span><strong id="todayWeek">第 1 周</strong></div><div class="mstat"><span>本周</span><strong id="todayStat">0/3</strong></div></div><div class="mobile-progress"><i id="todayBar"></i></div></header>
     <main class="content"><div id="todayList" class="today-list"></div></main>
   </div>
 
@@ -207,15 +206,11 @@ function drawStreak(){
 function celebrate(barId){
   const feedback=$('todayFeedback');feedback.classList.remove('show');void feedback.offsetWidth;feedback.classList.add('show');
   setTimeout(()=>feedback.classList.remove('show'),700);
-  const bar=$(barId);bar.classList.remove('jump');void bar.offsetWidth;bar.classList.add('jump');
+  const bar=$(barId);if(bar){bar.classList.remove('jump');void bar.offsetWidth;bar.classList.add('jump');}
 }
 function drawToday(){
   const week=currentWeek();
-  $('todayStat').textContent=`${week.doneCount}/${week.songs.length}`;
-  $('todayWeek').textContent=week.week||'--';
   const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)), ds=sheets.filter(done).length;
-  $('todayTotal').textContent=`${ds}/${sheets.length} 首`;
-  $('todayBar').style.width=`${sheets.length?ds/sheets.length*100:0}%`;
   const card=(title,sub,items,render)=>items.length?`<section class="today-card"><div class="today-card-head"><h3>${title}</h3><small>${sub}</small></div><div class="today-card-body">${items.map(render).join('')}</div></section>`:'';
   const heroes=week.songs.map((song,index)=>{
     const info=bySheet.get(song.sheet), allDone=done(song.sheet), tpr=(info?.tpr||[]).filter(t=>t.lyric);
@@ -342,7 +337,7 @@ document.body.addEventListener('click',e=>{
   const toggle=e.target.closest('[data-toggle]'); if(toggle){
     const sheet=toggle.dataset.toggle, completing=!done(sheet);
     state[sheet]=completing?{status:'已完成',completedAt:new Date().toISOString()}:{status:'待打卡',completedAt:''};save();renderAll();drawStreak();
-    if(completing)celebrate($('todayRoot').classList.contains('active')?'todayBar':'progressBar');
+    if(completing)celebrate('progressBar');
     if(!$('songRoot').classList.contains('hidden'))openSong(sheet);
     return;
   }
