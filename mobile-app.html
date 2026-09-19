@@ -63,7 +63,9 @@ button,input{font:inherit}button{cursor:pointer}
 .tpr-row{display:grid;grid-template-columns:28px minmax(0,1fr);gap:9px;align-items:start;padding:9px 0;border-bottom:1px solid #edf1f0}.tpr-row:last-child{border-bottom:0}.tpr-row b{width:28px;height:28px;display:grid;place-items:center;border-radius:8px;background:var(--soft);color:var(--deep);font-size:12px}
 .tpr-row strong{font-weight:750}.tpr-row .tpr-action{color:var(--brand);font-weight:800}
 .qa .trans{color:var(--muted);font-size:11px}
-.qa-examples{margin:7px 0 0;padding:0;list-style:none}.qa-examples li{padding:6px 8px;border-radius:8px;background:#f5f9f8;color:#5b6d70;font-size:12px;line-height:1.5}.qa-examples li+li{margin-top:5px}.qa-examples b{color:var(--deep)}
+.qa p{font-size:16px}
+.qa .trans{font-size:13px}
+.qa-examples{margin:7px 0 0;padding:0;list-style:none}.qa-examples li{padding:9px 10px;border-radius:8px;background:#f5f9f8;color:#46585b;font-size:14px;line-height:1.55}.qa-examples li+li{margin-top:6px}.qa-examples b{color:var(--deep);font-weight:800}
 .stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;padding:14px 16px}.stat-card{padding:13px;border:1px solid var(--line);border-radius:12px;background:#fbfdfc}.stat-card span{color:var(--muted);font-size:11px}.stat-card strong{display:block;margin-top:4px;font-size:22px}.stat-card small{display:block;margin-top:4px;color:var(--muted);font-size:10px}
 .tabbar{position:fixed;left:0;right:0;bottom:0;z-index:30;display:flex;justify-content:center;background:rgba(255,255,255,.94);border-top:1px solid var(--line);backdrop-filter:blur(14px);padding:6px max(8px,env(safe-area-inset-bottom))}
 .tabbar-inner{display:grid;grid-template-columns:repeat(3,1fr);width:min(100%,560px)}
@@ -312,8 +314,10 @@ function openSong(sheet){
       ['A','It is '+toIng((s.words||[])[2]?.english||'clap')+' around the flowers.'],
     ]:[];
     const swaps=number===12?['clap now?','stretch up high?','touch your toes?','turn around?','say hello?']:number===57?['It is clapping around the flowers.','It is stomping around the flowers.','It is turning around the flowers.']:[];
+    const swapZh=number===12?'我现在可以拍手吗？ / 我可以伸高吗？ / 我可以摸脚趾吗？ / 我可以转圈吗？ / 我可以说 Hello 吗？':'它在花丛边拍手。 / 它在花丛边跺脚。 / 它在花丛边转圈。';
+    const exampleZh=number===12?'如果你想去睡觉，你会怎么问？我现在可以睡觉吗？':number===57?'看，这里有美丽的花。在花丛边你能做什么？ / 熊猫在花丛边做什么？ / 熊猫在花丛边跳舞。':'';
     const zhFor={12:'我可以……吗？ / 是的，你可以。',57:'它在做什么？ / 它正在……花丛边。'};
-    return `<div class="qa"><small>${esc(p.type)} ${number?number+'.':''}</small><p>${esc(p.pattern)}</p>${zhFor[number]?`<div class="trans">${esc(zhFor[number])}</div>`:''}${body.length?`<ul class="qa-examples">${body.map(([k,v])=>`<li><b>${k}:</b> ${esc(v)}</li>`).join('')}</ul>`:''}${swaps.length?`<ul class="qa-examples"><li><b>替换词：</b>${swaps.map(esc).join(' / ')}</li></ul>`:''}${examples.length?`<ul class="qa-examples">${examples.map(x=>`<li>${x}</li>`).join('')}</ul>`:''}</div>`;
+    return `<div class="qa"><small>${esc(p.type)} ${number?number+'.':''}</small><p>${esc(p.pattern)}</p>${zhFor[number]?`<div class="trans">${esc(zhFor[number])}</div>`:''}${body.length?`<ul class="qa-examples">${body.map(([k,v])=>`<li><b>${k}:</b> ${esc(v)}</li>`).join('')}</ul>`:''}${swaps.length?`<ul class="qa-examples"><li><b>替换词：</b>${swaps.map(esc).join(' / ')}<br><span style="color:#67797c">${esc(swapZh)}</span></li></ul>`:''}${examples.length?`<ul class="qa-examples">${examples.map(x=>`<li>${x}</li>`).join('')}${exampleZh?`<li><span style="color:#67797c">${esc(exampleZh)}</span></li>`:''}</ul>`:''}</div>`;
   };
   const tprRows=(s.tpr||[]).filter(t=>t.lyric);
   const tprAction=(lyric)=>{
