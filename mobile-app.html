@@ -232,6 +232,19 @@ function celebrate(barId){
   setTimeout(()=>feedback.classList.remove('show'),700);
   const bar=$(barId);if(bar){bar.classList.remove('jump');void bar.offsetWidth;bar.classList.add('jump');}
 }
+function transHTML(p){
+  const number=Number(String(p.pattern||'').match(/(\\d+)\\s*\\./)?.[1]);
+  const body=p.type==='动词卡'&&number===12?[
+    ['Q','Can I clap now?'],['A','Yes, you can clap now.'],
+  ]:p.type==='动词卡'&&number===57?[
+    ['Q','What is it doing?'],['A','It is clapping around the flowers.'],
+  ]:[];
+  const swaps=number===12?['clap now?','stretch up high?','touch your toes?','turn around?','say hello?']:number===57?['It is clapping around the flowers.','It is stomping around the flowers.','It is turning around the flowers.']:[];
+  const swapZh=number===12?'我现在可以拍手吗？ / 我可以伸高吗？ / 我可以摸脚趾吗？ / 我可以转圈吗？ / 我可以说 Hello 吗？':'它在花丛边拍手。 / 它在花丛边跺脚。 / 它在花丛边转圈。';
+  const exampleZh=number===12?'如果你想去睡觉，你会怎么问？我现在可以睡觉吗？':number===57?'看，这里有美丽的花。在花丛边你能做什么？ / 熊猫在花丛边做什么？ / 熊猫在花丛边跳舞。':'';
+  const zhFor={12:'我可以……吗？ / 是的，你可以。',57:'它在做什么？ / 它正在……花丛边。'};
+  return `${zhFor[number]?`<div class="trans">${esc(zhFor[number])}</div>`:''}${body.length?`<ul class="qa-examples">${body.map(([k,v])=>`<li><b>${k}:</b> ${esc(v)}</li>`).join('')}</ul>`:''}${swaps.length?`<ul class="qa-examples"><li><b>替换词：</b>${swaps.map(esc).join(' / ')}<br><span style="color:#67797c">${esc(swapZh)}</span></li></ul>`:''}`;
+}
 function drawToday(){
   const week=currentWeek();
   const sheets=PLAN.flatMap(w=>w.songs.map(s=>s.sheet)), ds=sheets.filter(done).length;
@@ -367,23 +380,6 @@ function openSong(sheet){
     return `<img class="cover-art" src="${esc(localCover)}">`;
   };
   const tprRows=(s.tpr||[]).filter(t=>t.lyric);
-  const transHTML=(p)=>{
-    const number=popNum(p), lib=(window.SSS_PATTERN_LIBRARY||[]).find(row=>row.type===p.type&&row.number===number);
-    const examples=(lib?.example||'').split(/\r?\n/).filter(Boolean);
-    const actionWord=(s.words||[]).find(w=>['clap','stomp','turn around'].includes(String(w.english).toLowerCase()))?.english||'clap';
-    const body=p.type==='动词卡'&&number===12?[
-      ['Q','Can I '+actionWord+' now?'],
-      ['A','Yes, you can '+actionWord+' now.'],
-    ]:p.type==='动词卡'&&number===57?[
-      ['Q','What is it doing?'],
-      ['A','It is '+toIng(actionWord)+' around the flowers.'],
-    ]:[];
-    const swaps=number===12?['clap now?','stretch up high?','touch your toes?','turn around?','say hello?']:number===57?['It is clapping around the flowers.','It is stomping around the flowers.','It is turning around the flowers.']:[];
-    const swapZh=number===12?'我现在可以拍手吗？ / 我可以伸高吗？ / 我可以摸脚趾吗？ / 我可以转圈吗？ / 我可以说 Hello 吗？':'它在花丛边拍手。 / 它在花丛边跺脚。 / 它在花丛边转圈。';
-    const exampleZh=number===12?'如果你想去睡觉，你会怎么问？我现在可以睡觉吗？':number===57?'看，这里有美丽的花。在花丛边你能做什么？ / 熊猫在花丛边做什么？ / 熊猫在花丛边跳舞。':'';
-    const zhFor={12:'我可以……吗？ / 是的，你可以。',57:'它在做什么？ / 它正在……花丛边。'};
-    return `${zhFor[number]?`<div class="trans">${esc(zhFor[number])}</div>`:''}${body.length?`<ul class="qa-examples">${body.map(([k,v])=>`<li><b>${k}:</b> ${esc(v)}</li>`).join('')}</ul>`:''}${swaps.length?`<ul class="qa-examples"><li><b>替换词：</b>${swaps.map(esc).join(' / ')}<br><span style="color:#67797c">${esc(swapZh)}</span></li></ul>`:''}${examples.length?`<ul class="qa-examples">${examples.map(x=>`<li>${x}</li>`).join('')}${exampleZh?`<li><span style="color:#67797c">${esc(exampleZh)}</span></li>`:''}</ul>`:''}`;
-  };
   const tprAction=(lyric)=>{
     const text=String(lyric||'');
     const actions=['clap your hands','stretch up high','touch your toes','turn around','say "Hello"','say hello'];
