@@ -186,15 +186,21 @@ button { cursor: pointer; }
   </div>
 
   <div id="view-cards" class="tab-view">
-    <section class="module"><div class="module-head"><div><h2>三色卡库</h2></div><span id="cards-mastered-label">已掌握 0</span></div><div class="module-body">
-      <div class="card-seg" id="card-type-seg">
-        <button class="active" data-card-type="noun">名词卡 100</button>
-        <button data-card-type="verb">动词卡 100</button>
-        <button data-card-type="adjective">形容词卡 100</button>
-      </div>
-      <div class="card-seg" id="card-category-seg"></div>
-      <div id="card-grid" class="card-grid"></div>
-    </div></section>
+    <div class="card-seg" id="card-type-seg" style="margin-bottom:10px">
+      <button class="active" data-card-type="noun">名词</button>
+      <button data-card-type="verb">动词</button>
+      <button data-card-type="adjective">形容词</button>
+    </div>
+    <div class="card-seg" id="card-subtab-seg" style="margin-bottom:12px">
+      <button class="active" data-card-subtab="cards">卡片</button>
+      <button data-card-subtab="speaking">开口神器</button>
+      <button data-card-subtab="patterns">基础句型</button>
+      <button data-card-subtab="checkin">打卡表</button>
+    </div>
+    <div class="card-seg" id="card-category-seg"></div>
+    <div id="cards-mastered-label" class="result-note" style="margin-bottom:10px">已掌握 0</div>
+    <div id="card-grid" class="card-grid"></div>
+    <div id="card-subtab-panel"></div>
   </div>
 
   <div id="view-plan" class="tab-view">
@@ -237,7 +243,9 @@ button { cursor: pointer; }
 
 <script src="data.js"></script>
 <script src="pattern-data.js"></script>
+<script src="noun-detail-data.js"></script>
 <script src="noun-card-data.js"></script>
+<script src="checkin-data.js"></script>
 <script src="games-data.js"></script>
 <script src="card-extensions.js"></script>
 <script src="verb-card-data.js"></script>
@@ -458,7 +466,7 @@ document.getElementById("start-today").addEventListener("click", () => {
 const switchTab = (tab) => {
   document.querySelectorAll(".tabbar button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
   document.querySelectorAll(".tab-view").forEach((view) => view.classList.toggle("active", view.id === `view-${tab}`));
-  if (tab === "cards") renderCards();
+  if (tab === "cards") { renderCardSubtab(); }
   if (tab === "plan") renderPlan();
   if (tab === "games") renderGamesTab();
   if (tab === "parent") renderParent();
@@ -469,6 +477,21 @@ document.querySelectorAll(".tabbar button").forEach((button) => {
 });
 
 /* ---------- Cards tab ---------- */
+const checkinState = loadState("susan-checkin-progress-v1", {});
+const patternState = loadState("sss-pattern-progress-v1", {});
+const saveCheckinState = () => saveState("susan-checkin-progress-v1", checkinState);
+const savePatternState = () => saveState("sss-pattern-progress-v1", patternState);
+const patternKeyOf = (type, number) => `${type}:${number}`;
+const patternIsDone = (type, number) => Boolean(patternState[patternKeyOf(type, number)]);
+const checkinIdFor = (type) => type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin";
+const checkinToggle = (key) => { checkinState[key] = !checkinState[key]; saveCheckinState(); };
+const patternToggleState = (type, number) => { const key = patternKeyOf(type, number); patternState[key] = !patternState[key]; savePatternState(); };
+const statusBadgeHtml = (done) => `<span class="status ${done ? "done" : "pending"}">${done ? "已完成" : "待打卡"}</span>`;
+
+let activeCardSubtab = "cards";
+let activeSpeakingMode = "core";
+const NOUN_GUESS_TITLES = ["Duck", "Chick", "Pig", "Elephant", "Horse", "Donkey", "Fox", "Cat", "Owl", "Cow", "Sheep", "Rabbit", "Lion", "Tiger", "Panda", "Monkey", "Dog", "Deer", "Penguin", "Hen", "Banana", "Egg", "Fish", "Candy", "Grape", "Watermelon", "Hamburger", "Carrot", "Coconut", "Apple", "Potato", "Grass", "Flower", "Mouth", "Dress", "Freezer", "Clock", "Hand", "Sofa"];
+
 function renderCardCategorySeg() {
   const cards = cardSources()[activeCardType];
   const counts = new Map();
@@ -490,9 +513,77 @@ function renderCards() {
     const label = cardCategoryLabel(activeCardType, card.number);
     return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><small>${escapeHtml(label)}</small><strong>${escapeHtml(name)}</strong></div></button>`;
   }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
-  const masteredKey = `cards-mastered-${activeCardType}`;
-  const mastered = Object.values(loadState(masteredKey, {})).filter(Boolean).length;
+  const checkinId = checkinIdFor(activeCardType);
+  const mastered = cards.filter((card) => checkinState[`${checkinId}:${card.number}`]).length;
   document.getElementById("cards-mastered-label").textContent = `已掌握 ${mastered}/${cards.length}`;
+}
+
+function renderSpeaking() {
+  const panel = document.getElementById("card-subtab-panel");
+  document.getElementById("card-grid").style.display = "none";
+  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("card-category-seg").style.display = "none";
+  if (activeCardType === "noun") {
+    const modes = [["core", "核心问答", 51], ["guess", "描述猜词", 39], ["true-false", "判断正误", 10]];
+    let items = [];
+    if (activeSpeakingMode === "core") {
+      items = (window.SSS_NOUN_DETAILS || []).map((item) => ({ number: item.number, title: item.pattern, image: `assets/noun-speaking-cards/card-${String(item.number).padStart(2, "0")}.jpg` }));
+    } else {
+      const start = activeSpeakingMode === "guess" ? 52 : 91;
+      const end = activeSpeakingMode === "guess" ? 90 : 100;
+      items = Array.from({ length: end - start + 1 }, (_, index) => {
+        const number = start + index;
+        return { number, title: activeSpeakingMode === "guess" ? NOUN_GUESS_TITLES[number - 52] : `判断正误 ${number}`, image: `assets/noun-speaking-advanced/card-${String(number).padStart(3, "0")}.jpg` };
+      });
+    }
+    panel.innerHTML = `<div class="card-seg" style="margin-bottom:10px">${modes.map(([id, label, count]) => `<button class="${activeSpeakingMode === id ? "active" : ""}" data-speaking-mode="${id}">${label} ${count}</button>`).join("")}</div><div class="card-grid">${items.map((item) => `<button class="card-tile" type="button" data-speaking-card="${item.number}"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy"><span class="card-no">${item.number}</span><div class="card-body"><small>名词句型</small><strong>${escapeHtml(item.title)}</strong></div></button>`).join("")}</div>`;
+    return;
+  }
+  if (activeCardType === "verb") {
+    const items = (patterns || []).filter((item) => item.type === "动词卡" && item.number <= 60);
+    panel.innerHTML = `<p class="result-note" style="margin-bottom:10px">显示 ${items.length} 张动词开口神器</p><div class="card-grid">${items.map((item) => `<button class="card-tile" type="button" data-speaking-card="${item.number}"><img src="assets/verb-speaking-cards/card-${String(item.number).padStart(2, "0")}.jpg" alt="${escapeHtml(item.pattern)}" loading="lazy"><span class="card-no">${item.number}</span><div class="card-body"><small>动词句型</small><strong>${escapeHtml(item.pattern)}</strong></div></button>`).join("")}</div>`;
+    return;
+  }
+  panel.innerHTML = `<div class="empty">形容词暂无开口神器图卡，可看「基础句型」练习。</div>`;
+}
+
+function renderPatternsTable() {
+  const panel = document.getElementById("card-subtab-panel");
+  document.getElementById("card-grid").style.display = "none";
+  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("card-category-seg").style.display = "none";
+  const typeLabel = { noun: "名词卡", verb: "动词卡", adjective: "形容词卡" }[activeCardType];
+  const items = (patterns || []).filter((item) => item.type === typeLabel);
+  panel.innerHTML = `<section class="module"><div class="module-head"><h2>基础句型</h2><span>${items.length} 条</span></div><div class="module-body" style="padding:0"><table class="record-table" style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">序号</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">句型</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">状态</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">操作</th></tr></thead><tbody>${items.map((item) => { const done = patternIsDone(typeLabel, item.number); return `<tr><td style="padding:9px 12px;border-bottom:1px solid var(--line)">${item.number}</td><td style="padding:9px 12px;border-bottom:1px solid var(--line)"><strong>${escapeHtml(item.pattern)}</strong></td><td style="padding:9px 12px;border-bottom:1px solid var(--line)">${statusBadgeHtml(done)}</td><td style="padding:9px 12px;border-bottom:1px solid var(--line)"><button class="tiny-action" data-toggle-pattern="${escapeHtml(typeLabel)}:${item.number}">${done ? "取消完成" : "完成"}</button></td></tr>`; }).join("")}</tbody></table></div></section>`;
+}
+
+function renderCheckinTable() {
+  const panel = document.getElementById("card-subtab-panel");
+  document.getElementById("card-grid").style.display = "none";
+  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("card-category-seg").style.display = "none";
+  const checkinId = checkinIdFor(activeCardType);
+  const list = (window.SUSAN_CHECKIN_DATA?.lists || []).find((item) => item.id === checkinId);
+  if (!list) { panel.innerHTML = `<div class="empty">暂无打卡表数据</div>`; return; }
+  const done = list.items.filter((item) => checkinState[`${checkinId}:${item.number}`]).length;
+  const typeLabel = { noun: "名词", verb: "动词", adjective: "形容词" }[activeCardType];
+  panel.innerHTML = `<section class="module"><div class="module-head"><h2>${escapeHtml(typeLabel)}打卡表</h2><span>${done}/${list.items.length}</span></div><div class="module-body" style="padding:0"><table class="record-table" style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">序号</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">词汇</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">状态</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">操作</th></tr></thead><tbody>${list.items.map((item) => { const key = `${checkinId}:${item.number}`; const complete = Boolean(checkinState[key]); return `<tr><td style="padding:9px 12px;border-bottom:1px solid var(--line)">${item.number}</td><td style="padding:9px 12px;border-bottom:1px solid var(--line)"><strong>${escapeHtml(item.word)}</strong></td><td style="padding:9px 12px;border-bottom:1px solid var(--line)">${statusBadgeHtml(complete)}</td><td style="padding:9px 12px;border-bottom:1px solid var(--line)"><button class="tiny-action" data-toggle-checkin="${escapeHtml(key)}">${complete ? "取消完成" : "完成"}</button></td></tr>`; }).join("")}</tbody></table></div></section>`;
+}
+
+function renderCardSubtab() {
+  document.querySelectorAll("#card-subtab-seg button").forEach((button) => button.classList.toggle("active", button.dataset.cardSubtab === activeCardSubtab));
+  if (activeCardSubtab === "cards") {
+    document.getElementById("card-grid").style.display = "";
+    document.getElementById("cards-mastered-label").style.display = "";
+    document.getElementById("card-category-seg").style.display = "";
+    document.getElementById("card-subtab-panel").innerHTML = "";
+    renderCardCategorySeg();
+    renderCards();
+    return;
+  }
+  if (activeCardSubtab === "speaking") { renderSpeaking(); return; }
+  if (activeCardSubtab === "patterns") { renderPatternsTable(); return; }
+  renderCheckinTable();
 }
 
 document.getElementById("card-type-seg").addEventListener("click", (event) => {
@@ -501,8 +592,15 @@ document.getElementById("card-type-seg").addEventListener("click", (event) => {
   activeCardType = button.dataset.cardType;
   activeCardCategory = "全部";
   document.querySelectorAll("#card-type-seg button").forEach((item) => item.classList.toggle("active", item === button));
-  renderCardCategorySeg();
-  renderCards();
+  activeSpeakingMode = "core";
+  renderCardSubtab();
+});
+
+document.getElementById("card-subtab-seg").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-card-subtab]");
+  if (!button) return;
+  activeCardSubtab = button.dataset.cardSubtab;
+  renderCardSubtab();
 });
 
 document.getElementById("card-category-seg").addEventListener("click", (event) => {
@@ -511,6 +609,25 @@ document.getElementById("card-category-seg").addEventListener("click", (event) =
   activeCardCategory = button.dataset.cardCategory;
   document.querySelectorAll("#card-category-seg button").forEach((item) => item.classList.toggle("active", item === button));
   renderCards();
+});
+
+document.addEventListener("click", (event) => {
+  const mode = event.target.closest("[data-speaking-mode]");
+  if (mode) { activeSpeakingMode = mode.dataset.speakingMode; renderSpeaking(); return; }
+  const patternButton = event.target.closest("[data-toggle-pattern]");
+  if (patternButton) {
+    const [type, number] = patternButton.dataset.togglePattern.split(":");
+    patternToggleState(type, Number(number));
+    toast(patternIsDone(type, Number(number)) ? "句型已打卡" : "已取消打卡");
+    renderCardSubtab();
+    return;
+  }
+  const checkinButton = event.target.closest("[data-toggle-checkin]");
+  if (checkinButton) {
+    checkinToggle(checkinButton.dataset.toggleCheckin);
+    toast("打卡状态已更新");
+    renderCardSubtab();
+  }
 });
 
 /* ---------- Plan tab ---------- */
