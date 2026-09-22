@@ -27,7 +27,44 @@ button { cursor: pointer; }
 .brand-copy small { margin-top: 3px; color: var(--muted); font-size: 12px; }
 .site-link { flex: none; padding: 9px 14px; border: 1px solid #cbd8d6; border-radius: 7px; background: #fff; color: var(--brand-deep); font-size: 13px; font-weight: 700; text-decoration: none; }
 .site-link:hover { border-color: var(--brand); background: var(--brand-soft); }
-.page { max-width: 1320px; margin: 0 auto; padding: 22px clamp(16px, 3vw, 40px) 80px; }
+.page { max-width: 1320px; margin: 0 auto; padding: 22px clamp(16px, 3vw, 40px) 110px; }
+.tabbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 40; display: flex; justify-content: center; gap: 4px; padding: 8px 10px calc(8px + env(safe-area-inset-bottom)); background: rgba(255,255,255,.97); border-top: 1px solid var(--line); box-shadow: 0 -6px 20px rgba(20,50,52,.07); }
+.tabbar button { flex: 0 1 96px; display: grid; justify-items: center; gap: 3px; padding: 6px 4px; border: 0; border-radius: 10px; background: none; color: var(--muted); font-size: 11.5px; font-weight: 700; }
+.tabbar button i { display: block; width: 20px; height: 20px; border-radius: 6px; background: #d8e4e3; }
+.tabbar button.active { color: var(--brand); }
+.tabbar button.active i { background: var(--brand); }
+.tabbar button:hover { color: var(--brand); }
+.tab-view { display: none; }
+.tab-view.active { display: block; }
+.card-seg { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
+.card-seg button { padding: 8px 14px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12.5px; font-weight: 700; }
+.card-seg button.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+.card-seg button:hover { border-color: var(--brand); color: var(--brand); }
+.card-seg button.active:hover { color: #fff; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
+.card-tile { position: relative; border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden; text-align: left; padding: 0; }
+.card-tile img { display: block; width: 100%; height: 120px; object-fit: cover; background: #eef4f3; }
+.card-tile .card-no { position: absolute; left: 8px; top: 8px; min-width: 22px; height: 22px; padding: 0 6px; display: grid; place-items: center; border-radius: 999px; background: rgba(23,107,112,.92); color: #fff; font-size: 11px; font-weight: 800; }
+.card-tile .card-body { padding: 9px 11px 11px; }
+.card-tile .card-body small { display: block; color: var(--muted); font-size: 10.5px; }
+.card-tile .card-body strong { display: block; margin-top: 2px; font-size: 14px; }
+.plan-week { border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden; margin-bottom: 10px; }
+.plan-week-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 12px 14px; background: #f7faf9; border-bottom: 1px solid var(--line); }
+.plan-week-head h3 { margin: 0; font-size: 14.5px; }
+.plan-week-head small { color: var(--muted); font-size: 11.5px; }
+.plan-songs { display: grid; gap: 8px; padding: 12px 14px; }
+.plan-song { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 8px; }
+.plan-song.done { border-color: var(--green); background: #f4fbf8; }
+.plan-song strong { font-size: 13.5px; }
+.game-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.game-filter-row button { padding: 7px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12.5px; font-weight: 700; }
+.game-filter-row button.active { background: var(--brand); border-color: var(--brand); color: #fff; }
+.parent-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.parent-card { padding: 16px; background: #fff; border: 1px solid var(--line); border-radius: 10px; }
+.parent-card h3 { margin: 0 0 6px; font-size: 15px; }
+.parent-card p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.55; }
+.parent-card .stat-line { display: flex; justify-content: space-between; margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); font-size: 13px; }
+.parent-card .stat-line b { color: var(--brand); }
 .hero { position: relative; overflow: hidden; padding: 24px 26px 30px; border-radius: 12px; background: linear-gradient(120deg, #0d494e, #176b70 55%, #1e848c); color: #fff; box-shadow: var(--shadow); }
 .hero-kicker { margin: 0; color: #9fd2ce; font-size: 12px; font-weight: 800; letter-spacing: .12em; }
 .hero h1 { margin: 7px 0 9px; font-size: 28px; line-height: 1.2; }
@@ -125,6 +162,7 @@ button { cursor: pointer; }
 </header>
 
 <main class="page">
+  <div id="view-today" class="tab-view active">
   <section class="hero">
     <p class="hero-kicker">SUSAN LEARNING DESK · TODAY</p>
     <h1 id="hero-title">今天，和宝宝一起把一句话说出来。</h1>
@@ -145,16 +183,65 @@ button { cursor: pointer; }
 
   <div id="steps-root"></div>
 
+  </div>
+
+  <div id="view-cards" class="tab-view">
+    <section class="module"><div class="module-head"><div><h2>三色卡库</h2></div><span id="cards-mastered-label">已掌握 0</span></div><div class="module-body">
+      <div class="card-seg" id="card-type-seg">
+        <button class="active" data-card-type="noun">名词卡 100</button>
+        <button data-card-type="verb">动词卡 100</button>
+        <button data-card-type="adjective">形容词卡 100</button>
+      </div>
+      <div class="card-seg" id="card-category-seg"></div>
+      <div id="card-grid" class="card-grid"></div>
+    </div></section>
+  </div>
+
+  <div id="view-plan" class="tab-view">
+    <section class="module"><div class="module-head"><div><h2>33 周计划表</h2></div><span id="plan-progress-label">0/99</span></div><div class="module-body">
+      <div id="plan-list"></div>
+    </div></section>
+  </div>
+
+  <div id="view-games" class="tab-view">
+    <section class="module"><div class="module-head"><div><h2>游戏库</h2></div><span id="games-count-label"></span></div><div class="module-body">
+      <div class="game-filter-row" id="game-filter-row">
+        <button class="active" data-game-filter="all">全部</button>
+        <button data-game-filter="intro">引入 · 动起来</button>
+        <button data-game-filter="review">复习 · Zoom in</button>
+        <button data-game-filter="challenge">闯关情景</button>
+      </div>
+      <div id="games-full-list" class="game-list"></div>
+    </div></section>
+  </div>
+
+  <div id="view-parent" class="tab-view">
+    <section class="module"><div class="module-head"><div><h2>家长面板</h2></div><span>数据只保存在本机</span></div><div class="module-body">
+      <div class="parent-grid" id="parent-cards"></div>
+    </div></section>
+  </div>
+
   <footer class="page-foot">
     <p>打卡进度保存在本机浏览器，与「完整学习站」共用同一份记录（同一浏览器、同一打开方式）。</p>
     <p>数据来源：Susan 33 周 SSS 儿歌计划 · 99 首儿歌 / 219 个核心句型。</p>
   </footer>
 </main>
 
+<nav class="tabbar" id="tabbar">
+  <button class="active" data-tab="today"><i></i>今日</button>
+  <button data-tab="cards"><i></i>卡库</button>
+  <button data-tab="plan"><i></i>计划</button>
+  <button data-tab="games"><i></i>游戏</button>
+  <button data-tab="parent"><i></i>家长</button>
+</nav>
+
 <script src="data.js"></script>
 <script src="pattern-data.js"></script>
 <script src="noun-card-data.js"></script>
 <script src="games-data.js"></script>
+<script src="card-extensions.js"></script>
+<script src="verb-card-data.js"></script>
+<script src="adjective-card-data.js"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -212,6 +299,19 @@ const patternForWeek = (week) => {
   const weekNumber = week.week || 1;
   return patterns.find((item) => item.type === "名词卡" && item.number === weekNumber) || patterns[0] || {};
 };
+
+const cardSources = () => ({
+  noun: window.SSS_NOUN_CARDS || [],
+  verb: window.SUSAN_VERB_CARDS || [],
+  adjective: window.SUSAN_ADJECTIVE_CARDS || [],
+});
+const cardName = (card, type) => type === "verb" ? (card.word || "") : (card.name || "");
+const cardImage = (card, type) => card.image || "";
+const cardCategories = window.SUSAN_CARD_CATEGORIES || {};
+const cardCategoryLabel = (type, number) => (cardCategories[type] || {})[number] || "其他";
+let activeCardType = "noun";
+let activeCardCategory = "全部";
+let activeGameFilter = "all";
 
 const youtubeThumbnail = (url) => {
   const match = String(url || "").match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/);
@@ -352,6 +452,131 @@ document.addEventListener("click", (event) => {
 
 document.getElementById("start-today").addEventListener("click", () => {
   document.getElementById("steps-root").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+/* ---------- Tab navigation ---------- */
+const switchTab = (tab) => {
+  document.querySelectorAll(".tabbar button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
+  document.querySelectorAll(".tab-view").forEach((view) => view.classList.toggle("active", view.id === `view-${tab}`));
+  if (tab === "cards") renderCards();
+  if (tab === "plan") renderPlan();
+  if (tab === "games") renderGamesTab();
+  if (tab === "parent") renderParent();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+};
+document.querySelectorAll(".tabbar button").forEach((button) => {
+  button.addEventListener("click", () => switchTab(button.dataset.tab));
+});
+
+/* ---------- Cards tab ---------- */
+function renderCardCategorySeg() {
+  const cards = cardSources()[activeCardType];
+  const counts = new Map();
+  cards.forEach((card) => {
+    const label = cardCategoryLabel(activeCardType, card.number);
+    counts.set(label, (counts.get(label) || 0) + 1);
+  });
+  const entries = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+  document.getElementById("card-category-seg").innerHTML = [["全部", cards.length], ...entries]
+    .map(([label, count]) => `<button class="${activeCardCategory === label ? "active" : ""}" data-card-category="${escapeHtml(label)}">${escapeHtml(label)} ${count}</button>`).join("");
+}
+
+function renderCards() {
+  const cards = cardSources()[activeCardType];
+  const filtered = cards.filter((card) => activeCardCategory === "全部" || cardCategoryLabel(activeCardType, card.number) === activeCardCategory);
+  document.getElementById("card-grid").innerHTML = filtered.map((card) => {
+    const name = cardName(card, activeCardType) || `#${card.number}`;
+    const img = cardImage(card, activeCardType);
+    const label = cardCategoryLabel(activeCardType, card.number);
+    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><small>${escapeHtml(label)}</small><strong>${escapeHtml(name)}</strong></div></button>`;
+  }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
+  const masteredKey = `cards-mastered-${activeCardType}`;
+  const mastered = Object.values(loadState(masteredKey, {})).filter(Boolean).length;
+  document.getElementById("cards-mastered-label").textContent = `已掌握 ${mastered}/${cards.length}`;
+}
+
+document.getElementById("card-type-seg").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-card-type]");
+  if (!button) return;
+  activeCardType = button.dataset.cardType;
+  activeCardCategory = "全部";
+  document.querySelectorAll("#card-type-seg button").forEach((item) => item.classList.toggle("active", item === button));
+  renderCardCategorySeg();
+  renderCards();
+});
+
+document.getElementById("card-category-seg").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-card-category]");
+  if (!button) return;
+  activeCardCategory = button.dataset.cardCategory;
+  document.querySelectorAll("#card-category-seg button").forEach((item) => item.classList.toggle("active", item === button));
+  renderCards();
+});
+
+/* ---------- Plan tab ---------- */
+function renderPlan() {
+  const totalDone = songs.filter((item) => isDone(item.sheet)).length;
+  document.getElementById("plan-progress-label").textContent = `${totalDone}/${songs.length}`;
+  document.getElementById("plan-list").innerHTML = weeks.map((week) => {
+    const weekSongs = week.songs.map((item) => songBySheet.get(item.sheet)).filter(Boolean);
+    const done = weekSongs.filter((item) => isDone(item.sheet)).length;
+    const complete = done === weekSongs.length && weekSongs.length > 0;
+    return `<article class="plan-week"><div class="plan-week-head"><div><h3>${escapeHtml(week.label)} · ${escapeHtml(week.theme)}</h3><small>${done}/${weekSongs.length} 已完成</small></div>${complete ? '<span class="status done">本周完成</span>' : ""}</div><div class="plan-songs">${weekSongs.map((item) => `<div class="plan-song ${isDone(item.sheet) ? "done" : ""}"><div><strong>${escapeHtml(item.title)}</strong></div><div style="display:flex;align-items:center;gap:8px"><span class="status ${isDone(item.sheet) ? "done" : "pending"}">${isDone(item.sheet) ? "已完成" : "待打卡"}</span><button class="tiny-action" data-toggle-song="${escapeHtml(item.sheet)}">${isDone(item.sheet) ? "取消" : "完成"}</button></div></div>`).join("")}</div></article>`;
+  }).join("");
+}
+
+/* ---------- Games tab ---------- */
+function renderGamesTab() {
+  const games = window.SUSAN_GAMES_DATA || [];
+  const filtered = games.filter((game) => activeGameFilter === "all" || game.type === activeGameFilter);
+  const typeLabel = { intro: "引入", review: "复习", challenge: "闯关" };
+  document.getElementById("games-count-label").textContent = `${filtered.length} 个游戏`;
+  document.getElementById("games-full-list").innerHTML = filtered.map((game) => {
+    const done = gameState.includes(game.id);
+    const dialogue = (game.dialogue || []).map((line) => `<div class="${line.who}"><b>${line.who === "mom" ? "👩 妈妈" : "🧒 宝宝"}</b>${escapeHtml(line.text)}</div>`).join("");
+    return `<article class="game-card"><div class="game-card-head"><h3>${escapeHtml(game.name)}</h3><small>${escapeHtml(typeLabel[game.type] || game.type)} · ${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</small></div><div class="game-card-body"><p>${escapeHtml(game.how || "")}</p><div class="game-props">${(game.props || []).map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div><div class="dialogue">${dialogue}</div><div style="margin-top:10px"><button class="tiny-action${done ? " done" : ""}" data-game-toggle="${escapeHtml(game.id)}">${done ? "已完成 ✓" : "完成游戏"}</button></div></div></article>`;
+  }).join("");
+}
+
+document.getElementById("game-filter-row").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-game-filter]");
+  if (!button) return;
+  activeGameFilter = button.dataset.gameFilter;
+  document.querySelectorAll("#game-filter-row button").forEach((item) => item.classList.toggle("active", item === button));
+  renderGamesTab();
+});
+
+/* ---------- Parent tab ---------- */
+function renderParent() {
+  const checkinLists = window.SUSAN_CHECKIN_DATA?.lists || [];
+  const totalDone = songs.filter((item) => isDone(item.sheet)).length;
+  const masteredNouns = Object.values(loadState("cards-mastered-noun", {})).filter(Boolean).length;
+  const gameDone = gameState.length;
+  const patternTotal = patterns.length;
+  const rows = [
+    ["儿歌进度", `${totalDone}/${songs.length}`, `完成率 ${songs.length ? Math.round(totalDone / songs.length * 100) : 0}%`],
+    ["名词掌握", `${masteredNouns}/100`, "在卡库中点卡片标记"],
+    ["今日游戏", `${gameDone}/3`, "完成任意 1 个算打卡"],
+    ["核心句型", `${patternTotal} 条`, "名词 51 / 动词 68 / 形容词 100"],
+    ...checkinLists.map((list) => {
+      const done = list.items.filter((item) => loadState(`${list.id}:checkin`, {})[item.number]).length;
+      return [`${list.label}打卡`, `${done}/${list.items.length}`, "与完整学习站同步"];
+    }),
+  ];
+  document.getElementById("parent-cards").innerHTML = rows.map(([label, value, note]) => `<article class="parent-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line"><span>${escapeHtml(note)}</span><b>${escapeHtml(value)}</b></div></article>`).join("");
+}
+
+/* ---------- Card library detail (click to toggle mastery) ---------- */
+document.addEventListener("click", (event) => {
+  const tile = event.target.closest("[data-card-library]");
+  if (!tile) return;
+  const [type, number] = tile.dataset.cardLibrary.split(":");
+  const key = `cards-mastered-${type}`;
+  const state = loadState(key, {});
+  state[number] = !state[number];
+  saveState(key, state);
+  toast(state[number] ? "已标记掌握" : "已取消掌握");
+  renderCards();
 });
 
 window.addEventListener("storage", (event) => {
