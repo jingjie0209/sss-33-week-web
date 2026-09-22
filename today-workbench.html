@@ -44,6 +44,8 @@ button { cursor: pointer; }
 .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px; }
 .card-tile { position: relative; border: 1px solid var(--line); border-radius: 10px; background: #fff; overflow: hidden; text-align: left; padding: 0; }
 .card-tile img { display: block; width: 100%; height: 120px; object-fit: cover; background: #eef4f3; }
+.card-tile img.speaking-img { height: auto; aspect-ratio: 595 / 842; object-fit: contain; background: #f4f6f5; }
+.card-tile img.speaking-advanced-img { height: auto; aspect-ratio: 2.05 / 1; object-fit: contain; background: #f4f6f5; }
 .card-tile .card-no { position: absolute; left: 8px; top: 8px; min-width: 22px; height: 22px; padding: 0 6px; display: grid; place-items: center; border-radius: 999px; background: rgba(23,107,112,.92); color: #fff; font-size: 11px; font-weight: 800; }
 .card-tile .card-body { padding: 9px 11px 11px; }
 .card-tile .card-body small { display: block; color: var(--muted); font-size: 10.5px; }
@@ -565,12 +567,12 @@ function renderSpeaking() {
         return { number, title: activeSpeakingMode === "guess" ? NOUN_GUESS_TITLES[number - 52] : `判断正误 ${number}`, image: `assets/noun-speaking-advanced/card-${String(number).padStart(3, "0")}.jpg` };
       });
     }
-    panel.innerHTML = `<div class="card-seg" style="margin-bottom:10px">${modes.map(([id, label, count]) => `<button class="${activeSpeakingMode === id ? "active" : ""}" data-speaking-mode="${id}">${label} ${count}</button>`).join("")}</div><div class="card-grid">${items.map((item) => `<button class="card-tile" type="button" data-speaking-card="${item.number}"><img src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy"><span class="card-no">${item.number}</span><div class="card-body"><small>名词句型</small><strong>${escapeHtml(item.title)}</strong></div></button>`).join("")}</div>`;
+    panel.innerHTML = `<div class="card-seg" style="margin-bottom:10px">${modes.map(([id, label, count]) => `<button class="${activeSpeakingMode === id ? "active" : ""}" data-speaking-mode="${id}">${label} ${count}</button>`).join("")}</div><div class="card-grid">${items.map((item) => `<button class="card-tile" type="button" data-speaking-card="${item.number}"><img class="${activeSpeakingMode === "core" ? "speaking-img" : "speaking-advanced-img"}" src="${escapeHtml(item.image)}" alt="${escapeHtml(item.title)}" loading="lazy"><span class="card-no">${item.number}</span><div class="card-body"><small>名词句型</small><strong>${escapeHtml(item.title)}</strong></div></button>`).join("")}</div>`;
     return;
   }
   if (activeCardType === "verb") {
     const items = (patterns || []).filter((item) => item.type === "动词卡" && item.number <= 60);
-    panel.innerHTML = `<p class="result-note" style="margin-bottom:10px">显示 ${items.length} 张动词开口神器</p><div class="card-grid">${items.map((item) => `<button class="card-tile" type="button" data-speaking-card="${item.number}"><img src="assets/verb-speaking-cards/card-${String(item.number).padStart(2, "0")}.jpg" alt="${escapeHtml(item.pattern)}" loading="lazy"><span class="card-no">${item.number}</span><div class="card-body"><small>动词句型</small><strong>${escapeHtml(item.pattern)}</strong></div></button>`).join("")}</div>`;
+    panel.innerHTML = `<p class="result-note" style="margin-bottom:10px">显示 ${items.length} 张动词开口神器</p><div class="card-grid">${items.map((item) => `<button class="card-tile" type="button" data-speaking-card="${item.number}"><img class="speaking-img" src="assets/verb-speaking-cards/card-${String(item.number).padStart(2, "0")}.jpg" alt="${escapeHtml(item.pattern)}" loading="lazy"><span class="card-no">${item.number}</span><div class="card-body"><small>动词句型</small><strong>${escapeHtml(item.pattern)}</strong></div></button>`).join("")}</div>`;
     return;
   }
   panel.innerHTML = `<div class="empty">形容词暂无开口神器图卡，可看「基础句型」练习。</div>`;
