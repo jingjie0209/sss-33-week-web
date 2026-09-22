@@ -156,6 +156,9 @@ button { cursor: pointer; }
 .detail-table th, .detail-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid var(--line); font-size: 13.5px; }
 .detail-table th { color: var(--muted); font-size: 12px; }
 .speaking-detail img { display: block; width: 100%; max-width: 640px; margin: 0 auto; height: auto; border-radius: 8px; }
+.speaking-detail img { opacity: 0; }
+.speaking-detail.loaded img { opacity: 1; transition: opacity .25s ease; }
+.speaking-detail:not(.loaded) { min-height: 60px; }
 .extra-cases { margin: 0; padding-left: 20px; display: grid; gap: 8px; font-size: 14px; }
 .song-link-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .song-link-row button { padding: 9px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--brand-deep); font-weight: 700; font-size: 13px; }
@@ -607,14 +610,35 @@ function renderNounPatternDetail(number) {
   const matchRows = detailRows.filter((row) => row.type === "名词卡" && Number(String(row.pattern || "").match(/(\d+)\s*\./)?.[1]) === item.number);
   const matched = [...new Set(matchRows.map((row) => row.sheet))].map((sheet) => songBySheet.get(sheet)).filter(Boolean);
   const done = patternIsDone("名词卡", item.number);
+  const hasSpeakingCard = fsCheckSpeakingCard(item.number);
+  const speakingSection = hasSpeakingCard
+    ? `<section class="module" data-speaking-section><div class="module-head"><h2>开口神器提问卡</h2><span>第 ${item.number} 页</span></div><div class="module-body speaking-detail"><img src="${speakingImage}" alt="${escapeHtml(item.pattern)} 开口神器提问卡"></div></section>`
+    : "";
+  const extraSection = (item.extraCases || []).length
+    ? `<section class="module"><div class="module-head"><h2>补充口语案例</h2><span>扩展练习</span></div><div class="module-body"><ol class="extra-cases">${item.extraCases.map((example) => `<li>${escapeHtml(example)}</li>`).join("")}</ol></div></section>`
+    : "";
+  const songSection = matched.length
+    ? `<section class="module"><div class="module-head"><h2>匹配歌曲</h2><span>${matched.length} 首</span></div><div class="module-body"><div class="song-link-row">${matched.map((song) => `<a class="tiny-action" href="index.html?song=${encodeURIComponent(song.sheet)}" target="_blank" rel="noopener">${escapeHtml(song.title)} ↗</a>`).join("")}</div></div></section>`
+    : "";
   panel.innerHTML = `
     <button class="detail-back" data-back-patterns>← 返回基础句型</button>
     <section class="detail-head"><span>名词句型 · ${escapeHtml(item.code)}</span><h1>${escapeHtml(item.pattern)}</h1><p>原表句型变化与补充口语案例</p></section>
     <section class="module"><div class="module-head"><h2>句型变化</h2><span>来源于原表</span></div><div class="module-body" style="padding:0"><table class="detail-table"><thead><tr><th>句式</th><th>原表例句</th><th>是否完成</th></tr></thead><tbody>${item.forms.map((form) => `<tr><td><strong>${escapeHtml(form.label)}</strong></td><td>${escapeHtml(form.value)}</td><td>${statusBadgeHtml(done)}</td></tr>`).join("")}</tbody></table></div></section>
-    <section class="module"><div class="module-head"><h2>开口神器提问卡</h2><span>第 ${item.number} 页</span></div><div class="module-body speaking-detail"><img src="${speakingImage}" alt="${escapeHtml(item.pattern)} 开口神器提问卡" loading="lazy"></div></section>
-    <section class="module"><div class="module-head"><h2>补充口语案例</h2><span>扩展练习</span></div><div class="module-body"><ol class="extra-cases">${item.extraCases.map((example) => `<li>${escapeHtml(example)}</li>`).join("")}</ol></div></section>
-    <section class="module"><div class="module-head"><h2>匹配歌曲</h2><span>${matched.length} 首</span></div><div class="module-body">${matched.length ? `<div class="song-link-row">${matched.map((song) => `<a class="tiny-action" href="index.html?song=${encodeURIComponent(song.sheet)}" target="_blank" rel="noopener">${escapeHtml(song.title)} ↗</a>`).join("")}</div>` : `<div class="empty">当前还没有匹配歌曲</div>`}</div></section>
+    ${speakingSection}
+    ${extraSection}
+    ${songSection}
     <div style="margin-top:10px"><button class="tiny-action${done ? " done" : ""}" data-toggle-pattern="名词卡:${item.number}">${done ? "取消完成整句型" : "标记完成整句型"}</button></div>`;
+  const img = panel.querySelector("[data-speaking-section] img");
+  if (img) {
+    img.addEventListener("load", () => img.closest("[data-speaking-section]").classList.add("loaded"));
+    img.addEventListener("error", () => img.closest("[data-speaking-section]").remove());
+  }
+}
+
+const speakingCardExists = {};
+function fsCheckSpeakingCard(number) {
+  const key = `assets/noun-speaking-cards/card-${String(number).padStart(2, "0")}.jpg`;
+  return speakingCardExists[key] !== false;
 }
 
 function renderCheckinTable() {
