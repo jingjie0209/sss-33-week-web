@@ -217,12 +217,12 @@ button { cursor: pointer; }
       <button class="active" data-card-type="noun">名词</button>
       <button data-card-type="verb">动词</button>
       <button data-card-type="adjective">形容词</button>
+      <button data-card-type="things">万物贴</button>
     </div>
     <div class="card-seg" id="card-subtab-seg" style="margin-bottom:12px">
       <button class="active" data-card-subtab="cards">卡片</button>
       <button data-card-subtab="speaking">开口神器</button>
       <button data-card-subtab="patterns">基础句型</button>
-      <button data-card-subtab="checkin">打卡表</button>
     </div>
     <div class="card-seg" id="card-category-seg"></div>
     <div id="cards-mastered-label" class="result-note" style="margin-bottom:10px">已掌握 0</div>
@@ -346,8 +346,9 @@ const cardSources = () => ({
   noun: window.SSS_NOUN_CARDS || [],
   verb: window.SUSAN_VERB_CARDS || [],
   adjective: window.SUSAN_ADJECTIVE_CARDS || [],
+  things: window.SSS_THINGS_CARDS || [],
 });
-const cardName = (card, type) => type === "verb" ? (card.word || "") : (card.name || "");
+const cardName = (card, type) => type === "verb" || type === "things" ? (card.word || "") : (card.name || "");
 const cardImage = (card, type) => card.image || "";
 const cardCategories = window.SUSAN_CARD_CATEGORIES || {};
 const cardCategoryLabel = (type, number) => (cardCategories[type] || {})[number] || "其他";
@@ -641,18 +642,6 @@ function fsCheckSpeakingCard(number) {
   return speakingCardExists[key] !== false;
 }
 
-function renderCheckinTable() {
-  const panel = document.getElementById("card-subtab-panel");
-  document.getElementById("card-grid").style.display = "none";
-  document.getElementById("cards-mastered-label").style.display = "none";
-  document.getElementById("card-category-seg").style.display = "none";
-  const checkinId = checkinIdFor(activeCardType);
-  const list = (window.SUSAN_CHECKIN_DATA?.lists || []).find((item) => item.id === checkinId);
-  if (!list) { panel.innerHTML = `<div class="empty">暂无打卡表数据</div>`; return; }
-  const done = list.items.filter((item) => checkinState[`${checkinId}:${item.number}`]).length;
-  const typeLabel = { noun: "名词", verb: "动词", adjective: "形容词" }[activeCardType];
-  panel.innerHTML = `<section class="module"><div class="module-head"><h2>${escapeHtml(typeLabel)}打卡表</h2><span>${done}/${list.items.length}</span></div><div class="module-body" style="padding:0"><table class="record-table" style="width:100%;border-collapse:collapse"><thead><tr><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">序号</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">词汇</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">状态</th><th style="padding:10px 12px;text-align:left;border-bottom:1px solid var(--line)">操作</th></tr></thead><tbody>${list.items.map((item) => { const key = `${checkinId}:${item.number}`; const complete = Boolean(checkinState[key]); return `<tr><td style="padding:9px 12px;border-bottom:1px solid var(--line)">${item.number}</td><td style="padding:9px 12px;border-bottom:1px solid var(--line)"><strong>${escapeHtml(item.word)}</strong></td><td style="padding:9px 12px;border-bottom:1px solid var(--line)">${statusBadgeHtml(complete)}</td><td style="padding:9px 12px;border-bottom:1px solid var(--line)"><button class="tiny-action" data-toggle-checkin="${escapeHtml(key)}">${complete ? "取消完成" : "完成"}</button></td></tr>`; }).join("")}</tbody></table></div></section>`;
-}
 
 function renderCardSubtab() {
   document.querySelectorAll("#card-subtab-seg button").forEach((button) => button.classList.toggle("active", button.dataset.cardSubtab === activeCardSubtab));
@@ -667,8 +656,8 @@ function renderCardSubtab() {
   }
   if (activeCardSubtab === "speaking") { renderSpeaking(); return; }
   if (activeCardSubtab === "patterns") { renderPatternsTable(); return; }
-  renderCheckinTable();
 }
+
 
 document.getElementById("card-type-seg").addEventListener("click", (event) => {
   const button = event.target.closest("[data-card-type]");
