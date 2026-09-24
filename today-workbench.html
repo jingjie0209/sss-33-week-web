@@ -920,6 +920,34 @@ const savePatternState = () => saveState("sss-pattern-progress-v1", patternState
 const patternKeyOf = (type, number) => `${type}:${number}`;
 const patternIsDone = (type, number) => Boolean(patternState[patternKeyOf(type, number)]);
 const checkinIdFor = (type) => type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin";
+const escapeLines = (value) => String(value ?? "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+const dialogueTable = (lines, translations) => {
+  if (!lines.length) return "";
+  return `<table class="detail-table"><thead><tr><th>英文原文</th><th>中文翻译</th></tr></thead><tbody>${lines.map((line, index) => `<tr><td>${escapeHtml(line)}</td><td>${escapeHtml((translations || [])[index] || "")}</td></tr>`).join("")}</tbody></table>`;
+};
+function renderCardSourceContent(type, card) {
+  let html = "";
+  if (type === "noun" || type === "things") {
+    const dialogueLines = escapeLines(card.dialogue);
+    const translations = Array.isArray(card.dialogueTranslations) ? card.dialogueTranslations : escapeLines(card.dialogueTranslations);
+    if (dialogueLines.length) {
+      html += `<section class="module"><div class="module-head"><h2>亲子对话</h2><span>英文 / 中文逐行对照</span></div><div class="module-body" style="padding:0">${dialogueTable(dialogueLines, translations)}</div></section>`;
+    }
+  }
+  if (type === "noun" && Array.isArray(card.words) && card.words.length) {
+    html += `<section class="module"><div class="module-head"><h2>生词</h2><span>${card.words.length} 个</span></div><div class="module-body" style="padding:0"><table class="detail-table"><thead><tr><th>单词</th><th>音标</th><th>词义</th><th>固定搭配</th><th>例句 / 中文</th></tr></thead><tbody>${card.words.map((word) => `<tr><td><strong>${escapeHtml(word.word)}</strong></td><td>${escapeHtml(word.ipa || "")}</td><td>${escapeHtml(word.meaning || "")}</td><td>${escapeHtml(word.collocation || "")}</td><td>${word.sourceExample ? `${escapeHtml(word.sourceExample)}<br><small>${escapeHtml(word.sourceTranslation || "")}</small>` : escapeHtml(word.example || "")}</td></tr>`).join("")}</tbody></table></div></section>`;
+  }
+  if (type === "noun" && Array.isArray(card.patterns) && card.patterns.length) {
+    html += `<section class="module"><div class="module-head"><h2>扩展句型</h2><span>${card.patterns.length} 条</span></div><div class="module-body"><ol class="extra-cases">${card.patterns.map((pattern, index) => `<li><strong>句型${index + 1}：${escapeHtml(pattern.name)}</strong>${(pattern.examples || []).map((example, exampleIndex) => `<br>${escapeHtml(example)}${(pattern.translations || [])[exampleIndex] ? `<br><small>${escapeHtml(pattern.translations[exampleIndex])}</small>` : ""}`).join("")}</li>`).join("")}</ol></div></section>`;
+  }
+  if (type === "verb" && card.text) {
+    html += `<section class="module"><div class="module-head"><h2>教学文本</h2><span>Susan 教学原文</span></div><div class="module-body"><p style="margin:0;white-space:pre-wrap;font-size:13px;line-height:1.7">${escapeHtml(card.text)}</p></div></section>`;
+  }
+  if (type === "adjective" && Array.isArray(card.examples) && card.examples.length) {
+    html += `<section class="module"><div class="module-head"><h2>卡片例句</h2><span>${card.examples.length} 句 · 英中对照</span></div><div class="module-body"><ol class="extra-cases">${card.examples.map((example, index) => `<li><strong>${escapeHtml(example)}</strong><br><small>${escapeHtml((card.translations || [])[index] || "")}</small></li>`).join("")}</ol></div></section>`;
+  }
+  return html;
+}
 const panelRoot = () => document.getElementById("card-subtab-panel");
 const checkinToggle = (key) => { checkinState[key] = !checkinState[key]; saveCheckinState(); };
 const patternToggleState = (type, number) => { const key = patternKeyOf(type, number); patternState[key] = !patternState[key]; savePatternState(); };
@@ -1076,7 +1104,8 @@ function renderCardDetail(type, number) {
       ${playBtn(guideVideo, `${name} 引导输出视频`, "▶ 引导输出视频")}
       ${(!contextVideo && !guideVideo) ? `<span class="empty-inline">暂无视频</span>` : ""}
     </div></section>
-    <section class="module"><div class="module-head"><h2>Zoom in 亲子玩法</h2><span>把这张词演活</span></div><div class="module-body">${zoomHtml(card, cn)}</div></section>`;
+    <section class="module"><div class="module-head"><h2>Zoom in 亲子玩法</h2><span>把这张词演活</span></div><div class="module-body">${zoomHtml(card, cn)}</div></section>
+    ${renderCardSourceContent(type, card)}`;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
