@@ -920,6 +920,7 @@ const savePatternState = () => saveState("sss-pattern-progress-v1", patternState
 const patternKeyOf = (type, number) => `${type}:${number}`;
 const patternIsDone = (type, number) => Boolean(patternState[patternKeyOf(type, number)]);
 const checkinIdFor = (type) => type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin";
+const panelRoot = () => document.getElementById("card-subtab-panel");
 const checkinToggle = (key) => { checkinState[key] = !checkinState[key]; saveCheckinState(); };
 const patternToggleState = (type, number) => { const key = patternKeyOf(type, number); patternState[key] = !patternState[key]; savePatternState(); };
 const statusBadgeHtml = (done) => `<span class="status ${done ? "done" : "pending"}">${done ? "已完成" : "待打卡"}</span>`;
@@ -1075,7 +1076,6 @@ function renderCardDetail(type, number) {
     <section class="module"><div class="module-head"><h2>Zoom in 亲子玩法</h2><span>把这张词演活</span></div><div class="module-body">${zoomHtml(card, cn)}</div></section>`;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
-const panelRoot = () => document.getElementById("card-subtab-panel");
 
 function renderCardSubtab() {
   document.querySelectorAll("#card-subtab-seg button").forEach((button) => button.classList.toggle("active", button.dataset.cardSubtab === activeCardSubtab));
