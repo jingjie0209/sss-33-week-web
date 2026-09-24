@@ -922,6 +922,7 @@ const patternIsDone = (type, number) => Boolean(patternState[patternKeyOf(type, 
 const checkinIdFor = (type) => type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin";
 const escapeLines = (value) => String(value ?? "").split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
 const dialogueTable = (lines, translations) => {
+  if (lines.length && lines[0] === "亲子对话") { lines = lines.slice(1); translations = (translations || []).slice(1); }
   if (!lines.length) return "";
   return `<table class="detail-table"><thead><tr><th>英文原文</th><th>中文翻译</th></tr></thead><tbody>${lines.map((line, index) => `<tr><td>${escapeHtml(line)}</td><td>${escapeHtml((translations || [])[index] || "")}</td></tr>`).join("")}</tbody></table>`;
 };
@@ -1097,15 +1098,14 @@ function renderCardDetail(type, number) {
   const playBtn = (src, title, label) => src ? `<button class="tiny-action" data-play-video="${escapeHtml(src)}" data-play-title="${escapeHtml(title)}">▶ ${escapeHtml(label)}</button>` : "";
   panelRoot().innerHTML = `
     <button class="detail-back" data-back-cards>← 返回卡库</button>
-    <section class="detail-head"><span>${escapeHtml({noun:"名词卡",verb:"动词卡",adjective:"形容词卡",things:"万物贴"}[type] || "卡片")} · No.${card.number}</span><h1>${escapeHtml(name)}</h1><p>${escapeHtml(cn || "")}</p></section>
     ${img ? `<section class="module"><div class="module-body card-detail-img"><img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy"></div></section>` : ""}
     <section class="module"><div class="module-head"><h2>教学视频</h2><span>点击播放</span></div><div class="module-body video-btn-row">
       ${playBtn(contextVideo, `${name} 常速语境视频`, "▶ 常速语境视频")}
       ${playBtn(guideVideo, `${name} 引导输出视频`, "▶ 引导输出视频")}
       ${(!contextVideo && !guideVideo) ? `<span class="empty-inline">暂无视频</span>` : ""}
     </div></section>
-    <section class="module"><div class="module-head"><h2>Zoom in 亲子玩法</h2><span>把这张词演活</span></div><div class="module-body">${zoomHtml(card, cn)}</div></section>
-    ${renderCardSourceContent(type, card)}`;
+    ${renderCardSourceContent(type, card)}
+    <section class="module"><div class="module-head"><h2>Zoom in 亲子玩法</h2><span>把这张词演活</span></div><div class="module-body">${zoomHtml(card, cn)}</div></section>`;
   window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
