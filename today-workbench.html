@@ -833,8 +833,7 @@ function render() {
 function renderFlashcards(cards) {
   return `<div class="flashcards">${cards.map((card) => {
     const checked = Boolean(cardState[String(card.number)]);
-    const videoUrl = guideVideoUrl("noun", card);
-    return `<button class="flashcard ${checked ? "checked" : ""}" data-card="${card.number}" type="button">${card.image ? `<img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name)}" loading="lazy">` : ""}<div class="flashcard-body"><small>名词卡 ${card.number}</small><strong>${escapeHtml(card.name)}</strong><em>点一下标记学会了</em>${videoUrl ? `<span class="video-play-button" data-play-video="${escapeHtml(videoUrl)}" data-play-title="${escapeHtml(card.name)} 引导输出视频">▶ 看视频</span>` : ""}</div></button>`;
+    return `<button class="flashcard ${checked ? "checked" : ""}" data-card="${card.number}" type="button">${card.image ? `<img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name)}" loading="lazy">` : ""}<div class="flashcard-body"><small>名词卡 ${card.number}</small><strong>${escapeHtml(card.name)}</strong><em>点一下标记学会了</em></div></button>`;
   }).join("")}</div>`;
 }
 
@@ -977,10 +976,7 @@ function renderCards() {
     const name = cardName(card, activeCardType) || `#${card.number}`;
     const img = cardImage(card, activeCardType);
     const label = cardCategoryLabel(activeCardType, card.number);
-    const catKey = activeCardType === "noun" ? "noun" : activeCardType === "verb" ? "verb" : "adj";
-    const videoUrl = contextVideoUrl(catKey, card);
-    const videoBtn = videoUrl ? `<span class="video-play-button" data-play-video="${escapeHtml(videoUrl)}" data-play-title="${escapeHtml(name)} 常速语境视频">▶ 视频</span>` : "";
-    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><small>${escapeHtml(label)}</small><strong>${escapeHtml(name)}</strong>${videoBtn}</div></button>`;
+    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><small>${escapeHtml(label)}</small><strong>${escapeHtml(name)}</strong></div></button>`;
   }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
   const checkinId = checkinIdFor(activeCardType);
   const mastered = cards.filter((card) => checkinState[`${checkinId}:${card.number}`]).length;
