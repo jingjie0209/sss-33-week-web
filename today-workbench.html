@@ -1057,6 +1057,9 @@ const cardCnName = (type, card) => (CARD_CN[type] || {})[card.word || card.name]
 function renderCardDetail(type, number) {
   const card = cardSources()[type].find((item) => item.number === Number(number));
   if (!card) return;
+  document.getElementById("card-grid").style.display = "none";
+  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("card-category-seg").style.display = "none";
   const name = cardName(card, type) || `#${number}`;
   const cn = cardCnName(type, card);
   const img = cardImage(card, type);
@@ -1141,7 +1144,12 @@ document.addEventListener("click", (event) => {
   const backCards = event.target.closest("[data-back-cards]");
   if (backCards) {
     activeCardSubtab = "cards";
-    renderCardSubtab();
+    document.getElementById("card-grid").style.display = "";
+    document.getElementById("cards-mastered-label").style.display = "";
+    document.getElementById("card-category-seg").style.display = "";
+    document.getElementById("card-subtab-panel").innerHTML = "";
+    renderCardCategorySeg();
+    renderCards();
     window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
