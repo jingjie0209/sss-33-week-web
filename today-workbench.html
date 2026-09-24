@@ -163,6 +163,16 @@ button { cursor: pointer; }
 .song-link-row { display: flex; flex-wrap: wrap; gap: 8px; }
 .song-link-row button { padding: 9px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--brand-deep); font-weight: 700; font-size: 13px; }
 .song-link-row button:hover { border-color: var(--brand); color: var(--brand); }
+.video-modal { position: fixed; inset: 0; z-index: 70; display: none; background: rgba(10,28,32,.9); padding: 18px 14px calc(18px + env(safe-area-inset-bottom)); align-items: center; justify-content: center; }
+.video-modal.open { display: flex; }
+.video-modal-inner { width: min(860px, 100%); }
+.video-modal-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 10px; color: #fff; }
+.video-modal-head strong { font-size: 14.5px; }
+.video-modal-close { min-height: 34px; padding: 7px 14px; border: 1px solid rgba(255,255,255,.4); border-radius: 8px; background: rgba(255,255,255,.14); color: #fff; font-weight: 700; }
+.video-modal video { display: block; width: 100%; max-height: 72vh; border-radius: 10px; background: #000; }
+.card-tile { position: relative; }
+.video-play-button { position: absolute; left: 8px; bottom: 8px; min-height: 30px; padding: 6px 12px; border: 0; border-radius: 999px; background: rgba(16,78,83,.92); color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 4px 14px rgba(0,0,0,.22); }
+.card-tile { }
 .img-modal { position: fixed; inset: 0; z-index: 60; display: none; background: rgba(15,35,38,.82); padding: 18px 14px calc(18px + env(safe-area-inset-bottom)); overflow-y: auto; }
 .img-modal.open { display: block; }
 .img-modal-inner { max-width: 860px; margin: 0 auto; }
@@ -267,6 +277,13 @@ button { cursor: pointer; }
   </div>
 </div>
 
+<div class="video-modal" id="video-modal">
+  <div class="video-modal-inner">
+    <div class="video-modal-head"><strong id="video-modal-title"></strong><button class="video-modal-close" id="video-modal-close" type="button">关闭</button></div>
+    <video id="video-modal-player" src="" controls playsinline webkit-playsinline preload="auto"></video>
+  </div>
+</div>
+
 <nav class="tabbar" id="tabbar">
   <button class="active" data-tab="today"><i></i>今日</button>
   <button data-tab="cards"><i></i>卡库</button>
@@ -336,6 +353,44 @@ const flashcardsForToday = () => (window.SSS_NOUN_CARDS || []).slice(0, 5);
 const gamesForToday = () => {
   const games = window.SUSAN_GAMES_DATA || [];
   return ["pat", "beanbag", "jump"].map((id) => games.find((game) => game.id === id)).filter(Boolean);
+};
+
+/* WorkBuddy 视频源（与参考站 VIDEO_MANIFEST 一致）
+   命名：<cat>_g_<NNN>.mp4 引导输出（名词/动词 → 沙盒1）；<cat>_c_<NNN>.mp4 常速语境（名词/动词 → 沙盒3，形容词 → 沙盒4） */
+const VIDEO_MANIFEST = {
+  g: ["https://6237ed5bd427410f906bbebcb1fd1f88.app.workbuddy.host/videos", "https://54c47bc437fc4b8d891d6c432e9aecec.app.workbuddy.host"],
+  c: ["https://0b32a60699ed4678be0163136784a17d.app.workbuddy.host", "https://246b04ba71a04baab9e270edba1eee83.app.workbuddy.host"],
+};
+const videoCardNumber = (card) => {
+  const n = Number(card && (card.number || card.n)) || 0;
+  return n ? String(n).padStart(3, "0") : "";
+};
+const guideVideoUrl = (cat, card) => {
+  const name = videoCardNumber(card);
+  return name ? `${VIDEO_MANIFEST.g[0]}/videos/${cat}_g_${name}.mp4` : "";
+};
+const contextVideoUrl = (cat, card) => {
+  const name = videoCardNumber(card);
+  if (!name) return "";
+  const bucket = cat === "adj" ? 1 : 0;
+  return `${VIDEO_MANIFEST.c[bucket]}/${cat}_c_${name}.mp4`;
+};
+const openVideoModal = (src, title) => {
+  if (!src) { toast("这个词的视频还没添加"); return; }
+  document.getElementById("video-modal-title").textContent = title || "视频";
+  const player = document.getElementById("video-modal-player");
+  player.src = src;
+  document.getElementById("video-modal").classList.add("open");
+  document.body.style.overflow = "hidden";
+  player.play().catch(() => {});
+};
+const closeVideoModal = () => {
+  const player = document.getElementById("video-modal-player");
+  player.pause();
+  player.removeAttribute("src");
+  player.load();
+  document.getElementById("video-modal").classList.remove("open");
+  document.body.style.overflow = "";
 };
 
 const patternForWeek = (week) => {
@@ -439,7 +494,8 @@ function render() {
 function renderFlashcards(cards) {
   return `<div class="flashcards">${cards.map((card) => {
     const checked = Boolean(cardState[String(card.number)]);
-    return `<button class="flashcard ${checked ? "checked" : ""}" data-card="${card.number}" type="button">${card.image ? `<img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name)}" loading="lazy">` : ""}<div class="flashcard-body"><small>名词卡 ${card.number}</small><strong>${escapeHtml(card.name)}</strong><em>点一下标记学会了</em></div></button>`;
+    const videoUrl = guideVideoUrl("noun", card);
+    return `<button class="flashcard ${checked ? "checked" : ""}" data-card="${card.number}" type="button">${card.image ? `<img src="${escapeHtml(card.image)}" alt="${escapeHtml(card.name)}" loading="lazy">` : ""}<div class="flashcard-body"><small>名词卡 ${card.number}</small><strong>${escapeHtml(card.name)}</strong><em>点一下标记学会了</em>${videoUrl ? `<span class="video-play-button" data-play-video="${escapeHtml(videoUrl)}" data-play-title="${escapeHtml(card.name)} 引导输出视频">▶ 看视频</span>` : ""}</div></button>`;
   }).join("")}</div>`;
 }
 
@@ -461,6 +517,11 @@ function renderGames(games) {
 }
 
 document.addEventListener("click", (event) => {
+  const videoTile = event.target.closest("[data-play-video]");
+  if (videoTile) {
+    openVideoModal(videoTile.dataset.playVideo, videoTile.dataset.playTitle || "教学视频");
+    return;
+  }
   const card = event.target.closest("[data-card]");
   if (card) {
     const key = card.dataset.card;
@@ -547,7 +608,10 @@ function renderCards() {
     const name = cardName(card, activeCardType) || `#${card.number}`;
     const img = cardImage(card, activeCardType);
     const label = cardCategoryLabel(activeCardType, card.number);
-    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><small>${escapeHtml(label)}</small><strong>${escapeHtml(name)}</strong></div></button>`;
+    const catKey = activeCardType === "noun" ? "noun" : activeCardType === "verb" ? "verb" : "adj";
+    const videoUrl = contextVideoUrl(catKey, card);
+    const videoBtn = videoUrl ? `<span class="video-play-button" data-play-video="${escapeHtml(videoUrl)}" data-play-title="${escapeHtml(name)} 常速语境视频">▶ 视频</span>` : "";
+    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><small>${escapeHtml(label)}</small><strong>${escapeHtml(name)}</strong>${videoBtn}</div></button>`;
   }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
   const checkinId = checkinIdFor(activeCardType);
   const mastered = cards.filter((card) => checkinState[`${checkinId}:${card.number}`]).length;
@@ -781,12 +845,17 @@ document.addEventListener("click", (event) => {
   const tile = event.target.closest("[data-card-library]");
   if (!tile) return;
   const [type, number] = tile.dataset.cardLibrary.split(":");
-  const key = `cards-mastered-${type}`;
-  const state = loadState(key, {});
-  state[number] = !state[number];
-  saveState(key, state);
-  toast(state[number] ? "已标记掌握" : "已取消掌握");
-  renderCards();
+  const checkinId = checkinIdFor(type);
+  const key = `${checkinId}:${number}`;
+  checkinState[key] = !checkinState[key];
+  saveCheckinState();
+  toast(checkinState[key] ? "已标记掌握" : "已取消掌握");
+  renderCardSubtab();
+});
+
+document.getElementById("video-modal-close").addEventListener("click", closeVideoModal);
+document.getElementById("video-modal").addEventListener("click", (event) => {
+  if (event.target.id === "video-modal") closeVideoModal();
 });
 
 window.addEventListener("storage", (event) => {
