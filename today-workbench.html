@@ -173,6 +173,18 @@ button { cursor: pointer; }
 .card-tile { position: relative; }
 .video-play-button { position: absolute; left: 8px; bottom: 8px; min-height: 30px; padding: 6px 12px; border: 0; border-radius: 999px; background: rgba(16,78,83,.92); color: #fff; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 5px; box-shadow: 0 4px 14px rgba(0,0,0,.22); }
 .card-tile { }
+.zi { padding: 14px; border: 1px dashed #e0a96d; border-radius: 10px; background: #fff7ef; }
+.zi-h { margin-bottom: 8px; color: #b0651a; font-weight: 800; font-size: 14.5px; }
+.zi-h-en { margin-top: 14px; color: #4a6f8a; }
+.zi-how { margin-bottom: 10px; color: #8a6a45; font-size: 12px; line-height: 1.65; }
+.zi-list { display: grid; gap: 8px; }
+.zi-it { display: grid; grid-template-columns: 96px minmax(0,1fr); gap: 10px; padding: 9px 11px; border-radius: 8px; background: #fff; }
+.zi-sk { font-weight: 800; font-size: 12.5px; color: var(--brand-deep); line-height: 1.4; }
+.zi-tip { font-size: 12.5px; line-height: 1.55; }
+.card-detail-img img { display: block; width: 100%; max-width: 420px; margin: 0 auto; border-radius: 10px; }
+.video-btn-row { display: flex; gap: 8px; flex-wrap: wrap; }
+.empty-inline { color: var(--muted); font-size: 12.5px; }
+.card-tile .video-play-button { position: static; margin-top: 6px; }
 .img-modal { position: fixed; inset: 0; z-index: 60; display: none; background: rgba(15,35,38,.82); padding: 18px 14px calc(18px + env(safe-area-inset-bottom)); overflow-y: auto; }
 .img-modal.open { display: block; }
 .img-modal-inner { max-width: 860px; margin: 0 auto; }
@@ -353,6 +365,333 @@ const flashcardsForToday = () => (window.SSS_NOUN_CARDS || []).slice(0, 5);
 const gamesForToday = () => {
   const games = window.SUSAN_GAMES_DATA || [];
   return ["pat", "beanbag", "jump"].map((id) => games.find((game) => game.id === id)).filter(Boolean);
+};
+
+/* Zoom in 内容（移植自参考站 genZoom） */
+const ZOOM_HOWTO = '用「音效·表情·动作·变大变小·变换角色·变颜色·反常识」把这一张词演活，钻进它的小世界聊天。练习顺序：每句话先加一个音效，稳定了加表情，再加动作，一步步叠加刻意练习。记得多提问、留气口，让宝宝多说，而不是自己一直讲。';
+const ZOOM_HOWTO_EN = '💬 Say these with your child — read them out loud and play together! Each line is something you can say right now.';
+function genZoom(c){
+  var cn = c.cn || '', w = c.w || '', cat = c.cat || 'noun';
+  var n = (typeof c.n === 'number') ? c.n : (parseInt(c.n,10)||0); if(!n) n = (c.id||0);
+  // 完全发散：每个技巧一大池创意场景，按词号 PRNG 抽取，相邻卡互不相同、同词稳定
+  function mul(seed){ var t = (seed>>>0) + 0x6D2B79F5; t = Math.imul(t ^ (t>>>15), t|1); t ^= t + Math.imul(t ^ (t>>>7), t|61); return ((t ^ (t>>>14))>>>0)/4294967296; }
+  function pick(arr, seed){ return arr[Math.floor(mul(seed) * arr.length) % arr.length]; }
+  var BANK = {
+    noun:{
+      sound:[
+    {cn:'凑近「'+cn+'」，听听它会不会「嘀嘀」叫~', en:'Put your ear to the '+w+'. Does it go beep beep?'},
+    {cn:'假装「'+cn+'」是个小喇叭，对着它「呜呜」吹一吹！', en:'Pretend the '+w+' is a horn. Blow whoosh whoosh into it!'},
+    {cn:'学一学「'+cn+'」的叫声，和宝宝你一声我一声对喊~', en:'Copy the '+w+' sound. You call, baby calls back!'},
+    {cn:'「'+cn+'」睡着了会打呼噜「呼噜呼噜」，轻轻戳戳它！', en:'The sleeping '+w+' goes snore snore. Gently poke it!'},
+    {cn:'让「'+cn+'」当小鼓，用手指「咚咚」敲一敲，打节拍！', en:'The '+w+' is a drum. Tap tap-tap with your finger!'},
+    {cn:'「'+cn+'」走路「咔嚓咔嚓」，跟着它的脚步一起走~', en:'The '+w+' walks crunch-crunch. Step along with it!'},
+    {cn:'对着「'+cn+'」轻轻「啵」一下，像亲亲的声音，逗它笑！', en:'Give the '+w+' a big smooch, pop! Make it smile!'},
+    {cn:'「'+cn+'」饿了会「咕咕」叫，假装喂它一口好吃的~', en:'The hungry '+w+' goes rumble rumble. Feed it a bite!'},
+    {cn:'把「'+cn+'」举高高，听风从它身边「呼~」吹过！', en:'Lift the '+w+' high. Hear the wind go whoosh!'},
+    {cn:'「'+cn+'」生气了「呼呼」喷气，哄哄它别生气啦~', en:'The angry '+w+' puffs huff-huff. Calm it down!'},
+    {cn:'学「'+cn+'」打喷嚏「阿嚏」，和宝宝比赛谁最响~', en:'The '+w+' sneezes achoo! Who can sneeze louder?'},
+    {cn:'「'+cn+'」在唱歌「啦啦啦」，跟着它一起哼哼~', en:'The '+w+' sings la-la-la. Hum along with it!'}
+      ],
+      face:[
+    {cn:'看到「'+cn+'」，眼睛一下子亮起来，惊喜得合不拢嘴！', en:'When you see the '+w+', your eyes light up, big surprise!'},
+    {cn:'对着「'+cn+'」做个超夸张的鬼脸，看它害不害怕~', en:'Make a silly face at the '+w+'. Is it scared?'},
+    {cn:'抱起「'+cn+'」，亲亲它，笑得眉毛都弯了！', en:'Hug the '+w+', kiss it, smile till your eyes curl!'},
+    {cn:'假装「'+cn+'」讲了个笑话，你笑得前仰后合！', en:'Pretend the '+w+' told a joke. Laugh out loud!'},
+    {cn:'和「'+cn+'」对视，看看谁先忍不住笑出来~', en:'Stare at the '+w+'. Who laughs first?'},
+    {cn:'学「'+cn+'」的表情：它开心你也开心，它困你也打哈欠~', en:'Copy the '+w+' face: happy, sleepy, whatever it does!'},
+    {cn:'看到「'+cn+'」假装被萌翻，捂住脸「太可爱啦！」', en:'Pretend the '+w+' is so cute you hide your face!'},
+    {cn:'对「'+cn+'」挤挤眼，偷偷给它一个只属于你们的暗号~', en:'Wink at the '+w+'. It is your secret sign!'},
+    {cn:'「'+cn+'」做错事，你假装生气嘟嘴，它来哄你~', en:'The '+w+' is naughty. You pout, it cheers you up!'},
+    {cn:'抱着「'+cn+'」转圈，两个人都笑得眯成一条缝~', en:'Spin with the '+w+'. Both of you squint with joy!'},
+    {cn:'对「'+cn+'」做超大笑脸，让它知道你超爱它！', en:'Give the '+w+' a huge smile. Show your love!'},
+    {cn:'假装「'+cn+'」是镜子，你做什么表情它就学什么~', en:'The '+w+' is a mirror. It copies your face!'}
+      ],
+      action:[
+    {cn:'把「'+cn+'」轻轻抱起来，假装它是个小宝宝，哄它睡觉~', en:'Lift the '+w+' gently. It is a baby, sing it to sleep!'},
+    {cn:'让「'+cn+'」骑在你肩膀上，带它去探险，到处看看！', en:'Put the '+w+' on your shoulder. Go explore!'},
+    {cn:'和「'+cn+'」玩捉迷藏，你藏它找，轮着来~', en:'Hide and seek with the '+w+'. Your turn, its turn!'},
+    {cn:'把「'+cn+'」当成小车，推着它「嘟嘟」满屋跑！', en:'The '+w+' is a car. Vroom it around the room!'},
+    {cn:'教「'+cn+'」跳舞，你扭扭它扭扭，越乱越好笑~', en:'Teach the '+w+' to dance. Wobble together!'},
+    {cn:'给「'+cn+'」喂一口好吃的，假装它嚼得超香！', en:'Feed the '+w+'. Hear it munch, yummy!'},
+    {cn:'和「'+cn+'」击个掌，嗨五个，庆祝一下~', en:'High five the '+w+'. Celebrate!'},
+    {cn:'把「'+cn+'」轻轻抛起再接住，宝宝笑个不停！', en:'Toss the '+w+'. Catch it. Baby laughs!'},
+    {cn:'让「'+cn+'」当医生，给你检查身体，假装打针~', en:'The '+w+' is a doctor. Check you up!'},
+    {cn:'带「'+cn+'」去散步，一路跟它聊今天看到的东西~', en:'Walk the '+w+'. Chat about what you see!'},
+    {cn:'和「'+cn+'」比赛爬山（枕头山），看谁先到顶！', en:'Race the '+w+'. Climb the pillow mountain!'},
+    {cn:'把「'+cn+'」当电话，凑耳边「喂喂」，和它打电话~', en:'The '+w+' is a phone. Hello, call it!'}
+      ],
+      bigsmall:[
+    {cn:'「'+cn+'」变成大巨人，只够你摸摸它的脚指头！', en:'The '+w+' is a giant. You only reach its toe!'},
+    {cn:'把「'+cn+'」缩成手指大，放在手心仔细瞧~', en:'Shrink the '+w+'. Hold it on your finger!'},
+    {cn:'大「'+cn+'」太大坐不下，小「'+cn+'」小得藏进耳朵里！', en:'Big '+w+' cannot sit. Tiny '+w+' hides in your ear!'},
+    {cn:'「'+cn+'」一会儿吹成大皮球，一会儿捏成小糖豆~', en:'The '+w+' puffs big, then tiny like a candy!'},
+    {cn:'比一比：爸爸那么大的「'+cn+'」和宝宝指甲大的「'+cn+'」！', en:'Compare: Daddy-big '+w+' and baby-nail-tiny '+w+'!'},
+    {cn:'「'+cn+'」涨成气球飞上天，你拉着绳子不放~', en:'The '+w+' floats up like a balloon. Hold the string!'},
+    {cn:'小小的「'+cn+'」躲猫猫，大大的「'+cn+'」来找，反着玩！', en:'Tiny '+w+' hides, big '+w+' seeks!'},
+    {cn:'「'+cn+'」变得像房子一样大，你住在它肚子里~', en:'The '+w+' is house-big. You live inside!'},
+    {cn:'把「'+cn+'」压扁成一张饼，再呼地吹鼓起来！', en:'Flatten the '+w+', then blow it up!'},
+    {cn:'大「'+cn+'」迈一步，小「'+cn+'」要走一百步，笑死！', en:'Big '+w+' one step, tiny '+w+' one hundred, funny!'},
+    {cn:'「'+cn+'」变小坐进汤勺里，你假装喂它喝汤~', en:'Tiny '+w+' sits in the spoon. Feed it soup!'},
+    {cn:'「'+cn+'」忽大忽小眨眼睛，像在变魔术逗你~', en:'The '+w+' blinks big-small. Magic for you!'}
+      ],
+      character:[
+    {cn:'「'+cn+'」突然开口：「你好呀！我是你的新朋友~」', en:'The '+w+' says hello. I am your new friend!'},
+    {cn:'让「'+cn+'」当老师，教宝宝说它自己的名字！', en:'The '+w+' is the teacher. Teach baby its name!'},
+    {cn:'「'+cn+'」想和你结拜？不，是当兄弟姐妹啦哈哈！', en:'The '+w+' wants to be your sibling, haha!'},
+    {cn:'「'+cn+'」会飞啦，载着你上天兜风，抓紧哦！', en:'The '+w+' can fly. Hold on for a ride!'},
+    {cn:'变身！「'+cn+'」成了超级英雄，专门保护小宝宝~', en:'The '+w+' is a superhero. Protects baby!'},
+    {cn:'「'+cn+'」开起了小店，你来当顾客买它~', en:'The '+w+' runs a shop. You are the customer!'},
+    {cn:'「'+cn+'」当厨师，给你做了一盘空气大餐！', en:'The '+w+' is a cook. Makes air-food for you!'},
+    {cn:'和「'+cn+'」聊秘密：只有你俩知道的悄悄话~', en:'Whisper a secret only you and the '+w+' know!'},
+    {cn:'「'+cn+'」当司机，开着想象的小车接你上学~', en:'The '+w+' is the driver. Picks you up!'},
+    {cn:'「'+cn+'」生病了，你当护士照顾它，量体温~', en:'The '+w+' is sick. Nurse it, take its temp!'},
+    {cn:'「'+cn+'」变成了小宝宝，哭着要你抱抱哄~', en:'The '+w+' is a baby. Wants your hug!'},
+    {cn:'「'+cn+'」开演唱会，你是台下最捧场的粉丝！', en:'The '+w+' has a concert. You are the fan!'}
+      ],
+      color:[
+    {cn:'给「'+cn+'」涂上草莓红，舔一口甜甜的~', en:'Paint the '+w+' strawberry-red. Yum!'},
+    {cn:'「'+cn+'」变成蓝天蓝，躺在它身上像躺云朵~', en:'The '+w+' is sky-blue. Lie on the cloud!'},
+    {cn:'魔法棒一挥，「'+cn+'」变成彩虹色，闪瞎眼！', en:'A wand turns the '+w+' rainbow. Sparkle!'},
+    {cn:'「'+cn+'」害羞了，脸蛋红扑扑的~', en:'The shy '+w+' has pink cheeks!'},
+    {cn:'把「'+cn+'」泡进柠檬黄里，酸得皱眉头！', en:'Dip the '+w+' in lemon-yellow. Sour!'},
+    {cn:'「'+cn+'」晚上发光，是颗小绿夜灯~', en:'The '+w+' glows green at night. A nightlight!'},
+    {cn:'「'+cn+'」穿了紫色的衣服，神气活现~', en:'The '+w+' wears purple. So proud!'},
+    {cn:'给「'+cn+'」画了金色皇冠，它是小王子~', en:'The '+w+' has a gold crown. Little prince!'},
+    {cn:'「'+cn+'」被彩虹糖染花了，五颜六色~', en:'The '+w+' is dyed by rainbow candy!'},
+    {cn:'「'+cn+'」变透明了，你看得见它肚子里的饭~', en:'The '+w+' turns clear. See its food!'},
+    {cn:'「'+cn+'」是橘色小太阳，暖乎乎~', en:'The '+w+' is an orange sun. Warm!'},
+    {cn:'给「'+cn+'」点了星星灯，一闪一闪~', en:'The '+w+' has star-lights. Twinkle!'}
+      ],
+      silly:[
+    {cn:'「'+cn+'」倒着走路，撞到了墙还傻笑~', en:'The '+w+' walks backwards, bumps the wall, giggles!'},
+    {cn:'「'+cn+'」忽然隐身，你到处找「咦人呢？」', en:'The '+w+' vanishes. Where did it go?'},
+    {cn:'「'+cn+'」长出了小翅膀，扑棱扑棱飞到冰箱上！', en:'The '+w+' grows wings, flaps to the fridge!'},
+    {cn:'「'+cn+'」和影子吵架，你当裁判劝架~', en:'The '+w+' fights its shadow. You judge!'},
+    {cn:'「'+cn+'」钻进袜子里睡觉，变成一只袜宝宝！', en:'The '+w+' sleeps in a sock. Sock-baby!'},
+    {cn:'「'+cn+'」会分身，一下变成三个一起跟你玩！', en:'The '+w+' splits into three. Play together!'},
+    {cn:'「'+cn+'」倒立着走路，脑袋朝下笑嘻嘻~', en:'The '+w+' walks upside-down, head down, smiling!'},
+    {cn:'「'+cn+'」变成了棉花糖，一口咬下去软软的！', en:'The '+w+' is cotton-candy. Soft bite!'},
+    {cn:'「'+cn+'」开着玩具车在天花板上跑！', en:'The '+w+' drives on the ceiling!'},
+    {cn:'「'+cn+'」假装是块石头，你来猜它哪句是真的~', en:'The '+w+' is a rock. Guess what is real!'},
+    {cn:'「'+cn+'」打喷嚏把自己吹到了窗户外面！', en:'The '+w+' sneezes itself out the window!'},
+    {cn:'「'+cn+'」和镜子里的自己抢玩具，逗翻你~', en:'The '+w+' fights its mirror-self. So funny!'}
+      ]
+    },
+    verb:{
+      sound:[
+    {cn:'「'+cn+'」的时候配上「哒哒哒」，像小马跑步~', en:'When you '+w+', go tap-tap like a pony!'},
+    {cn:'边「'+cn+'」边给自己喊加油「嘿哟嘿哟」！', en:'As you '+w+', cheer yourself hey-ho!'},
+    {cn:'「'+cn+'」发出「呼呼」的风声，假装是龙卷风~', en:'The '+w+' goes whoosh, a tornado!'},
+    {cn:'「'+cn+'」一下「咔嚓」响，像在拍照留念~', en:'The '+w+' goes crunch, take a photo!'},
+    {cn:'慢慢「'+cn+'」配「唰」的声音，像在滑滑梯~', en:'Slow '+w+' goes swish, a slide!'},
+    {cn:'「'+cn+'」时学小动物叫，增添气氛~', en:'As you '+w+', copy an animal sound!'},
+    {cn:'「'+cn+'」重重落地「咚」，像大象踩脚~', en:'The '+w+' lands boom, like an elephant!'},
+    {cn:'「'+cn+'」的时候哼歌，给自己伴奏~', en:'Hum a song while you '+w+'!'},
+    {cn:'「'+cn+'」配「咕咚」一声，假装喝了一大口~', en:'The '+w+' goes gulp, big sip!'},
+    {cn:'快速「'+cn+'」配「嗖嗖」，像赛车飞过~', en:'Fast '+w+' goes swoosh, a race car!'},
+    {cn:'「'+cn+'」时打节拍「一二一」，整齐又神气~', en:'March as you '+w+': one-two-one!'},
+    {cn:'「'+cn+'」结尾「啵」一下，像完成任务盖章~', en:'End the '+w+' with a pop, done stamp!'}
+      ],
+      face:[
+    {cn:'「'+cn+'」时做个超级用力的脸，青筋都出来了！', en:'Make a trying-hard face as you '+w+'!'},
+    {cn:'「'+cn+'」得好开心，笑得露出小牙~', en:'So happy '+w+'ing, show your teeth!'},
+    {cn:'「'+cn+'」时假装很神秘，眨眨眼~', en:'Be mysterious as you '+w+', wink!'},
+    {cn:'「'+cn+'」做搞怪表情，把自己都逗笑了~', en:'Silly face while '+w+'ing, laugh at yourself!'},
+    {cn:'「'+cn+'」累了的脸：吐舌头、翻白眼，装瘫~', en:'Tired '+w+' face, tongue out, floppy!'},
+    {cn:'「'+cn+'」时对着镜子做鬼脸，越丑越棒~', en:'Ugly faces in the mirror while '+w+'ing!'},
+    {cn:'「'+cn+'」得意的脸：叉腰、抬下巴，帅！', en:'Proud '+w+' face, hands on hips!'},
+    {cn:'「'+cn+'」惊讶脸：嘴巴张成 O 型~', en:'Surprised '+w+' face, mouth O!'},
+    {cn:'「'+cn+'」时闭眼享受，像在吃大餐~', en:'Close eyes, enjoy as you '+w+'!'},
+    {cn:'「'+cn+'」害羞脸：捂脸偷看~', en:'Shy '+w+' face, peek through hands!'},
+    {cn:'「'+cn+'」生气脸：鼓腮帮子，呼呼~', en:'Angry '+w+' face, puff cheeks!'},
+    {cn:'「'+cn+'」时做专注脸，舌头不自觉伸出来~', en:'Focused '+w+' face, tongue out!'}
+      ],
+      action:[
+    {cn:'拿个道具一起「'+cn+'」，演得越夸张越好笑~', en:'Grab a toy and '+w+', big and silly!'},
+    {cn:'和宝宝比赛「'+cn+'」，看谁先到终点！', en:'Race baby to '+w+', who wins!'},
+    {cn:'「'+cn+'」的时候转个圈，晕乎乎逗人~', en:'Spin while you '+w+', dizzy fun!'},
+    {cn:'假装「'+cn+'」是在跳舞，配上音乐摇摆~', en:'Pretend '+w+' is a dance, move to music!'},
+    {cn:'慢慢「'+cn+'」像树懒，再突然加速像火箭！', en:'Slow '+w+' like a sloth, then zoom like a rocket!'},
+    {cn:'「'+cn+'」时学机器人，一卡一卡地动~', en:'Be a robot '+w+'ing, click clack!'},
+    {cn:'闭眼「'+cn+'」，用别的感官来玩~', en:'Close eyes and '+w+' with your senses!'},
+    {cn:'「'+cn+'」给毛绒玩具看，教它也会~', en:'Show the teddy how to '+w+'!'},
+    {cn:'倒着「'+cn+'」，挑战一下平衡感~', en:''+w+' backwards, balance challenge!'},
+    {cn:'「'+cn+'」时踩着想象的积木，一步一晃~', en:'Step on pretend blocks as you '+w+'!'},
+    {cn:'和影子一起「'+cn+'」，两个你都在动~', en:''+w+' with your shadow, two of you!'},
+    {cn:'「'+cn+'」完击个掌，庆祝完成~', en:'High five after you '+w+'!'}
+      ],
+      bigsmall:[
+    {cn:'变成巨人一样「'+cn+'」，大步跨过山丘~', en:'Be a giant '+w+'ing, big steps over hills!'},
+    {cn:'缩成小蚂蚁「'+cn+'」，钻过门缝~', en:'Tiny ant '+w+'ing, through the crack!'},
+    {cn:'一会儿超大「'+cn+'」，一会儿超小「'+cn+'」！', en:'Huge '+w+' then tiny '+w+'!'},
+    {cn:'「'+cn+'」时把手举得像大树那么高~', en:'Raise hands tall as a tree while '+w+'ing!'},
+    {cn:'蹲得低低地「'+cn+'」，像小蘑菇~', en:'Crouch low '+w+'ing like a mushroom!'},
+    {cn:'「'+cn+'」时把自己拉长成长面条~', en:'Stretch long like noodles as you '+w+'!'},
+    {cn:'变大「'+cn+'」撞到天花板，哦哟！', en:'Big '+w+' hits the ceiling, oops!'},
+    {cn:'变小「'+cn+'」坐进鞋子里，开车兜风~', en:'Tiny '+w+' rides in a shoe!'},
+    {cn:'「'+cn+'」时踮脚尖，越高越好~', en:'Tiptoe '+w+'ing, reach high!'},
+    {cn:'「'+cn+'」时缩成球，骨碌骨碌滚~', en:'Curl into a ball '+w+'ing, roll!'},
+    {cn:'一只手大「'+cn+'」一只手小「'+cn+'」，对比~', en:'One hand big '+w+', one small '+w+'!'},
+    {cn:'「'+cn+'」时把自己摊平，像张纸~', en:'Flatten like paper while '+w+'ing!'}
+      ],
+      character:[
+    {cn:'你当妈妈「'+cn+'」，宝宝当宝宝，你来教~', en:'You are Mommy '+w+'ing, teach baby!'},
+    {cn:'今天你是小熊「'+cn+'」，宝宝当蜂蜜~', en:'You are a bear '+w+'ing, baby is honey!'},
+    {cn:'机器人来「'+cn+'」啦，关节咔咔响~', en:'A robot comes to '+w+', clank clank!'},
+    {cn:'超人和宝宝比赛「'+cn+'」，谁更快？', en:'Superhero races baby to '+w+'!'},
+    {cn:'你演大风「'+cn+'」，宝宝演小树~', en:'You are wind '+w+'ing, baby is a tree!'},
+    {cn:'小猫来「'+cn+'」了，喵喵伴奏~', en:'A kitten comes to '+w+', meow!'},
+    {cn:'你当裁判，看妈妈和宝宝谁「'+cn+'」得好~', en:'You judge who '+w+'s better!'},
+    {cn:'假装你是怪兽「'+cn+'」，宝宝快跑！', en:'You are a monster '+w+'ing, baby run!'},
+    {cn:'小火车「'+cn+'」进站啦，宝宝上车~', en:'The train '+w+'s in, baby aboard!'},
+    {cn:'你当镜子，「'+cn+'」的动作它都学~', en:'You are the mirror, copy the '+w+'!'},
+    {cn:'医生和护士一起「'+cn+'」照顾娃娃~', en:'Doctor and nurse '+w+' the doll!'},
+    {cn:'你当主持人，采访宝宝怎么「'+cn+'」~', en:'You interview baby on how to '+w+'!'}
+      ],
+      color:[
+    {cn:'「'+cn+'」时冒红色火花，像小火苗~', en:'Red sparks as you '+w+', little fire!'},
+    {cn:'「'+cn+'」拖出蓝色光尾，像小流星~', en:'Blue light trail as you '+w+', a comet!'},
+    {cn:'「'+cn+'」时全身金光闪闪，超神气~', en:'Gold shimmer as you '+w+', so proud!'},
+    {cn:'「'+cn+'」染成彩虹色，七彩的~', en:'Rainbow '+w+', seven colors!'},
+    {cn:'「'+cn+'」时绿色光环绕，像森林精灵~', en:'Green glow as you '+w+', forest elf!'},
+    {cn:'「'+cn+'」亮粉色，甜甜的~', en:'Pink bright '+w+', sweet!'},
+    {cn:'「'+cn+'」时紫色闪电，酷炫！', en:'Purple lightning as you '+w+', cool!'},
+    {cn:'「'+cn+'」橙色暖光，像小太阳~', en:'Orange warm glow as you '+w+', little sun!'},
+    {cn:'「'+cn+'」闪着银色星点，闪闪烁烁~', en:'Silver sparkles as you '+w+'!'},
+    {cn:'「'+cn+'」时彩色泡泡冒出来，啵啵~', en:'Color bubbles as you '+w+', pop pop!'},
+    {cn:'「'+cn+'」发白光，像小云朵飘~', en:'White glow as you '+w+', a cloud!'},
+    {cn:'「'+cn+'」金色和紫色交替，变魔术~', en:'Gold and purple switch as you '+w+', magic!'}
+      ],
+      silly:[
+    {cn:'反着「'+cn+'」，倒退着玩~', en:''+w+' backwards, silly!'},
+    {cn:'「'+cn+'」到天花板上去，飘着~', en:''+w+' up to the ceiling, float!'},
+    {cn:'「'+cn+'」和影子比赛，谁快？', en:'Race your shadow to '+w+'!'},
+    {cn:'假装「'+cn+'」时被粘住，拔不出来~', en:'Pretend stuck while '+w+'ing!'},
+    {cn:'「'+cn+'」时变成一团棉花，软乎乎~', en:'Turn to cotton while '+w+'ing, soft!'},
+    {cn:'「'+cn+'」一下分身成两个你！', en:'Split into two as you '+w+'!'},
+    {cn:'「'+cn+'」时忽然隐身，只剩声音~', en:'Vanish while '+w+'ing, just sound!'},
+    {cn:'「'+cn+'」转圈转到晕，假装要倒~', en:'Spin '+w+'ing till dizzy, fall!'},
+    {cn:'「'+cn+'」坐进碗里，当小船~', en:''+w+' in a bowl, little boat!'},
+    {cn:'「'+cn+'」时学木头人，不许动！', en:'Freeze like a statue while '+w+'ing!'},
+    {cn:'「'+cn+'」和枕头打架，羽毛飞~', en:'Fight the pillow while '+w+'ing, feathers!'},
+    {cn:'「'+cn+'」完假装累瘫，躺平~', en:'Flop down tired after '+w+'ing!'}
+      ]
+    },
+    adj:{
+      sound:[
+    {cn:'说「'+cn+'」时配「哇」的大喊，把感觉喊出来！', en:'Shout wow as you say '+w+'!'},
+    {cn:'「'+cn+'」的东西配上「啵」的轻响，可爱~', en:'The '+w+' thing goes pop, cute!'},
+    {cn:'形容「'+cn+'」来个「叮」，像发现了宝贝！', en:'Ding as you find something '+w+'!'},
+    {cn:'「'+cn+'」时哼段小调，晃着脑袋~', en:'Hum a tune when it is '+w+'!'},
+    {cn:'说「'+cn+'」拖长音「呜」，感受它~', en:'Drawl woo as you say '+w+'!'},
+    {cn:'「'+cn+'」配「呼」的叹气，好满足~', en:'Sigh hoo for '+w+', so happy!'},
+    {cn:'形容「'+cn+'」来个「嗯」的点头肯定~', en:'Nod mmm for '+w+'!'},
+    {cn:'「'+cn+'」时学小动物叫，加强语气~', en:'Animal sound to show '+w+'!'},
+    {cn:'说「'+cn+'」配鼓点「咚咚」，有气势~', en:'Drum boom as you say '+w+'!'},
+    {cn:'「'+cn+'」轻轻「嘘」，神秘感~', en:'Hush as it is '+w+', mystery!'},
+    {cn:'形容「'+cn+'」来个「啦啦」，开心~', en:'La-la for '+w+', happy!'},
+    {cn:'「'+cn+'」配「咕噜」，像在品味~', en:'Rumble for '+w+', tasting!'}
+      ],
+      face:[
+    {cn:'做出「'+cn+'」的脸：惊喜得张嘴~', en:'Make a '+w+' face, mouth open!'},
+    {cn:'「'+cn+'」时眯眼笑，甜甜的~', en:'Squint smile when '+w+'!'},
+    {cn:'「'+cn+'」表情：叉腰挺胸，超自信~', en:''+w+' face, hands on hips!'},
+    {cn:'「'+cn+'」时做鬼脸，越丑越像~', en:'Ugly face for '+w+'!'},
+    {cn:'「'+cn+'」害羞脸：捂脸偷看~', en:'Shy face for '+w+', peek!'},
+    {cn:'「'+cn+'」惊讶脸：眉毛挑高~', en:'Surprised face for '+w+', brows up!'},
+    {cn:'「'+cn+'」时闭眼享受，像在吃糖~', en:'Eyes closed enjoy when '+w+'!'},
+    {cn:'「'+cn+'」神气脸：抬下巴~', en:'Proud face for '+w+', chin up!'},
+    {cn:'「'+cn+'」生气嘟嘴，呼呼~', en:'Pout for '+w+', huff!'},
+    {cn:'「'+cn+'」时做专注样，舌头伸出~', en:'Focused look for '+w+', tongue out!'},
+    {cn:'「'+cn+'」笑得眼睛弯弯~', en:'Smile curvy eyes for '+w+'!'},
+    {cn:'「'+cn+'」时假装照镜子，学自己~', en:'Mirror yourself for '+w+'!'}
+      ],
+      action:[
+    {cn:'用身体摆出「'+cn+'」：伸展双臂~', en:'Show '+w+' with your body, arms wide!'},
+    {cn:'「'+cn+'」地跳起来，像弹簧~', en:'Jump '+w+' like a spring!'},
+    {cn:'「'+cn+'」地缩成一团，圆滚滚~', en:'Curl '+w+' into a ball!'},
+    {cn:'「'+cn+'」地慢慢走，像大树~', en:'Walk '+w+' like a big tree!'},
+    {cn:'「'+cn+'」地转圈，裙子飘~', en:'Spin '+w+', skirt flies!'},
+    {cn:'「'+cn+'」地趴下，像小山~', en:'Lie '+w+' like a hill!'},
+    {cn:'「'+cn+'」地踮脚，越高越好~', en:'Tiptoe '+w+', reach high!'},
+    {cn:'「'+cn+'」地伸展，像大字~', en:'Stretch '+w+' like a star!'},
+    {cn:'「'+cn+'」地扭动，像面条~', en:'Wiggle '+w+' like noodles!'},
+    {cn:'「'+cn+'」地挺肚子，神气~', en:'Belly out '+w+', proud!'},
+    {cn:'「'+cn+'」地蹲下，像蘑菇~', en:'Squat '+w+' like a mushroom!'},
+    {cn:'「'+cn+'」地张开手，拥抱世界~', en:'Open arms '+w+', hug the world!'}
+      ],
+      bigsmall:[
+    {cn:'变得超级「'+cn+'」，顶到天~', en:'Be super '+w+', touch the sky!'},
+    {cn:'超级不「'+cn+'」，小得像芝麻~', en:'Not '+w+' at all, tiny as a seed!'},
+    {cn:'一会儿「'+cn+'」一会儿小，变魔术~', en:''+w+' then small, magic!'},
+    {cn:'「'+cn+'」得像个巨人，跨大步~', en:''+w+' like a giant, big steps!'},
+    {cn:'「'+cn+'」得缩成豆，藏手里~', en:''+w+' tiny as a bean, in hand!'},
+    {cn:'比一比：最「'+cn+'」和最不「'+cn+'」~', en:'Compare most '+w+' and least '+w+'!'},
+    {cn:'「'+cn+'」地鼓起来，像气球~', en:'Puff '+w+' like a balloon!'},
+    {cn:'「'+cn+'」地压扁，像饼~', en:'Flatten '+w+' like a pancake!'},
+    {cn:'「'+cn+'」得站上凳子才够得着~', en:''+w+', stand on a stool!'},
+    {cn:'「'+cn+'」地钻进杯子，当小船~', en:''+w+' into a cup, boat!'},
+    {cn:'「'+cn+'」地拉长，像橡皮~', en:'Stretch '+w+' like rubber!'},
+    {cn:'「'+cn+'」地缩成球，滚一滚~', en:'Curl '+w+', roll!'}
+      ],
+      character:[
+    {cn:'大巨人很「'+cn+'」，小蚂蚁也「'+cn+'」~', en:'The giant is '+w+', the ant is '+w+'!'},
+    {cn:'你当「'+cn+'」大王，宝宝当小兵~', en:'You are the '+w+' king, baby is the guard!'},
+    {cn:'小熊很「'+cn+'」，来抱抱你~', en:'The bear is '+w+', hugs you!'},
+    {cn:'机器人很「'+cn+'」，硬邦邦~', en:'The robot is '+w+', hard!'},
+    {cn:'云朵很「'+cn+'」，软软飘~', en:'The cloud is '+w+', soft float!'},
+    {cn:'小猫很「'+cn+'」，喵喵撒娇~', en:'The cat is '+w+', meow!'},
+    {cn:'大树很「'+cn+'」，站在那~', en:'The tree is '+w+', stands tall!'},
+    {cn:'宝宝很「'+cn+'」，求抱抱~', en:'The baby is '+w+', wants hug!'},
+    {cn:'石头很「'+cn+'」，一动不动~', en:'The stone is '+w+', still!'},
+    {cn:'太阳很「'+cn+'」，暖暖照~', en:'The sun is '+w+', warm!'},
+    {cn:'你演「'+cn+'」的小怪兽，吼一声~', en:'You are a '+w+' monster, roar!'},
+    {cn:'气球很「'+cn+'」，飘起来~', en:'The balloon is '+w+', floats!'}
+      ],
+      color:[
+    {cn:'「'+cn+'」的东西是红红的，像苹果~', en:'The '+w+' thing is red-red, like an apple!'},
+    {cn:'「'+cn+'」的世界蓝蓝的，像大海~', en:'The '+w+' world is blue-blue, like the sea!'},
+    {cn:'「'+cn+'」染成金灿灿，闪眼光~', en:'The '+w+' thing is golden, shines!'},
+    {cn:'「'+cn+'」的彩虹色，七彩的~', en:'The '+w+' thing is rainbow, seven colors!'},
+    {cn:'「'+cn+'」绿绿的，像草地~', en:'The '+w+' thing is green-green, like grass!'},
+    {cn:'「'+cn+'」粉粉的，甜甜~', en:'The '+w+' thing is pink-pink, sweet!'},
+    {cn:'「'+cn+'」紫紫的，神秘~', en:'The '+w+' thing is purple-purple, mystery!'},
+    {cn:'「'+cn+'」橙橙的，像橘子~', en:'The '+w+' thing is orange-orange, like an orange!'},
+    {cn:'「'+cn+'」白白的，像云朵~', en:'The '+w+' thing is white-white, like a cloud!'},
+    {cn:'「'+cn+'」闪闪银，像星星~', en:'The '+w+' thing is silver, like a star!'},
+    {cn:'「'+cn+'」黄黄的，像月亮~', en:'The '+w+' thing is yellow-yellow, like the moon!'},
+    {cn:'「'+cn+'」彩彩的，像糖果~', en:'The '+w+' thing is colorful, like candy!'}
+      ],
+      silly:[
+    {cn:'明明「'+cn+'」，却假装一点都不「'+cn+'」~', en:'It is '+w+' but pretend not '+w+'!'},
+    {cn:'「'+cn+'」的东西偷偷变成了相反~', en:'The '+w+' thing turns opposite!'},
+    {cn:'「'+cn+'」飘了起来，不落地~', en:'The '+w+' thing floats up!'},
+    {cn:'「'+cn+'」和别的东西换了，乱套~', en:'The '+w+' thing swapped with another!'},
+    {cn:'「'+cn+'」倒着来，头朝下~', en:'The '+w+' thing is upside-down!'},
+    {cn:'「'+cn+'」躲猫猫，找不着~', en:'The '+w+' thing hides, cannot find!'},
+    {cn:'「'+cn+'」变成了饼干，一口没~', en:'The '+w+' thing is a cookie, one bite!'},
+    {cn:'「'+cn+'」会说话，逗你笑~', en:'The '+w+' thing talks, makes you laugh!'},
+    {cn:'「'+cn+'」缩成芝麻，藏鞋里~', en:'The '+w+' thing shrinks in the shoe!'},
+    {cn:'「'+cn+'」忽然长大，顶破屋顶~', en:'The '+w+' thing grows, breaks the roof!'},
+    {cn:'「'+cn+'」分身成三个，一起玩~', en:'The '+w+' thing splits into three!'},
+    {cn:'「'+cn+'」和影子吵架，劝架~', en:'The '+w+' thing fights its shadow!'}
+      ]
+    }
+  };
+  var b = BANK[cat] || BANK.noun;
+  var SK = [['sound','🔊 音效','🔊 Sound'],['face','😊 表情','😊 Face'],['action','🤸 动作','🤸 Action'],['bigsmall','🔍 变大变小','🔍 Big & Small'],['character','🎭 变换角色','🎭 New Character'],['color','🌈 变颜色','🌈 Color'],['silly','🌀 反常识','🌀 Something Silly']];
+  return SK.map(function(pair, k){
+    var item = pick(b[pair[0]], n*131 + k*977 + 17);
+    return {skill: pair[1], tip: item.cn, skillEn: pair[2], tipEn: item.en};
+  });
+}
+
+const zoomHtml = (card, cnName) => {
+  const c = { cn: cnName || "", w: (card.word || card.name || "").toLowerCase(), cat: card.type || "noun", n: card.number };
+  const z = genZoom(c);
+  const zh = z.map((it) => `<div class="zi-it"><span class="zi-sk">${escapeHtml(it.skill)}</span><span class="zi-tip">${escapeHtml(it.tip)}</span></div>`).join("");
+  const en = z.map((it) => `<div class="zi-it"><span class="zi-sk">${escapeHtml(it.skillEn)}</span><span class="zi-tip">${escapeHtml(it.tipEn)}</span></div>`).join("");
+  return `<div class="zi"><div class="zi-h">🔍 Zoom in 一起玩</div><div class="zi-how">${escapeHtml(ZOOM_HOWTO)}</div><div class="zi-list">${zh}</div><div class="zi-h zi-h-en">🔍 Zoom in · English</div><div class="zi-how">${escapeHtml(ZOOM_HOWTO_EN)}</div><div class="zi-list">${en}</div></div>`;
 };
 
 /* WorkBuddy 视频源（与参考站 VIDEO_MANIFEST 一致）
@@ -708,6 +1047,36 @@ function fsCheckSpeakingCard(number) {
 }
 
 
+const CARD_CN = {
+  noun: {Chick:"小鸡",Duck:"鸭子",Lion:"狮子",Tiger:"老虎",Monkey:"猴子",Panda:"熊猫",Pig:"猪",Elephant:"大象",Sheep:"绵羊",Rabbit:"兔子",Dog:"小狗",Deer:"小鹿",Cat:"小猫",Fox:"狐狸",Penguin:"企鹅",Hen:"母鸡",Horse:"马",Donkey:"驴",Bull:"公牛",Gorilla:"大猩猩",Owl:"猫头鹰",Cow:"奶牛",Apple:"苹果",Orange:"橙子",Watermelon:"西瓜",Grape:"葡萄",Banana:"香蕉",pear:"梨",coconut:"椰子",vegetable:"蔬菜",carrot:"胡萝卜",tamato:"西红柿",pea:"豌豆",potato:"土豆",fish:"鱼",egg:"鸡蛋",hamburger:"汉堡",noodles:"面条",candy:"糖果",juicy:"果汁",mom:"妈妈",Dad:"爸爸",Grandma:"奶奶",Grandpa:"爷爷",Girl:"女孩",Boy:"男孩",Baby:"宝宝",Robot:"机器人",Heart:"心",Mouth:"嘴巴",Hand:"手",Feet:"脚",Leg:"腿",Arm:"手臂",Building:"大楼",Bed:"床",Desk:"书桌",Table:"桌子",Door:"门",Window:"窗户",Sofa:"沙发",Piano:"钢琴",TV:"电视",Freezer:"冰柜",Newspaper:"报纸",Envelope:"信封",Pencil:"铅笔",Book:"书",Ink:"墨水",Cup:"杯子",Lock:"锁",Key:"钥匙",Hammer:"锤子",Clock:"钟",Jacket:"外套",Jeans:"牛仔裤",Dress:"连衣裙",Vest:"背心","T-shirt":"T恤",Socks:"袜子",Hat:"帽子",Cap:"鸭舌帽",Glasses:"眼镜",Sunglasses:"墨镜",Watch:"手表",Umbrella:"雨伞",Car:"小汽车",Bus:"公交车",Van:"面包车","Traffic light":"红绿灯",Boat:"小船",Sea:"大海",Sun:"太阳",Moon:"月亮",Flower:"花",Grass:"草",Spring:"春天",Summer:"夏天",Autumn:"秋天",Winter:"冬天"},
+  things: {AC:"空调","Air Purifier":"空气净化器"}
+};
+const cardCnName = (type, card) => (CARD_CN[type] || {})[card.word || card.name] || "";
+
+function renderCardDetail(type, number) {
+  const card = cardSources()[type].find((item) => item.number === Number(number));
+  if (!card) return;
+  const name = cardName(card, type) || `#${number}`;
+  const cn = cardCnName(type, card);
+  const img = cardImage(card, type);
+  const catKey = type === "noun" ? "noun" : type === "verb" ? "verb" : "adj";
+  const guideVideo = type === "noun" || type === "verb" ? guideVideoUrl(catKey, card) : "";
+  const contextVideo = contextVideoUrl(catKey, card);
+  const playBtn = (src, title, label) => src ? `<button class="tiny-action" data-play-video="${escapeHtml(src)}" data-play-title="${escapeHtml(title)}">▶ ${escapeHtml(label)}</button>` : "";
+  panelRoot().innerHTML = `
+    <button class="detail-back" data-back-cards>← 返回卡库</button>
+    <section class="detail-head"><span>${escapeHtml({noun:"名词卡",verb:"动词卡",adjective:"形容词卡",things:"万物贴"}[type] || "卡片")} · No.${card.number}</span><h1>${escapeHtml(name)}</h1><p>${escapeHtml(cn || "")}</p></section>
+    ${img ? `<section class="module"><div class="module-body card-detail-img"><img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy"></div></section>` : ""}
+    <section class="module"><div class="module-head"><h2>教学视频</h2><span>点击播放</span></div><div class="module-body video-btn-row">
+      ${playBtn(contextVideo, `${name} 常速语境视频`, "▶ 常速语境视频")}
+      ${playBtn(guideVideo, `${name} 引导输出视频`, "▶ 引导输出视频")}
+      ${(!contextVideo && !guideVideo) ? `<span class="empty-inline">暂无视频</span>` : ""}
+    </div></section>
+    <section class="module"><div class="module-head"><h2>Zoom in 亲子玩法</h2><span>把这张词演活</span></div><div class="module-body">${zoomHtml(card, cn)}</div></section>`;
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+const panelRoot = () => document.getElementById("card-subtab-panel");
+
 function renderCardSubtab() {
   document.querySelectorAll("#card-subtab-seg button").forEach((button) => button.classList.toggle("active", button.dataset.cardSubtab === activeCardSubtab));
   if (activeCardSubtab === "cards") {
@@ -769,6 +1138,13 @@ document.addEventListener("click", (event) => {
   }
   const nounPattern = event.target.closest("[data-noun-pattern]");
   if (nounPattern) { renderNounPatternDetail(nounPattern.dataset.nounPattern); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
+  const backCards = event.target.closest("[data-back-cards]");
+  if (backCards) {
+    activeCardSubtab = "cards";
+    renderCardSubtab();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+    return;
+  }
   const backPatterns = event.target.closest("[data-back-patterns]");
   if (backPatterns) { renderPatternsTable(); window.scrollTo({ top: 0, behavior: "smooth" }); return; }
   const patternButton = event.target.closest("[data-toggle-pattern]");
@@ -845,12 +1221,7 @@ document.addEventListener("click", (event) => {
   const tile = event.target.closest("[data-card-library]");
   if (!tile) return;
   const [type, number] = tile.dataset.cardLibrary.split(":");
-  const checkinId = checkinIdFor(type);
-  const key = `${checkinId}:${number}`;
-  checkinState[key] = !checkinState[key];
-  saveCheckinState();
-  toast(checkinState[key] ? "已标记掌握" : "已取消掌握");
-  renderCardSubtab();
+  renderCardDetail(type, Number(number));
 });
 
 document.getElementById("video-modal-close").addEventListener("click", closeVideoModal);
