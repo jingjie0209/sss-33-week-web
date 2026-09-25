@@ -31,6 +31,10 @@ button { cursor: pointer; }
   .app-phone { min-height: 0; border-radius: 34px; overflow: hidden; box-shadow: 0 24px 70px #1f265126, 0 0 0 1px var(--line); }
 }
 
+/* ===== Tab 视图切换（核心） ===== */
+.tab-view { display: none; }
+.tab-view.active { display: block; }
+
 /* ===== 顶栏 ===== */
 .topbar { position: sticky; top: 0; z-index: 30; background: #fffffffa; backdrop-filter: blur(10px); border-bottom: 1px solid #eceef5; }
 .topbar-inner { max-width: 480px; margin: 0 auto; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
