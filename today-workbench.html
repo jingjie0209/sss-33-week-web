@@ -93,20 +93,22 @@ button { cursor: pointer; }
 .tiny-action.done { background: var(--green); border-color: var(--green); color: #fff; }
 
 /* ===== 闪卡 / 卡片网格 ===== */
-.flashcards, .card-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
-@media (max-width: 380px) { .flashcards, .card-grid { grid-template-columns: 1fr; } }
+.flashcards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+@media (max-width: 380px) { .flashcards { grid-template-columns: 1fr; } .card-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; } }
 .flashcard, .card-tile { position: relative; border: 1px solid var(--line); border-radius: 16px; background: #fff; overflow: hidden; text-align: left; padding: 0; box-shadow: var(--shadow-sm); }
 .flashcard img { display: block; width: 100%; height: 120px; object-fit: cover; background: #eef0f7; }
-.card-tile img { display: block; width: 100%; height: 120px; object-fit: cover; background: #eef0f7; }
+.card-tile img { display: block; width: 100%; aspect-ratio: 1 / 1; height: auto; object-fit: cover; background: #eef0f7; }
 .card-tile img.speaking-img { height: auto; aspect-ratio: 595 / 842; object-fit: contain; background: #f2f3f7; }
 .card-tile img.speaking-advanced-img { height: auto; aspect-ratio: 2.05 / 1; object-fit: contain; background: #f2f3f7; }
 .flashcard.checked, .card-tile.checked { border-color: var(--green-border); background: var(--green-soft); }
 .flashcard.checked::after { content: "✓"; position: absolute; right: 8px; top: 8px; width: 22px; height: 22px; display: grid; place-items: center; border-radius: 50%; background: var(--green); color: #fff; font-size: 13px; font-weight: 900; }
-.flashcard-body, .card-tile .card-body { padding: 10px 12px 12px; }
-.flashcard-body small, .card-tile .card-body small { display: block; color: var(--muted-2); font-size: 10.5px; }
-.flashcard-body strong, .card-tile .card-body strong { display: block; margin-top: 3px; font-size: 14.5px; }
-.flashcard-body em, .card-tile .card-body em { display: block; margin-top: 2px; color: var(--muted-2); font-style: normal; font-size: 11.5px; }
-.card-no { position: absolute; left: 8px; top: 8px; min-width: 22px; height: 22px; padding: 0 6px; display: grid; place-items: center; border-radius: 999px; background: #5b53d3; color: #fff; font-size: 10.5px; font-weight: 800; }
+.flashcard-body { padding: 10px 12px 12px; }
+.card-tile .card-body { padding: 7px 8px 9px; }
+.flashcard-body small, .card-tile .card-body small { display: block; color: var(--muted-2); font-size: 9.5px; }
+.flashcard-body strong, .card-tile .card-body strong { display: block; margin-top: 2px; font-size: 12.5px; }
+.flashcard-body em, .card-tile .card-body em { display: block; margin-top: 2px; color: var(--muted-2); font-style: normal; font-size: 10.5px; }
+.card-no { position: absolute; left: 6px; top: 6px; min-width: 18px; height: 18px; padding: 0 5px; display: grid; place-items: center; border-radius: 999px; background: #5b53d3; color: #fff; font-size: 9.5px; font-weight: 800; }
 
 /* ===== 游戏 ===== */
 .game-list { display: grid; gap: 10px; }
