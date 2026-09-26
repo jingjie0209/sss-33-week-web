@@ -1209,6 +1209,7 @@ document.getElementById("card-type-seg").addEventListener("click", (event) => {
   activeCardType = button.dataset.cardType;
   activeCardCategory = "全部";
   document.querySelectorAll("#card-type-seg button").forEach((item) => item.classList.toggle("active", item === button));
+  document.getElementById("filter-hero-title").textContent = button.textContent.trim();
   activeSpeakingMode = "core";
   renderCardSubtab();
 });
