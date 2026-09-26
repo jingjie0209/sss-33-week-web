@@ -152,6 +152,22 @@ button { cursor: pointer; }
 .status-badge.pending { background: var(--yellow-soft); color: #8a5a12; }
 .status-badge.done { background: var(--green-soft); color: var(--green); }
 
+/* ===== 卡库筛选 Hero（参考"北京必游榜"样式） ===== */
+.filter-hero { padding: 16px 14px 13px; border-radius: 22px 22px 26px 26px; margin-bottom: 14px; color: #fff; background: linear-gradient(140deg, #4f46cf, #7564e4 58%, #9780ef); box-shadow: var(--shadow-lg); position: relative; overflow: hidden; }
+.filter-hero::before { content: ""; position: absolute; left: -30px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: #ffffff17; }
+.filter-hero::after { content: ""; position: absolute; right: -40px; top: 30%; width: 180px; height: 180px; border-radius: 50%; background: #ffffff0d; }
+.filter-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; position: relative; z-index: 1; }
+.filter-hero-title { font-size: 19px; font-weight: 900; letter-spacing: .02em; }
+.filter-hero-badge { padding: 6px 12px; border-radius: 999px; background: #ffffff1f; font-size: 11px; font-weight: 800; color: #fff; }
+.filter-line { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 1; }
+.filter-line::-webkit-scrollbar { display: none; }
+.filter-line button { flex: none; min-height: 32px; padding: 6px 14px; border: 0; border-radius: 999px; background: #ffffff21; color: #eae7ff; font-size: 12.5px; font-weight: 700; }
+.filter-line button.active { background: #fff; color: #4f46cf; box-shadow: 0 4px 12px #1f26512e; }
+.filter-line-main { margin-bottom: 9px; }
+.filter-line-main button { font-size: 13px; font-weight: 800; }
+.filter-line-sub { margin-bottom: 9px; }
+.filter-line-cats button { background: #ffffff14; font-size: 12px; }
+
 /* ===== 分类筛选 ===== */
 .card-seg { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
 .card-seg button { padding: 7px 13px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12px; font-weight: 700; }
@@ -292,19 +308,24 @@ button { cursor: pointer; }
   </div>
 
   <div id="view-cards" class="tab-view">
-    <div class="card-seg" id="card-type-seg" style="margin-bottom:10px">
-      <button class="active" data-card-type="noun">名词</button>
-      <button data-card-type="verb">动词</button>
-      <button data-card-type="adjective">形容词</button>
-      <button data-card-type="things">万物贴</button>
+    <div class="filter-hero">
+      <div class="filter-hero-top">
+        <div class="filter-hero-title" id="filter-hero-title">名词</div>
+        <div class="filter-hero-badge" id="filter-hero-badge">已掌握 0</div>
+      </div>
+      <div class="filter-line filter-line-main">
+        <button class="active" data-card-type="noun">名词</button>
+        <button data-card-type="verb">动词</button>
+        <button data-card-type="adjective">形容词</button>
+        <button data-card-type="things">万物贴</button>
+      </div>
+      <div class="filter-line filter-line-sub">
+        <button class="active" data-card-subtab="cards">卡片</button>
+        <button data-card-subtab="speaking">开口神器</button>
+        <button data-card-subtab="patterns">基础句型</button>
+      </div>
+      <div class="filter-line filter-line-cats" id="card-category-seg"></div>
     </div>
-    <div class="card-seg" id="card-subtab-seg" style="margin-bottom:12px">
-      <button class="active" data-card-subtab="cards">卡片</button>
-      <button data-card-subtab="speaking">开口神器</button>
-      <button data-card-subtab="patterns">基础句型</button>
-    </div>
-    <div class="card-seg" id="card-category-seg"></div>
-    <div id="cards-mastered-label" class="result-note" style="margin-bottom:10px">已掌握 0</div>
     <div id="card-grid" class="card-grid"></div>
     <div id="card-subtab-panel"></div>
   </div>
@@ -1039,14 +1060,15 @@ function renderCards() {
   }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
   const checkinId = checkinIdFor(activeCardType);
   const mastered = cards.filter((card) => checkinState[`${checkinId}:${card.number}`]).length;
-  document.getElementById("cards-mastered-label").textContent = `已掌握 ${mastered}/${cards.length}`;
+  document.getElementById("filter-hero-badge").textContent = `已掌握 ${mastered}/${cards.length}`;
 }
 
 function renderSpeaking() {
   const panel = document.getElementById("card-subtab-panel");
   document.getElementById("card-grid").style.display = "none";
-  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("filter-hero-badge").style.display = "none";
   document.getElementById("card-category-seg").style.display = "none";
+  document.querySelector(".filter-hero").style.display = "none";
   if (activeCardType === "noun") {
     const modes = [["core", "核心问答", 51], ["guess", "描述猜词", 39], ["true-false", "判断正误", 10]];
     let items = [];
@@ -1074,7 +1096,7 @@ function renderSpeaking() {
 function renderPatternsTable() {
   const panel = document.getElementById("card-subtab-panel");
   document.getElementById("card-grid").style.display = "none";
-  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("filter-hero-badge").style.display = "none";
   document.getElementById("card-category-seg").style.display = "none";
   const typeLabel = { noun: "名词卡", verb: "动词卡", adjective: "形容词卡" }[activeCardType];
   const items = (patterns || []).filter((item) => item.type === typeLabel);
@@ -1093,7 +1115,7 @@ function renderNounPatternDetail(number) {
   if (!item) return;
   const panel = document.getElementById("card-subtab-panel");
   document.getElementById("card-grid").style.display = "none";
-  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("filter-hero-badge").style.display = "none";
   document.getElementById("card-category-seg").style.display = "none";
   const speakingImage = `assets/noun-speaking-cards/card-${String(item.number).padStart(2, "0")}.jpg`;
   const detailRows = (window.SSS_WEB_DATA?.detailRows || []);
@@ -1142,7 +1164,7 @@ function renderCardDetail(type, number) {
   const card = cardSources()[type].find((item) => item.number === Number(number));
   if (!card) return;
   document.getElementById("card-grid").style.display = "none";
-  document.getElementById("cards-mastered-label").style.display = "none";
+  document.getElementById("filter-hero-badge").style.display = "none";
   document.getElementById("card-category-seg").style.display = "none";
   const name = cardName(card, type) || `#${number}`;
   const cn = cardCnName(type, card);
@@ -1168,8 +1190,9 @@ function renderCardSubtab() {
   document.querySelectorAll("#card-subtab-seg button").forEach((button) => button.classList.toggle("active", button.dataset.cardSubtab === activeCardSubtab));
   if (activeCardSubtab === "cards") {
     document.getElementById("card-grid").style.display = "";
-    document.getElementById("cards-mastered-label").style.display = "";
+    document.getElementById("filter-hero-badge").style.display = "";
     document.getElementById("card-category-seg").style.display = "";
+    document.querySelector(".filter-hero").style.display = "";
     document.getElementById("card-subtab-panel").innerHTML = "";
     renderCardCategorySeg();
     renderCards();
@@ -1229,7 +1252,7 @@ document.addEventListener("click", (event) => {
   if (backCards) {
     activeCardSubtab = "cards";
     document.getElementById("card-grid").style.display = "";
-    document.getElementById("cards-mastered-label").style.display = "";
+    document.getElementById("filter-hero-badge").style.display = "";
     document.getElementById("card-category-seg").style.display = "";
     document.getElementById("card-subtab-panel").innerHTML = "";
     renderCardCategorySeg();
