@@ -154,12 +154,12 @@ button { cursor: pointer; }
 
 /* ===== 卡库筛选 Hero（参考"北京必游榜"样式） ===== */
 .filter-hero { padding: 16px 14px 13px; border-radius: 22px 22px 26px 26px; margin-bottom: 14px; color: #fff; background: linear-gradient(140deg, #4f46cf, #7564e4 58%, #9780ef); box-shadow: var(--shadow-lg); position: relative; overflow: hidden; }
-.filter-hero::before { content: ""; position: absolute; left: -30px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: #ffffff17; }
-.filter-hero::after { content: ""; position: absolute; right: -40px; top: 30%; width: 180px; height: 180px; border-radius: 50%; background: #ffffff0d; }
-.filter-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; position: relative; z-index: 1; }
+.filter-hero::before { content: ""; position: absolute; left: -30px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: #ffffff17; pointer-events: none; }
+.filter-hero::after { content: ""; position: absolute; right: -40px; top: 30%; width: 180px; height: 180px; border-radius: 50%; background: #ffffff0d; pointer-events: none; }
+.filter-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; position: relative; z-index: 2; }
 .filter-hero-title { font-size: 19px; font-weight: 900; letter-spacing: .02em; }
 .filter-hero-badge { padding: 6px 12px; border-radius: 999px; background: #ffffff1f; font-size: 11px; font-weight: 800; color: #fff; }
-.filter-line { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 1; }
+.filter-line { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 2; }
 .filter-line::-webkit-scrollbar { display: none; }
 .filter-line button { flex: none; min-height: 32px; padding: 6px 14px; border: 0; border-radius: 999px; background: #ffffff21; color: #eae7ff; font-size: 12.5px; font-weight: 700; }
 .filter-line button.active { background: #fff; color: #4f46cf; box-shadow: 0 4px 12px #1f26512e; }
