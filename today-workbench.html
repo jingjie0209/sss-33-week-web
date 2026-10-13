@@ -175,15 +175,43 @@ button { cursor: pointer; }
 .card-seg button:hover { border-color: var(--brand-border); color: var(--brand); }
 .card-seg button.active:hover { color: #fff; }
 
-/* ===== 计划 ===== */
-.plan-week { border: 1px solid var(--line); border-radius: 18px; background: #fff; overflow: hidden; margin-bottom: 10px; box-shadow: var(--shadow-sm); }
-.plan-week-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 15px; background: #f7f8fc; border-bottom: 1px solid #eceef5; }
-.plan-week-head h3 { margin: 0; font-size: 14px; }
-.plan-week-head small { color: var(--muted-2); font-size: 11px; }
-.plan-songs { display: grid; gap: 8px; padding: 12px 14px; }
-.plan-song { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 13px; }
-.plan-song.done { border-color: var(--green-border); background: var(--green-soft); }
-.plan-song strong { font-size: 13px; }
+/* ===== 儿歌 ===== */
+.rhyme-hero { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-radius: 20px; background: linear-gradient(140deg, #4f46cf, #7564e4 65%, #9780ef); color: #fff; box-shadow: var(--shadow-lg); }
+.rhyme-hero span { display: block; font-size: 11.5px; font-weight: 800; letter-spacing: .08em; color: #dcd9ff; }
+.rhyme-hero strong { display: block; margin-top: 4px; font-size: 20px; }
+.rhyme-hero p { margin: 5px 0 0; color: #dedcff; font-size: 12px; line-height: 1.55; }
+.rhyme-hero-progress { text-align: right; flex: none; }
+.rhyme-hero-progress b { display: block; font-size: 28px; font-weight: 900; line-height: 1.1; }
+.rhyme-hero-progress span { color: #dedcff; font-size: 12px; }
+.rhyme-subtabs { display: flex; gap: 6px; margin: 12px 0; overflow-x: auto; padding-bottom: 2px; }
+.rhyme-subtabs button { flex: none; padding: 8px 15px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12.5px; font-weight: 800; }
+.rhyme-subtabs button.active { background: linear-gradient(145deg, #4d45cc, #7566e3); border-color: transparent; color: #fff; box-shadow: 0 6px 16px #2c248c26; }
+.rhyme-group { margin-bottom: 12px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: var(--shadow-sm); }
+.rhyme-group-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
+.rhyme-group-head h3 { margin: 0; font-size: 14.5px; }
+.rhyme-group-head small { display: block; margin-top: 3px; color: var(--muted-2); font-size: 11px; }
+.rhyme-progress-badge { flex: none; padding: 5px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-size: 11.5px; font-weight: 800; }
+.rhyme-songs { display: grid; gap: 7px; }
+.rhyme-song { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
+.rhyme-song.done { border-color: var(--green-border); background: var(--green-soft); }
+.rhyme-song-open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px; border: 0; background: transparent; padding: 0; text-align: left; }
+.rhyme-song-no { flex: none; min-width: 26px; padding: 3px 6px; border-radius: 8px; background: #f2f3fb; color: var(--brand); font-size: 10.5px; font-weight: 800; text-align: center; }
+.rhyme-song-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; color: var(--ink); }
+.rhyme-audio-dot { flex: none; color: var(--brand); font-size: 11px; }
+.rhyme-back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--brand); font-size: 12.5px; font-weight: 800; }
+.rhyme-detail-head h2 { margin: 0 0 3px; font-size: 18px; line-height: 1.3; }
+.rhyme-detail-head small { color: var(--muted-2); font-size: 11.5px; }
+.rhyme-detail-actions { margin-top: 12px; }
+.rhyme-media { margin-top: 13px; padding: 14px; border: 1px solid var(--line); border-radius: 16px; background: #fff; }
+.rhyme-media h3 { margin: 0 0 9px; font-size: 13px; }
+.rhyme-media img { display: block; width: 100%; height: auto; border-radius: 12px; border: 1px solid #eceef5; }
+.rhyme-flash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.rhyme-flash-grid img { aspect-ratio: 1; object-fit: cover; }
+.rhyme-tpr-list { display: grid; gap: 7px; }
+.rhyme-tpr-row { display: flex; justify-content: space-between; gap: 10px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 12px; background: #fafbff; font-size: 12.5px; }
+.rhyme-tpr-row b { color: var(--ink); }
+.rhyme-tpr-row span { color: var(--muted-2); }
+.empty-note { color: var(--muted-2); font-size: 12px; }
 
 /* ===== 游戏筛选 ===== */
 .game-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -330,10 +358,18 @@ button { cursor: pointer; }
     <div id="card-subtab-panel"></div>
   </div>
 
-  <div id="view-plan" class="tab-view">
-    <section class="module"><div class="module-head"><div><h2>33 周计划表</h2></div><span id="plan-progress-label">0/99</span></div><div class="module-body">
-      <div id="plan-list"></div>
+  <div id="view-rhyme" class="tab-view">
+    <section class="module rhyme-hero-module"><div class="rhyme-hero">
+      <div><span>SSS 儿歌库</span><strong id="rhyme-total-label">0 首儿歌</strong><p>主题 · 场景 · TPR · 打卡计划，点击进入详情和打卡。</p></div>
+      <div class="rhyme-hero-progress"><b id="rhyme-done-label">0</b><span id="rhyme-total-short">/ 0</span></div>
     </div></section>
+    <nav class="rhyme-subtabs" id="rhyme-subtabs">
+      <button class="active" data-rhyme-section="themes">全部</button>
+      <button data-rhyme-section="plan">打卡计划</button>
+      <button data-rhyme-section="scene">场景儿歌</button>
+      <button data-rhyme-section="tpr">TPR儿歌</button>
+    </nav>
+    <div id="rhyme-body"></div>
   </div>
 
   <div id="view-games" class="tab-view">
@@ -379,7 +415,7 @@ button { cursor: pointer; }
 <nav class="tabbar" id="tabbar">
   <button class="active" data-tab="today"><i></i>今日</button>
   <button data-tab="cards"><i></i>卡库</button>
-  <button data-tab="plan"><i></i>计划</button>
+  <button data-tab="rhyme"><i></i>儿歌</button>
   <button data-tab="games"><i></i>游戏</button>
   <button data-tab="parent"><i></i>家长</button>
 </nav>
@@ -390,6 +426,7 @@ button { cursor: pointer; }
 <script src="noun-card-data.js"></script>
 <script src="checkin-data.js"></script>
 <script src="games-data.js"></script>
+<script src="rhyme-data.js"></script>
 <script src="card-extensions.js"></script>
 <script src="things-card-data.js"></script>
 <script src="verb-card-data.js"></script>
@@ -982,7 +1019,7 @@ const switchTab = (tab) => {
   document.querySelectorAll(".tabbar button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
   document.querySelectorAll(".tab-view").forEach((view) => view.classList.toggle("active", view.id === `view-${tab}`));
   if (tab === "cards") { renderCardSubtab(); }
-  if (tab === "plan") renderPlan();
+  if (tab === "rhyme") renderRhyme();
   if (tab === "games") renderGamesTab();
   if (tab === "parent") renderParent();
   window.scrollTo({ top: 0, behavior: "smooth" });
@@ -1279,17 +1316,126 @@ document.addEventListener("click", (event) => {
   }
 });
 
-/* ---------- Plan tab ---------- */
-function renderPlan() {
-  const totalDone = songs.filter((item) => isDone(item.sheet)).length;
-  document.getElementById("plan-progress-label").textContent = `${totalDone}/${songs.length}`;
-  document.getElementById("plan-list").innerHTML = weeks.map((week) => {
-    const weekSongs = week.songs.map((item) => songBySheet.get(item.sheet)).filter(Boolean);
-    const done = weekSongs.filter((item) => isDone(item.sheet)).length;
-    const complete = done === weekSongs.length && weekSongs.length > 0;
-    return `<article class="plan-week"><div class="plan-week-head"><div><h3>${escapeHtml(week.label)} · ${escapeHtml(week.theme)}</h3><small>${done}/${weekSongs.length} 已完成</small></div>${complete ? '<span class="status done">本周完成</span>' : ""}</div><div class="plan-songs">${weekSongs.map((item) => `<div class="plan-song ${isDone(item.sheet) ? "done" : ""}"><div><strong>${escapeHtml(item.title)}</strong></div><div style="display:flex;align-items:center;gap:8px"><span class="status ${isDone(item.sheet) ? "done" : "pending"}">${isDone(item.sheet) ? "已完成" : "待打卡"}</span><button class="tiny-action" data-toggle-song="${escapeHtml(item.sheet)}">${isDone(item.sheet) ? "取消" : "完成"}</button></div></div>`).join("")}</div></article>`;
+/* ---------- Rhyme tab ---------- */
+const RHYME = window.RHYME_DATA || { themes: [], sceneGroups: [], tprSongs: [], planWeeks: [], songTpr: {}, songPreviews: {}, localAudio: {} };
+let rhymeSection = "themes";
+let rhymePreviewSongId = null;
+
+const rhymeAllSongs = () => {
+  const items = [];
+  RHYME.themes.forEach((theme) => theme.songs.forEach((song) => items.push({ ...song, themeId: theme.id, themeNumber: theme.number, themeName: theme.name })));
+  RHYME.sceneGroups.forEach((group) => group.songs.forEach((song) => items.push({ ...song, themeId: group.id, themeName: `场景 ${group.num} · ${group.name}` })));
+  RHYME.tprSongs.forEach((song) => items.push({ ...song, themeId: "theme-11", themeName: "TPR儿歌" }));
+  RHYME.planWeeks.forEach((week) => week.songs.forEach((song) => items.push({ ...song, themeId: `plan-week-${week.week}`, themeName: `第${week.week}周` })));
+  return items;
+};
+const rhymeSongById = new Map(rhymeAllSongs().map((song) => [song.id, song]));
+const rhymeAudio = (songId) => RHYME.localAudio[songId] || "";
+const rhymePreview = (songId) => RHYME.songPreviews[songId] || { poster: "", lyric: "", flashcards: [] };
+const isRhymeDone = (songId) => Boolean(songState[songId]);
+const toggleRhymeDone = (songId) => {
+  if (songState[songId]) delete songState[songId]; else songState[songId] = { at: Date.now() };
+  saveState(STORAGE_KEY, songState);
+};
+
+function renderRhyme() {
+  const total = rhymeAllSongs().length;
+  const done = rhymeAllSongs().filter((song) => isRhymeDone(song.id)).length;
+  document.getElementById("rhyme-total-label").textContent = `${total} 首儿歌`;
+  document.getElementById("rhyme-total-short").textContent = `/ ${total}`;
+  document.getElementById("rhyme-done-label").textContent = done;
+  document.querySelectorAll("#rhyme-subtabs button").forEach((b) => b.classList.toggle("active", b.dataset.rhymeSection === rhymeSection));
+  const body = document.getElementById("rhyme-body");
+  if (rhymePreviewSongId) { body.innerHTML = renderRhymeDetail(rhymePreviewSongId); return; }
+  if (rhymeSection === "themes") body.innerHTML = renderRhymeThemes();
+  else if (rhymeSection === "plan") body.innerHTML = renderRhymePlan();
+  else if (rhymeSection === "scene") body.innerHTML = renderRhymeScene();
+  else body.innerHTML = renderRhymeTpr();
+}
+
+function renderRhymeThemes() {
+  return RHYME.themes.map((theme) => {
+    const done = theme.songs.filter((song) => isRhymeDone(song.id)).length;
+    return `<article class="rhyme-group"><div class="rhyme-group-head"><div><h3>${escapeHtml(theme.name)}</h3><small>${theme.songCount} 首 · ${escapeHtml(theme.level)}</small></div><span class="rhyme-progress-badge">${done}/${theme.songCount}</span></div><div class="rhyme-songs">${theme.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
   }).join("");
 }
+
+function renderRhymePlan() {
+  return RHYME.planWeeks.map((week) => {
+    const done = week.songs.filter((song) => isRhymeDone(song.id)).length;
+    return `<article class="rhyme-group"><div class="rhyme-group-head"><div><h3>第 ${week.week} 周</h3><small>${escapeHtml(week.theme)}</small></div><span class="rhyme-progress-badge">${done}/${week.songs.length}</span></div><div class="rhyme-songs">${week.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
+  }).join("");
+}
+
+function renderRhymeScene() {
+  return RHYME.sceneGroups.map((group) => {
+    const done = group.songs.filter((song) => isRhymeDone(song.id)).length;
+    return `<article class="rhyme-group"><div class="rhyme-group-head"><div><h3>${group.num}. ${escapeHtml(group.name)}</h3><small>${group.songs.length} 首</small></div><span class="rhyme-progress-badge">${done}/${group.songs.length}</span></div><div class="rhyme-songs">${group.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
+  }).join("");
+}
+
+function renderRhymeTpr() {
+  const done = RHYME.tprSongs.filter((song) => isRhymeDone(song.id)).length;
+  return `<article class="rhyme-group"><div class="rhyme-group-head"><div><h3>TPR 儿歌</h3><small>动起来学英语 · ${RHYME.tprSongs.length} 首</small></div><span class="rhyme-progress-badge">${done}/${RHYME.tprSongs.length}</span></div><div class="rhyme-songs">${RHYME.tprSongs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
+}
+
+function rhymeSongRow(song) {
+  const done = isRhymeDone(song.id);
+  const hasAudio = Boolean(rhymeAudio(song.id));
+  return `<div class="rhyme-song ${done ? "done" : ""}"><button class="rhyme-song-open" data-rhyme-open="${escapeHtml(song.id)}"><span class="rhyme-song-no">${String(song.no || 0).padStart(2, "0")}</span><span class="rhyme-song-title">${escapeHtml(song.title)}</span>${hasAudio ? '<span class="rhyme-audio-dot">▶</span>' : ""}</button><button class="tiny-action${done ? " done" : ""}" data-rhyme-toggle="${escapeHtml(song.id)}">${done ? "已完成 ✓" : "打卡"}</button></div>`;
+}
+
+function renderRhymeDetail(songId) {
+  const song = rhymeSongById.get(songId);
+  if (!song) return `<p class="empty-note">未找到这首儿歌。</p>`;
+  const preview = rhymePreview(songId);
+  const audio = rhymeAudio(songId);
+  const tpr = RHYME.songTpr[songId] || [];
+  const done = isRhymeDone(songId);
+  const flashcards = preview.flashcards || [];
+  return `<article class="rhyme-detail">
+    <button class="rhyme-back" data-rhyme-back>← 返回儿歌</button>
+    <div class="rhyme-detail-head"><h2>${escapeHtml(song.title)}</h2><small>${escapeHtml(song.themeName || "")}</small></div>
+    <div class="rhyme-detail-actions">
+      ${audio ? `<audio controls preload="none" src="${escapeHtml(audio)}" style="width:100%;margin-bottom:10px"></audio>` : '<p class="empty-note">暂无音频。</p>'}
+      <button class="tiny-action${done ? " done" : ""}" data-rhyme-toggle="${escapeHtml(songId)}">${done ? "已完成 ✓" : "打卡完成"}</button>
+    </div>
+    ${preview.poster ? `<section class="rhyme-media"><h3>海报</h3><img src="${escapeHtml(preview.poster)}" alt="${escapeHtml(song.title)} 海报" loading="lazy"></section>` : ""}
+    ${preview.lyric ? `<section class="rhyme-media"><h3>歌词</h3><img src="${escapeHtml(preview.lyric)}" alt="${escapeHtml(song.title)} 歌词" loading="lazy"></section>` : ""}
+    ${flashcards.length ? `<section class="rhyme-media"><h3>闪卡 (${flashcards.length})</h3><div class="rhyme-flash-grid">${flashcards.map((src) => `<img src="${escapeHtml(src)}" alt="闪卡" loading="lazy">`).join("")}</div></section>` : ""}
+    ${tpr.length ? `<section class="rhyme-media"><h3>TPR 动作指令</h3><div class="rhyme-tpr-list">${tpr.map((item) => `<div class="rhyme-tpr-row"><b>${escapeHtml(item.en)}</b><span>${escapeHtml(item.zh)}</span></div>`).join("")}</div></section>` : ""}
+  </article>`;
+}
+
+document.getElementById("rhyme-subtabs").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-rhyme-section]");
+  if (!button) return;
+  rhymeSection = button.dataset.rhymeSection;
+  rhymePreviewSongId = null;
+  renderRhyme();
+});
+
+document.addEventListener("click", (event) => {
+  const openButton = event.target.closest("[data-rhyme-open]");
+  if (openButton) {
+    rhymePreviewSongId = openButton.dataset.rhymeOpen;
+    renderRhyme();
+    document.getElementById("view-rhyme").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  const backButton = event.target.closest("[data-rhyme-back]");
+  if (backButton) {
+    rhymePreviewSongId = null;
+    renderRhyme();
+    return;
+  }
+  const toggleButton = event.target.closest("[data-rhyme-toggle]");
+  if (toggleButton) {
+    toggleRhymeDone(toggleButton.dataset.rhymeToggle);
+    renderRhyme();
+    toast(isRhymeDone(toggleButton.dataset.rhymeToggle) ? "已打卡" : "已取消打卡");
+  }
+});
 
 /* ---------- Games tab ---------- */
 function renderGamesTab() {
