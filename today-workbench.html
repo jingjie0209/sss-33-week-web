@@ -1342,7 +1342,13 @@ const toggleRhymeDone = (songId) => {
 function renderRhyme() {
   const themeSongs = RHYME.themes.flatMap((theme) => theme.songs);
   const themeTotal = themeSongs.length;
-  const done = themeSongs.filter((song) => isRhymeDone(song.id)).length;
+  const themeTitles = new Set(themeSongs.map((song) => song.title.trim()));
+  const checkedTitles = new Set();
+  RHYME.themes.forEach((theme) => theme.songs.forEach((song) => { if (isRhymeDone(song.id)) checkedTitles.add(song.title.trim()); }));
+  RHYME.sceneGroups.forEach((group) => group.songs.forEach((song) => { if (isRhymeDone(song.id) && themeTitles.has(song.title.trim())) checkedTitles.add(song.title.trim()); }));
+  RHYME.tprSongs.forEach((song) => { if (isRhymeDone(song.id) && themeTitles.has(song.title.trim())) checkedTitles.add(song.title.trim()); });
+  RHYME.planWeeks.forEach((week) => week.songs.forEach((song) => { if (isRhymeDone(song.id) && themeTitles.has(song.title.trim())) checkedTitles.add(song.title.trim()); }));
+  const done = Math.min(checkedTitles.size, themeTotal);
   document.getElementById("rhyme-total-label").textContent = `${themeTotal} 首儿歌`;
   document.getElementById("rhyme-total-short").textContent = `/ ${themeTotal}`;
   document.getElementById("rhyme-done-label").textContent = done;
