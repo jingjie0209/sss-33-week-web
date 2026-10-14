@@ -1666,7 +1666,7 @@ function renderParent() {
     ["熏听数量", `${listenStats.songCount} 首`, "今日播放"],
     ["新增儿歌", `${newRhymeCount} 首`, "今日标记打卡"],
     ["今日闪卡", `${todayFlashDone()} 张`, "标记已学"],
-    ["今日游戏", `${gameState.length}/3`, "挑 1–3 个玩"],
+    ["今日句型", `${todayPatternDone()}/1`, "本周句型"],
   ];
 
   const pct = (done, total) => total ? Math.round(done / total * 100) : 0;
@@ -1698,6 +1698,13 @@ function todayInfoSafe() {
     const weekDone = (week?.songs || []).map((item) => songBySheet.get(item.sheet)).filter((s) => s && isDone(s.sheet)).length;
     return { weekSongs, weekDone };
   } catch { return { weekSongs: 0, weekDone: 0 }; }
+}
+
+function todayPatternDone() {
+  try {
+    const pattern = patternForWeek(todayInfo().week);
+    return patternIsDone(pattern.type, pattern.number) ? 1 : 0;
+  } catch { return 0; }
 }
 
 function todayListenStats() {
