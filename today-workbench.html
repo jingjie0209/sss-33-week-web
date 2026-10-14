@@ -405,8 +405,14 @@ button { cursor: pointer; }
   </div>
 
   <div id="view-parent" class="tab-view">
-    <section class="module"><div class="module-head"><div><h2>累计进度</h2></div><span>数据只保存在本机</span></div><div class="module-body">
+    <section class="module"><div class="module-head"><div><h2>今日</h2></div><span>数据只保存在本机</span></div><div class="module-body">
+      <div class="parent-grid" id="parent-today-cards"></div>
+    </div></section>
+    <section class="module"><div class="module-head"><div><h2>输入端</h2></div><span>儿歌与卡片打卡</span></div><div class="module-body">
       <div class="parent-grid" id="parent-cards"></div>
+    </div></section>
+    <section class="module"><div class="module-head"><div><h2>输出端</h2></div><span>核心句型库</span></div><div class="module-body">
+      <div class="parent-grid" id="parent-output-cards"></div>
     </div></section>
   </div>
 
@@ -1602,17 +1608,49 @@ function renderParent() {
   const totalDone = songs.filter((item) => isDone(item.sheet)).length;
   const patternByType = { "名词卡": 0, "动词卡": 0, "形容词卡": 0 };
   patterns.forEach((p) => { if (patternByType[p.type] != null) patternByType[p.type] += 1; });
-  const rows = [
+
+  const cardHtml = ([label, value, note]) => `<article class="parent-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line"><span>${escapeHtml(note)}</span><b>${escapeHtml(value)}</b></div></article>`;
+
+  const todayInfo = todayInfoSafe();
+  const todayRows = [
+    ["今日儿歌", `${todayInfo.weekDone}/${todayInfo.weekSongs}`, "本周打卡"],
+    ["今日闪卡", `${todayFlashDone()}/5`, "点卡片标记学会"],
+    ["今日游戏", `${gameState.length}/3`, "挑 1–3 个玩"],
+  ];
+
+  const inputRows = [
     ["儿歌进度", `${totalDone}/${songs.length}`, `完成率 ${songs.length ? Math.round(totalDone / songs.length * 100) : 0}%`],
     ...checkinLists.map((list) => {
       const done = list.items.filter((item) => loadState(`${list.id}:checkin`, {})[item.number]).length;
       return [`${list.label}打卡`, `${done}/${list.items.length}`, ""];
     }),
+  ];
+
+  const outputRows = [
     ["名词句型", `${patternByType["名词卡"]} 条`, "核心句型 · 名词"],
     ["动词句型", `${patternByType["动词卡"]} 条`, "核心句型 · 动词"],
     ["形容词句型", `${patternByType["形容词卡"]} 条`, "核心句型 · 形容词"],
   ];
-  document.getElementById("parent-cards").innerHTML = rows.map(([label, value, note]) => `<article class="parent-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line"><span>${escapeHtml(note)}</span><b>${escapeHtml(value)}</b></div></article>`).join("");
+
+  document.getElementById("parent-today-cards").innerHTML = todayRows.map(cardHtml).join("");
+  document.getElementById("parent-cards").innerHTML = inputRows.map(cardHtml).join("");
+  document.getElementById("parent-output-cards").innerHTML = outputRows.map(cardHtml).join("");
+}
+
+function todayInfoSafe() {
+  try {
+    const week = weeks?.[todayInfo().weekIndex] || weeks?.[0];
+    const weekSongs = week?.songs?.length || 0;
+    const weekDone = (week?.songs || []).map((item) => songBySheet.get(item.sheet)).filter((s) => s && isDone(s.sheet)).length;
+    return { weekSongs, weekDone };
+  } catch { return { weekSongs: 0, weekDone: 0 }; }
+}
+
+function todayFlashDone() {
+  try {
+    const flashcards = flashcardsForToday();
+    return flashcards.filter((card) => cardState[String(card.number)]).length;
+  } catch { return 0; }
 }
 
 /* ---------- Card library detail (click to toggle mastery) ---------- */
