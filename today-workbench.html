@@ -98,7 +98,12 @@ button { cursor: pointer; }
 @media (max-width: 380px) { .flashcards { grid-template-columns: 1fr; } .card-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; } }
 .flashcard, .card-tile { position: relative; border: 1px solid var(--line); border-radius: 16px; background: #fff; overflow: hidden; text-align: left; padding: 0; box-shadow: var(--shadow-sm); }
 .flashcard img { display: block; width: 100%; height: 120px; object-fit: cover; background: #eef0f7; }
-.card-tile img { display: block; width: 100%; aspect-ratio: 1 / 1; height: auto; object-fit: cover; background: #eef0f7; }
+.card-tile img { display: block; width: 100%; aspect-ratio: 1 / 1; height: auto; object-fit: cover; background: #eef0f7; margin: 0; padding: 0; border: 0; }
+.card-stage { display: inline-flex; align-items: center; justify-content: center; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--muted); font-size: 11px; font-weight: 800; cursor: pointer; }
+.card-stage.learned { background: var(--yellow-soft); border-color: #f0dfa8; color: #8a6d1c; }
+.card-stage.output { background: var(--green-soft); border-color: var(--green-border); color: var(--green); }
+.card-tile .card-body { padding: 6px 8px 8px; display: flex; align-items: center; }
+.card-tile .card-body:empty { display: none; }
 .card-tile img.speaking-img { height: auto; aspect-ratio: 595 / 842; object-fit: contain; background: #f2f3f7; }
 .card-tile img.speaking-advanced-img { height: auto; aspect-ratio: 2.05 / 1; object-fit: contain; background: #f2f3f7; }
 .flashcard.checked, .card-tile.checked { border-color: var(--green-border); background: var(--green-soft); }
@@ -1075,6 +1080,7 @@ document.querySelectorAll(".tabbar button").forEach((button) => {
 /* ---------- Cards tab ---------- */
 const checkinState = loadState("susan-checkin-progress-v1", {});
 const patternState = loadState("sss-pattern-progress-v1", {});
+const cardOutputState = loadState("sss-workbench-card-output-v1", {});
 const saveCheckinState = () => saveState("susan-checkin-progress-v1", checkinState);
 const savePatternState = () => saveState("sss-pattern-progress-v1", patternState);
 const patternKeyOf = (type, number) => `${type}:${number}`;
@@ -1137,11 +1143,15 @@ function renderCards() {
     const name = cardName(card, activeCardType) || `#${card.number}`;
     const img = cardImage(card, activeCardType);
     const label = cardCategoryLabel(activeCardType, card.number);
-    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="${escapeHtml(name)}" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><small>${escapeHtml(label)}</small><strong>${escapeHtml(name)}</strong></div></button>`;
+    const stateKey = `output:${checkinIdFor(activeCardType)}:${card.number}`;
+    const cardStage = Number(cardOutputState[stateKey] || 0);
+    const stageLabel = ["未学", "已学未输出", "已学已输出"][cardStage];
+    const stageClass = ["", "learned", "output"][cardStage];
+    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><span class="card-stage ${stageClass}" data-card-stage="${activeCardType}:${card.number}">${stageLabel}</span></div></button>`;
   }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
   const checkinId = checkinIdFor(activeCardType);
   const mastered = cards.filter((card) => checkinState[`${checkinId}:${card.number}`]).length;
-  document.getElementById("filter-hero-badge").textContent = `已掌握 ${mastered}/${cards.length}`;
+  document.getElementById("filter-hero-badge").textContent = `已学 ${mastered}/${cards.length}`;
 }
 
 function renderSpeaking() {
@@ -1690,6 +1700,7 @@ function renderParent() {
   ];
 
   const patternState = loadState("sss-pattern-progress-v1", {});
+const cardOutputState = loadState("sss-workbench-card-output-v1", {});
   const countPatternDone = (type) => patterns.filter((item) => item.type === type && patternState[String(item.number)]?.status === "已完成").length;
   const outputRows = [
     ["名词句型", `${countPatternDone("名词卡")}/${patternByType["名词卡"]}`, `完成率 ${pct(countPatternDone("名词卡"), patternByType["名词卡"])}%`],
@@ -1763,6 +1774,20 @@ function todayFlashDone() {
 
 /* ---------- Card library detail (click to toggle mastery) ---------- */
 document.addEventListener("click", (event) => {
+  const stageButton = event.target.closest("[data-card-stage]");
+  if (stageButton) {
+    event.stopPropagation();
+    const key = stageButton.dataset.cardStage;
+    const next = (Number(cardOutputState[key] || 0) + 1) % 3;
+    cardOutputState[key] = next;
+    saveState("sss-workbench-card-output-v1", cardOutputState);
+    const checkinKey = key.replace(/^output:/, "");
+    checkinState[checkinKey] = next >= 1;
+    saveCheckinState();
+    renderCards();
+    toast(["未学", "已学未输出", "已学已输出"][next]);
+    return;
+  }
   const tile = event.target.closest("[data-card-library]");
   if (!tile) return;
   const [type, number] = tile.dataset.cardLibrary.split(":");
