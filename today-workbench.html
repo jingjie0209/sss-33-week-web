@@ -186,7 +186,12 @@ button { cursor: pointer; }
 .rhyme-playall-bar { display: flex; align-items: center; gap: 10px; margin: 12px 0 0; }
 #rhyme-playall-button { padding: 9px 16px; border: 0; border-radius: 999px; background: linear-gradient(145deg, #4d45cc, #7566e3); color: #fff; font-size: 12.5px; font-weight: 800; box-shadow: 0 6px 16px #2c248c26; }
 #rhyme-playall-button.on { background: linear-gradient(145deg, #16815b, #1ea06f); }
-#rhyme-playall-status { color: var(--muted-2); font-size: 11.5px; }
+.rhyme-global-player { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(62px + env(safe-area-inset-bottom)); z-index: 45; width: 100%; max-width: 452px; display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: #fffffffb; backdrop-filter: blur(12px); border: 1px solid #e6e8f4; border-radius: 18px; box-shadow: 0 14px 34px #1f26511f; }
+.rhyme-global-player[hidden] { display: none; }
+#rhyme-global-stop { flex: none; width: 38px; height: 38px; border: 0; border-radius: 50%; background: linear-gradient(145deg, #16815b, #1ea06f); color: #fff; font-size: 14px; display: grid; place-items: center; box-shadow: 0 6px 14px #16815b3d; }
+.rhyme-global-copy { min-width: 0; display: grid; gap: 2px; }
+.rhyme-global-copy b { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rhyme-global-copy small { color: var(--muted-2); font-size: 11px; }
 .rhyme-subtabs { position: sticky; top: 69px; z-index: 25; display: flex; gap: 6px; margin: 12px 0; overflow-x: auto; padding: 8px 2px; background: var(--canvas); border-bottom: 1px solid var(--line); min-height: 44px; align-items: center; }
 @media (max-width: 559px) { .rhyme-subtabs { top: 69px; margin: 0; border-radius: 0; } }
 .rhyme-subtabs button { flex: none; padding: 8px 15px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12.5px; font-weight: 800; }
@@ -375,7 +380,7 @@ button { cursor: pointer; }
       <div><span>SSS 儿歌库</span><strong id="rhyme-total-label">0 首儿歌</strong><p>主题 · 场景 · TPR · 打卡计划，点击进入详情和打卡。</p></div>
       <div class="rhyme-hero-progress"><b id="rhyme-done-label">0</b><span id="rhyme-total-short">/ 0</span></div>
     </div></section>
-    <div class="rhyme-playall-bar"><button id="rhyme-playall-button">▶ 播放全部打卡儿歌</button><span id="rhyme-playall-status"></span></div>
+    <div class="rhyme-playall-bar"><button id="rhyme-playall-button">▶ 播放全部打卡儿歌</button></div>
     <nav class="rhyme-subtabs" id="rhyme-subtabs">
       <button class="active" data-rhyme-section="themes">全部</button>
       <button data-rhyme-section="plan">打卡计划</button>
@@ -418,6 +423,14 @@ button { cursor: pointer; }
   <div class="video-modal-inner">
     <div class="video-modal-head"><strong id="video-modal-title"></strong><button class="video-modal-close" id="video-modal-close" type="button">关闭</button></div>
     <video id="video-modal-player" src="" controls playsinline webkit-playsinline preload="auto"></video>
+  </div>
+</div>
+
+<div class="rhyme-global-player" id="rhyme-global-player" hidden>
+  <button id="rhyme-global-stop" aria-label="停止播放">⏸</button>
+  <div class="rhyme-global-copy">
+    <b id="rhyme-global-title"></b>
+    <small id="rhyme-global-progress"></small>
   </div>
 </div>
 
@@ -1438,14 +1451,19 @@ document.getElementById("rhyme-playall-button").addEventListener("click", () => 
   stopAllRhymeAudio();
   const tracks = currentSectionTracks();
   if (!tracks.length) return;
-  const sectionLabel = { themes: "全部", plan: "打卡计划", scene: "场景儿歌", tpr: "TPR儿歌" }[rhymeSection] || "";
   let index = 0;
   const audio = new Audio(rhymeAudio(tracks[0].id));
   rhymeGlobalPlaylist = audio;
   button.classList.add("on");
   button.textContent = "⏸ 停止播放";
-  const status = document.getElementById("rhyme-playall-status");
-  const updateStatus = () => { if (status) status.textContent = `正在播放 ${index + 1}/${tracks.length} · ${tracks[index].title}`; };
+  const bar = document.getElementById("rhyme-global-player");
+  const titleEl = document.getElementById("rhyme-global-title");
+  const progressEl = document.getElementById("rhyme-global-progress");
+  if (bar) bar.hidden = false;
+  const updateStatus = () => {
+    if (titleEl) titleEl.textContent = tracks[index].title;
+    if (progressEl) progressEl.textContent = `正在播放 ${index + 1}/${tracks.length} · ${{ themes: "全部", plan: "打卡计划", scene: "场景儿歌", tpr: "TPR儿歌" }[rhymeSection] || ""}`;
+  };
   updateStatus();
   audio.addEventListener("ended", () => {
     index += 1;
@@ -1457,6 +1475,8 @@ document.getElementById("rhyme-playall-button").addEventListener("click", () => 
   audio.play().catch(stopRhymeGlobal);
 });
 
+document.getElementById("rhyme-global-stop").addEventListener("click", stopRhymeGlobal);
+
 let rhymeGlobalPlaylist = null;
 const currentSectionTracks = () => {
   let songs = [];
@@ -1466,7 +1486,13 @@ const currentSectionTracks = () => {
   else songs = RHYME.tprSongs;
   return songs.filter((song) => rhymeAudio(song.id));
 };
-const stopRhymeGlobal = () => { if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; } const btn = document.getElementById("rhyme-playall-button"); const status = document.getElementById("rhyme-playall-status"); if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; } if (status) status.textContent = ""; };
+const stopRhymeGlobal = () => {
+  if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; }
+  const btn = document.getElementById("rhyme-playall-button");
+  if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; }
+  const bar = document.getElementById("rhyme-global-player");
+  if (bar) bar.hidden = true;
+};
 
 let rhymePlaylistAudio = null;
 let rhymePlayingThemeId = null;
