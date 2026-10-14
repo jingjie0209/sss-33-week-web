@@ -88,7 +88,7 @@ button { cursor: pointer; }
 .step-title small { display: inline-block; margin-left: 7px; padding: 2px 8px; border-radius: 999px; background: var(--brand-soft); color: #5850d0; font-size: 10.5px; }
 .step-desc { margin: 4px 0 0; color: var(--muted); font-size: 12px; line-height: 1.55; }
 .step-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.tiny-action { min-height: 34px; padding: 7px 13px; border: 1px solid var(--line); border-radius: 13px; background: #fff; color: #5b53d3; font-weight: 800; font-size: 12px; box-shadow: 0 3px 8px #3f369112; }
+.tiny-action { min-height: 34px; padding: 7px 13px; border: 1px solid var(--line); border-radius: 13px; background: #fff; color: var(--muted-2); font-weight: 800; font-size: 12px; box-shadow: 0 3px 8px #3f369112; }
 .tiny-action:hover { border-color: var(--brand-border); }
 .tiny-action.done { background: var(--green); border-color: var(--green); color: #fff; }
 
@@ -219,7 +219,7 @@ button { cursor: pointer; }
 .rhyme-song { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
 .rhyme-song.done { border-color: var(--green-border); background: var(--green-soft); }
 .rhyme-song-open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px; border: 0; background: transparent; padding: 0; text-align: left; }
-.rhyme-song-no { flex: none; min-width: 26px; padding: 3px 6px; border-radius: 8px; background: #f2f3fb; color: var(--brand); font-size: 10.5px; font-weight: 800; text-align: center; }
+.rhyme-song-no { flex: none; min-width: 26px; padding: 3px 6px; border-radius: 8px; background: #f1f2f6; color: var(--muted-2); font-size: 10.5px; font-weight: 800; text-align: center; }
 .rhyme-song-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; color: var(--ink); }
 .rhyme-song .tiny-action { flex: none; width: 51px; text-align: center; padding-left: 0; padding-right: 0; }
 .rhyme-song-play { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--brand); background: #fff; color: var(--brand); font-size: 11px; display: grid; place-items: center; padding: 0; }
@@ -1441,7 +1441,7 @@ function renderRhyme() {
 function renderRhymeThemes() {
   return RHYME.themes.map((theme) => {
     const done = theme.songs.filter((song) => isRhymeDone(song.id)).length;
-    return `<article class="rhyme-group" data-theme-group="${escapeHtml(theme.id)}"><div class="rhyme-group-head"><div class="rhyme-group-title-line"><h3>${escapeHtml(theme.name)}</h3><small>${theme.songCount} 首 · ${escapeHtml(theme.level)}</small></div><span class="rhyme-play-all" data-rhyme-play-theme="${escapeHtml(theme.id)}">▶ 播放全部</span><span class="rhyme-progress-badge">${done}/${theme.songCount}</span></div><div class="rhyme-songs">${theme.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
+    return `<article class="rhyme-group" data-theme-group="${escapeHtml(theme.id)}"><div class="rhyme-group-head"><div class="rhyme-group-title-line"><h3>${escapeHtml(theme.name)}</h3><small>${theme.songCount} 首 · ${escapeHtml(theme.level)}</small></div><span class="rhyme-play-all" data-rhyme-play-theme="${escapeHtml(theme.id)}">▶ 播放本组</span><span class="rhyme-progress-badge">${done}/${theme.songCount}</span></div><div class="rhyme-songs">${theme.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
   }).join("");
 }
 
