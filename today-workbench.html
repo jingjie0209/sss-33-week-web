@@ -181,14 +181,15 @@ button { cursor: pointer; }
 .card-seg button.active:hover { color: #fff; }
 
 /* ===== 儿歌 ===== */
-.rhyme-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 18px 20px; border-radius: 20px; background: linear-gradient(140deg, #4f46cf, #7564e4 65%, #9780ef); color: #fff; box-shadow: var(--shadow-lg); }
+.rhyme-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 18px 20px 46px; border-radius: 20px; background: linear-gradient(140deg, #4f46cf, #7564e4 65%, #9780ef); color: #fff; box-shadow: var(--shadow-lg); position: relative; }
 .rhyme-hero-actions { justify-content: flex-end; }
 .rhyme-hero span { display: block; font-size: 11.5px; font-weight: 800; letter-spacing: .08em; color: #dcd9ff; }
 .rhyme-hero strong { display: block; margin-top: 4px; font-size: 20px; }
 .rhyme-hero p { margin: 5px 0 0; color: #dedcff; font-size: 12px; line-height: 1.55; }
-.rhyme-hero-progress { text-align: right; flex: none; }
-.rhyme-hero-progress b { display: block; font-size: 28px; font-weight: 900; line-height: 1.1; }
-.rhyme-hero-progress span { color: #dedcff; font-size: 12px; }
+.rhyme-hero-bottombar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 10px; padding: 8px 20px 10px; background: #ffffff14; }
+.rhyme-hero-bar { flex: 1; height: 6px; border-radius: 999px; background: #ffffff3d; overflow: hidden; }
+.rhyme-hero-bar i { display: block; height: 100%; border-radius: 999px; background: #fff; transition: width .3s ease; }
+.rhyme-hero-progress-text { flex: none; color: #dedcff; font-size: 11.5px; font-weight: 800; }
 .rhyme-hero-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
 .rhyme-hero-actions button { padding: 8px 15px; border: 1px solid #ffffff59; border-radius: 999px; background: #ffffff1f; color: #fff; font-size: 12.5px; font-weight: 800; cursor: pointer; }
 .rhyme-hero-actions button.on { background: #fff; border-color: #fff; color: var(--brand); }
@@ -398,12 +399,16 @@ button { cursor: pointer; }
   <div id="view-rhyme" class="tab-view">
     <section class="module rhyme-hero-module"><div class="rhyme-hero">
       <div><span>SSS 儿歌库</span><strong id="rhyme-total-label">0 首儿歌</strong></div>
-      <div class="rhyme-hero-progress"><b id="rhyme-done-label">0</b><span id="rhyme-total-short">/ 0</span></div>
       <div class="rhyme-hero-actions">
         <button id="rhyme-playall-button">▶ 一键磨耳朵</button>
         <button id="rhyme-play-checked-button" hidden>▶ 播放已打卡</button>
       </div>
-    </div></section>
+    </div>
+    <div class="rhyme-hero-bottombar">
+      <div class="rhyme-hero-bar"><i id="rhyme-progress-fill" style="width:0%"></i></div>
+      <span class="rhyme-hero-progress-text" id="rhyme-progress-text">0 / 0</span>
+    </div>
+    </section>
     <nav class="rhyme-subtabs" id="rhyme-subtabs">
       <button class="active" data-rhyme-section="themes">全部</button>
       <button data-rhyme-section="plan">打卡计划</button>
@@ -1428,8 +1433,10 @@ function renderRhyme() {
   const total = allSongs.length;
   const done = allSongs.filter((song) => isRhymeDone(song.id)).length;
   document.getElementById("rhyme-total-label").textContent = `${total} 首儿歌`;
-  document.getElementById("rhyme-total-short").textContent = `/ ${total}`;
-  document.getElementById("rhyme-done-label").textContent = done;
+  const fill = document.getElementById("rhyme-progress-fill");
+  const progressText = document.getElementById("rhyme-progress-text");
+  if (fill) fill.style.width = `${total ? Math.round(done / total * 100) : 0}%`;
+  if (progressText) progressText.textContent = `${done} / ${total}`;
   const checkedBtn = document.getElementById("rhyme-play-checked-button");
   if (checkedBtn) checkedBtn.hidden = checkedTracks().length === 0;
   const body = document.getElementById("rhyme-body");
@@ -1443,7 +1450,7 @@ function renderRhyme() {
 function renderRhymeThemes() {
   return RHYME.themes.map((theme) => {
     const done = theme.songs.filter((song) => isRhymeDone(song.id)).length;
-    return `<article class="rhyme-group" data-theme-group="${escapeHtml(theme.id)}"><div class="rhyme-group-head"><div class="rhyme-group-title-line"><h3>${escapeHtml(theme.name)}</h3><small>${theme.songCount} 首 · ${escapeHtml(theme.level)}</small></div><span class="rhyme-play-all" data-rhyme-play-theme="${escapeHtml(theme.id)}">▶ 播放本组</span><span class="rhyme-progress-badge">${done}/${theme.songCount}</span></div><div class="rhyme-songs">${theme.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
+    return `<article class="rhyme-group" data-theme-group="${escapeHtml(theme.id)}"><div class="rhyme-group-head"><div class="rhyme-group-title-line"><h3>${escapeHtml(theme.name)}</h3><span class="rhyme-play-all" data-rhyme-play-theme="${escapeHtml(theme.id)}">▶ 播放本组</span><small>${theme.songCount} 首 · ${escapeHtml(theme.level)}</small></div><span class="rhyme-progress-badge">${done}/${theme.songCount}</span></div><div class="rhyme-songs">${theme.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
   }).join("");
 }
 
