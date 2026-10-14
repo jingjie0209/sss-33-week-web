@@ -1419,6 +1419,12 @@ function renderRhyme() {
   document.getElementById("rhyme-total-label").textContent = `${total} 首儿歌`;
   document.getElementById("rhyme-total-short").textContent = `/ ${total}`;
   document.getElementById("rhyme-done-label").textContent = done;
+  const body = document.getElementById("rhyme-body");
+  if (rhymePreviewSongId) { body.innerHTML = renderRhymeDetail(rhymePreviewSongId); return; }
+  if (rhymeSection === "themes") body.innerHTML = renderRhymeThemes();
+  else if (rhymeSection === "plan") body.innerHTML = renderRhymePlan();
+  else if (rhymeSection === "scene") body.innerHTML = renderRhymeScene();
+  else body.innerHTML = renderRhymeTpr();
 }
 
 function renderRhymeThemes() {
