@@ -1446,6 +1446,14 @@ document.getElementById("rhyme-subtabs").addEventListener("click", (event) => {
 });
 
 let rhymeGlobalPlaylist = null;
+const stopAllRhymeAudio = () => { stopRhymePlaylist(); stopRhymeSong(); };
+const stopRhymeGlobal = () => {
+  if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; }
+  const btn = document.getElementById("rhyme-playall-button");
+  if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; }
+  const bar = document.getElementById("rhyme-global-player");
+  if (bar) bar.hidden = true;
+};
 
 document.getElementById("rhyme-playall-button").addEventListener("click", () => {
   const button = document.getElementById("rhyme-playall-button");
@@ -1487,21 +1495,11 @@ const currentSectionTracks = () => {
   else songs = RHYME.tprSongs;
   return songs.filter((song) => rhymeAudio(song.id));
 };
-const stopRhymeGlobal = () => {
-  if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; }
-  const btn = document.getElementById("rhyme-playall-button");
-  if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; }
-  const bar = document.getElementById("rhyme-global-player");
-  if (bar) bar.hidden = true;
-};
-
 let rhymePlaylistAudio = null;
 let rhymePlayingThemeId = null;
 let rhymePlayingSongId = null;
 const stopRhymePlaylist = () => { if (rhymePlaylistAudio) { rhymePlaylistAudio.pause(); rhymePlaylistAudio = null; } rhymePlayingThemeId = null; document.querySelectorAll(".rhyme-play-all.on").forEach((b) => b.classList.remove("on")); };
 const stopRhymeSong = () => { if (rhymePlaylistAudio) { rhymePlaylistAudio.pause(); rhymePlaylistAudio = null; } rhymePlayingSongId = null; document.querySelectorAll(".rhyme-song-play.playing").forEach((b) => b.classList.remove("playing")); };
-const stopAllRhymeAudio = () => { stopRhymePlaylist(); stopRhymeSong(); };
-
 document.addEventListener("click", (event) => {
   const playThemeButton = event.target.closest("[data-rhyme-play-theme]");
   if (playThemeButton) {
