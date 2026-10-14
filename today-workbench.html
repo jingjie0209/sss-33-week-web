@@ -1604,13 +1604,13 @@ function renderParent() {
   patterns.forEach((p) => { if (patternByType[p.type] != null) patternByType[p.type] += 1; });
   const rows = [
     ["儿歌进度", `${totalDone}/${songs.length}`, `完成率 ${songs.length ? Math.round(totalDone / songs.length * 100) : 0}%`],
+    ...checkinLists.map((list) => {
+      const done = list.items.filter((item) => loadState(`${list.id}:checkin`, {})[item.number]).length;
+      return [`${list.label}打卡`, `${done}/${list.items.length}`, ""];
+    }),
     ["名词句型", `${patternByType["名词卡"]} 条`, "核心句型 · 名词"],
     ["动词句型", `${patternByType["动词卡"]} 条`, "核心句型 · 动词"],
     ["形容词句型", `${patternByType["形容词卡"]} 条`, "核心句型 · 形容词"],
-    ...checkinLists.map((list) => {
-      const done = list.items.filter((item) => loadState(`${list.id}:checkin`, {})[item.number]).length;
-      return [`${list.label}打卡`, `${done}/${list.items.length}`, "与完整学习站同步"];
-    }),
   ];
   document.getElementById("parent-cards").innerHTML = rows.map(([label, value, note]) => `<article class="parent-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line"><span>${escapeHtml(note)}</span><b>${escapeHtml(value)}</b></div></article>`).join("");
 }
