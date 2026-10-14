@@ -183,6 +183,10 @@ button { cursor: pointer; }
 .rhyme-hero-progress { text-align: right; flex: none; }
 .rhyme-hero-progress b { display: block; font-size: 28px; font-weight: 900; line-height: 1.1; }
 .rhyme-hero-progress span { color: #dedcff; font-size: 12px; }
+.rhyme-playall-bar { display: flex; align-items: center; gap: 10px; margin: 12px 0 0; }
+#rhyme-playall-button { padding: 9px 16px; border: 0; border-radius: 999px; background: linear-gradient(145deg, #4d45cc, #7566e3); color: #fff; font-size: 12.5px; font-weight: 800; box-shadow: 0 6px 16px #2c248c26; }
+#rhyme-playall-button.on { background: linear-gradient(145deg, #16815b, #1ea06f); }
+#rhyme-playall-status { color: var(--muted-2); font-size: 11.5px; }
 .rhyme-subtabs { position: sticky; top: 69px; z-index: 25; display: flex; gap: 6px; margin: 12px 0; overflow-x: auto; padding: 8px 2px; background: var(--canvas); border-bottom: 1px solid var(--line); min-height: 44px; align-items: center; }
 @media (max-width: 559px) { .rhyme-subtabs { top: 69px; margin: 0; border-radius: 0; } }
 .rhyme-subtabs button { flex: none; padding: 8px 15px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12.5px; font-weight: 800; }
@@ -371,6 +375,7 @@ button { cursor: pointer; }
       <div><span>SSS 儿歌库</span><strong id="rhyme-total-label">0 首儿歌</strong><p>主题 · 场景 · TPR · 打卡计划，点击进入详情和打卡。</p></div>
       <div class="rhyme-hero-progress"><b id="rhyme-done-label">0</b><span id="rhyme-total-short">/ 0</span></div>
     </div></section>
+    <div class="rhyme-playall-bar"><button id="rhyme-playall-button">▶ 播放全部打卡儿歌</button><span id="rhyme-playall-status"></span></div>
     <nav class="rhyme-subtabs" id="rhyme-subtabs">
       <button class="active" data-rhyme-section="themes">全部</button>
       <button data-rhyme-section="plan">打卡计划</button>
@@ -1423,8 +1428,45 @@ document.getElementById("rhyme-subtabs").addEventListener("click", (event) => {
   if (!button) return;
   rhymeSection = button.dataset.rhymeSection;
   rhymePreviewSongId = null;
+  stopRhymeGlobal();
   renderRhyme();
 });
+
+document.getElementById("rhyme-playall-button").addEventListener("click", () => {
+  const button = document.getElementById("rhyme-playall-button");
+  if (rhymeGlobalPlaylist) { stopRhymeGlobal(); return; }
+  stopAllRhymeAudio();
+  const tracks = currentSectionTracks();
+  if (!tracks.length) return;
+  const sectionLabel = { themes: "全部", plan: "打卡计划", scene: "场景儿歌", tpr: "TPR儿歌" }[rhymeSection] || "";
+  let index = 0;
+  const audio = new Audio(rhymeAudio(tracks[0].id));
+  rhymeGlobalPlaylist = audio;
+  button.classList.add("on");
+  button.textContent = "⏸ 停止播放";
+  const status = document.getElementById("rhyme-playall-status");
+  const updateStatus = () => { if (status) status.textContent = `正在播放 ${index + 1}/${tracks.length} · ${tracks[index].title}`; };
+  updateStatus();
+  audio.addEventListener("ended", () => {
+    index += 1;
+    if (index >= tracks.length) { stopRhymeGlobal(); return; }
+    audio.src = rhymeAudio(tracks[index].id);
+    updateStatus();
+    audio.play().catch(stopRhymeGlobal);
+  });
+  audio.play().catch(stopRhymeGlobal);
+});
+
+let rhymeGlobalPlaylist = null;
+const currentSectionTracks = () => {
+  let songs = [];
+  if (rhymeSection === "themes") songs = RHYME.themes.flatMap((t) => t.songs);
+  else if (rhymeSection === "plan") songs = RHYME.planWeeks.flatMap((w) => w.songs);
+  else if (rhymeSection === "scene") songs = RHYME.sceneGroups.flatMap((g) => g.songs);
+  else songs = RHYME.tprSongs;
+  return songs.filter((song) => rhymeAudio(song.id));
+};
+const stopRhymeGlobal = () => { if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; } const btn = document.getElementById("rhyme-playall-button"); const status = document.getElementById("rhyme-playall-status"); if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; } if (status) status.textContent = ""; };
 
 let rhymePlaylistAudio = null;
 let rhymePlayingThemeId = null;
@@ -1439,6 +1481,7 @@ document.addEventListener("click", (event) => {
     const themeId = playThemeButton.dataset.rhymePlayTheme;
     if (rhymePlayingThemeId === themeId) { stopRhymePlaylist(); return; }
     stopAllRhymeAudio();
+    stopRhymeGlobal();
     const theme = RHYME.themes.find((t) => t.id === themeId);
     const tracks = (theme?.songs || []).filter((song) => rhymeAudio(song.id));
     if (!tracks.length) return;
@@ -1461,6 +1504,7 @@ document.addEventListener("click", (event) => {
     const songId = songPlayButton.dataset.rhymePlaySong;
     if (rhymePlayingSongId === songId) { stopRhymeSong(); return; }
     stopAllRhymeAudio();
+    stopRhymeGlobal();
     const src = rhymeAudio(songId);
     if (!src) return;
     const audio = new Audio(src);
