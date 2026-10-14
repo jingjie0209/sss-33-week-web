@@ -213,7 +213,7 @@ button { cursor: pointer; }
 .rhyme-song-open { flex: 1; min-width: 0; display: flex; align-items: center; gap: 9px; border: 0; background: transparent; padding: 0; text-align: left; }
 .rhyme-song-no { flex: none; min-width: 26px; padding: 3px 6px; border-radius: 8px; background: #f2f3fb; color: var(--brand); font-size: 10.5px; font-weight: 800; text-align: center; }
 .rhyme-song-title { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; font-weight: 700; color: var(--ink); }
-.rhyme-song .tiny-action { flex: none; }
+.rhyme-song .tiny-action { flex: none; width: 51px; text-align: center; padding-left: 0; padding-right: 0; }
 .rhyme-song-play { flex: none; width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--brand); background: #fff; color: var(--brand); font-size: 11px; display: grid; place-items: center; padding: 0; }
 .rhyme-song-play.playing { background: var(--brand); color: #fff; }
 .rhyme-back { display: inline-flex; align-items: center; gap: 6px; margin-bottom: 12px; padding: 8px 14px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--brand); font-size: 12.5px; font-weight: 800; }
@@ -1415,7 +1415,7 @@ function renderRhymeTpr() {
 function rhymeSongRow(song) {
   const done = isRhymeDone(song.id);
   const hasAudio = Boolean(rhymeAudio(song.id));
-  return `<div class="rhyme-song ${done ? "done" : ""}"><button class="rhyme-song-open" data-rhyme-open="${escapeHtml(song.id)}"><span class="rhyme-song-no">${String(song.no || 0).padStart(2, "0")}</span><span class="rhyme-song-title">${escapeHtml(song.title)}</span></button>${hasAudio ? '<button class="rhyme-song-play" data-rhyme-play-song="' + escapeHtml(song.id) + '" aria-label="播放">▶</button>' : ""}<button class="tiny-action${done ? " done" : ""}" data-rhyme-toggle="${escapeHtml(song.id)}">${done ? "已完成 ✓" : "打卡"}</button></div>`;
+  return `<div class="rhyme-song ${done ? "done" : ""}"><button class="rhyme-song-open" data-rhyme-open="${escapeHtml(song.id)}"><span class="rhyme-song-no">${String(song.no || 0).padStart(2, "0")}</span><span class="rhyme-song-title">${escapeHtml(song.title)}</span></button>${hasAudio ? '<button class="rhyme-song-play" data-rhyme-play-song="' + escapeHtml(song.id) + '" aria-label="播放">▶</button>' : ""}<button class="tiny-action${done ? " done" : ""}" data-rhyme-toggle="${escapeHtml(song.id)}">${done ? "done" : "打卡"}</button></div>`;
 }
 
 function renderRhymeDetail(songId) {
