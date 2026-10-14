@@ -1147,7 +1147,7 @@ function renderCards() {
     const cardStage = Number(cardOutputState[stateKey] || 0);
     const stageLabel = ["未学", "已学未输出", "已学已输出"][cardStage];
     const stageClass = ["", "learned", "output"][cardStage];
-    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><span class="card-stage ${stageClass}" data-card-stage="${activeCardType}:${card.number}">${stageLabel}</span></div></button>`;
+    return `<button class="card-tile" type="button" data-card-library="${activeCardType}:${card.number}">${img ? `<img src="${escapeHtml(img)}" alt="" loading="lazy">` : `<div style="height:120px;display:grid;place-items:center;background:#eef4f3;color:var(--muted);font-size:26px;font-weight:800">${escapeHtml(name.slice(0, 1))}</div>`}<span class="card-no">${card.number}</span><div class="card-body"><span class="card-stage ${stageClass}" data-card-stage="${stateKey}">${stageLabel}</span></div></button>`;
   }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
   const checkinId = checkinIdFor(activeCardType);
   const mastered = cards.filter((card) => checkinState[`${checkinId}:${card.number}`]).length;
