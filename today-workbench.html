@@ -1456,6 +1456,8 @@ const stopRhymeGlobal = () => {
   if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; }
   rhymeQueue = [];
   rhymeQueueIndex = 0;
+  rhymePlayingSongId = null;
+  document.querySelectorAll(".rhyme-song-play.playing").forEach((b) => b.classList.remove("playing"));
   const btn = document.getElementById("rhyme-playall-button");
   if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; }
   const bar = document.getElementById("rhyme-global-player");
@@ -1538,17 +1540,16 @@ document.addEventListener("click", (event) => {
   const songPlayButton = event.target.closest("[data-rhyme-play-song]");
   if (songPlayButton) {
     const songId = songPlayButton.dataset.rhymePlaySong;
-    if (rhymePlayingSongId === songId) { stopRhymeSong(); return; }
+    if (rhymePlayingSongId === songId) { stopRhymeSong(); stopRhymeGlobal(); return; }
     stopAllRhymeAudio();
     stopRhymeGlobal();
     const src = rhymeAudio(songId);
     if (!src) return;
-    const audio = new Audio(src);
-    rhymePlaylistAudio = audio;
+    const song = rhymeSongById.get(songId);
+    const singleQueue = [song || { id: songId, title: song?.title || "正在播放", no: song?.no || 0 }];
+    startGlobalQueue(singleQueue, 0);
     rhymePlayingSongId = songId;
     songPlayButton.classList.add("playing");
-    audio.addEventListener("ended", () => { stopRhymeSong(); });
-    audio.play().catch(stopRhymeSong);
     return;
   }
   const openButton = event.target.closest("[data-rhyme-open]");
