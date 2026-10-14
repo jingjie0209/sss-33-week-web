@@ -1411,9 +1411,33 @@ const rhymeAllSongs = () => {
 const rhymeSongById = new Map(rhymeAllSongs().map((song) => [song.id, song]));
 const rhymeAudio = (songId) => RHYME.localAudio[songId] || "";
 const rhymePreview = (songId) => RHYME.songPreviews[songId] || { poster: "", lyric: "", flashcards: [] };
-const isRhymeDone = (songId) => Boolean(songState[songId]);
+const rhymeSiblingsById = (() => {
+  const map = new Map();
+  const groups = new Map();
+  const add = (song) => {
+    if (!song) return;
+    const key = rhymeTitleKey(song.title);
+    if (!groups.has(key)) groups.set(key, []);
+    groups.get(key).push(song.id);
+  };
+  (RHYME.themes || []).forEach((t) => t.songs.forEach(add));
+  (RHYME.sceneGroups || []).forEach((g) => g.songs.forEach(add));
+  (RHYME.tprSongs || []).forEach(add);
+  (RHYME.planWeeks || []).forEach((w) => w.songs.forEach(add));
+  groups.forEach((ids) => ids.forEach((id) => map.set(id, ids)));
+  return map;
+})();
+const isRhymeDone = (songId) => {
+  const ids = rhymeSiblingsById.get(songId) || [songId];
+  return ids.some((id) => Boolean(songState[id]));
+};
 const toggleRhymeDone = (songId) => {
-  if (songState[songId]) delete songState[songId]; else songState[songId] = { at: Date.now() };
+  const ids = rhymeSiblingsById.get(songId) || [songId];
+  const willCheck = !isRhymeDone(songId);
+  ids.forEach((id) => {
+    if (willCheck) songState[id] = { at: Date.now() };
+    else delete songState[id];
+  });
   saveState(STORAGE_KEY, songState);
 };
 
