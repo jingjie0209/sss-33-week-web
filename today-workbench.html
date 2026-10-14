@@ -1700,7 +1700,6 @@ function renderParent() {
   ];
 
   const patternState = loadState("sss-pattern-progress-v1", {});
-const cardOutputState = loadState("sss-workbench-card-output-v1", {});
   const countPatternDone = (type) => patterns.filter((item) => item.type === type && patternState[String(item.number)]?.status === "已完成").length;
   const outputRows = [
     ["名词句型", `${countPatternDone("名词卡")}/${patternByType["名词卡"]}`, `完成率 ${pct(countPatternDone("名词卡"), patternByType["名词卡"])}%`],
