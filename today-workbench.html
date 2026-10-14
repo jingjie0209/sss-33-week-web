@@ -1445,6 +1445,8 @@ document.getElementById("rhyme-subtabs").addEventListener("click", (event) => {
   renderRhyme();
 });
 
+let rhymeGlobalPlaylist = null;
+
 document.getElementById("rhyme-playall-button").addEventListener("click", () => {
   const button = document.getElementById("rhyme-playall-button");
   if (rhymeGlobalPlaylist) { stopRhymeGlobal(); return; }
@@ -1477,7 +1479,6 @@ document.getElementById("rhyme-playall-button").addEventListener("click", () => 
 
 document.getElementById("rhyme-global-stop").addEventListener("click", stopRhymeGlobal);
 
-let rhymeGlobalPlaylist = null;
 const currentSectionTracks = () => {
   let songs = [];
   if (rhymeSection === "themes") songs = RHYME.themes.flatMap((t) => t.songs);
