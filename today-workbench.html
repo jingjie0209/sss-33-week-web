@@ -188,7 +188,8 @@ button { cursor: pointer; }
 #rhyme-playall-button.on { background: linear-gradient(145deg, #16815b, #1ea06f); }
 .rhyme-global-player { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(62px + env(safe-area-inset-bottom)); z-index: 45; width: 100%; max-width: 452px; display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: #fffffffb; backdrop-filter: blur(12px); border: 1px solid #e6e8f4; border-radius: 18px; box-shadow: 0 14px 34px #1f26511f; }
 .rhyme-global-player[hidden] { display: none; }
-#rhyme-global-stop { flex: none; width: 38px; height: 38px; border: 0; border-radius: 50%; background: linear-gradient(145deg, #16815b, #1ea06f); color: #fff; font-size: 14px; display: grid; place-items: center; box-shadow: 0 6px 14px #16815b3d; }
+#rhyme-global-stop { flex: none; width: 40px; height: 40px; border: 0; border-radius: 50%; background: linear-gradient(145deg, #16815b, #1ea06f); color: #fff; font-size: 14px; display: grid; place-items: center; box-shadow: 0 6px 14px #16815b3d; }
+.rhyme-global-skip { flex: none; width: 32px; height: 32px; border: 1px solid var(--brand-border); border-radius: 50%; background: #fff; color: var(--brand); font-size: 12px; display: grid; place-items: center; }
 .rhyme-global-copy { min-width: 0; display: grid; gap: 2px; }
 .rhyme-global-copy b { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rhyme-global-copy small { color: var(--muted-2); font-size: 11px; }
@@ -427,7 +428,9 @@ button { cursor: pointer; }
 </div>
 
 <div class="rhyme-global-player" id="rhyme-global-player" hidden>
-  <button id="rhyme-global-stop" aria-label="停止播放">⏸</button>
+  <button class="rhyme-global-skip" id="rhyme-global-prev" aria-label="上一首">⏮</button>
+  <button id="rhyme-global-stop" aria-label="暂停/播放">⏸</button>
+  <button class="rhyme-global-skip" id="rhyme-global-next" aria-label="下一首">⏭</button>
   <div class="rhyme-global-copy">
     <b id="rhyme-global-title"></b>
     <small id="rhyme-global-progress"></small>
@@ -1446,23 +1449,24 @@ document.getElementById("rhyme-subtabs").addEventListener("click", (event) => {
 });
 
 let rhymeGlobalPlaylist = null;
+let rhymeQueue = [];
+let rhymeQueueIndex = 0;
 const stopAllRhymeAudio = () => { stopRhymePlaylist(); stopRhymeSong(); };
 const stopRhymeGlobal = () => {
   if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; }
+  rhymeQueue = [];
+  rhymeQueueIndex = 0;
   const btn = document.getElementById("rhyme-playall-button");
   if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; }
   const bar = document.getElementById("rhyme-global-player");
   if (bar) bar.hidden = true;
 };
 
-document.getElementById("rhyme-playall-button").addEventListener("click", () => {
+const startGlobalQueue = (tracks, fromIndex) => {
   const button = document.getElementById("rhyme-playall-button");
-  if (rhymeGlobalPlaylist) { stopRhymeGlobal(); return; }
-  stopAllRhymeAudio();
-  const tracks = currentSectionTracks();
-  if (!tracks.length) return;
-  let index = 0;
-  const audio = new Audio(rhymeAudio(tracks[0].id));
+  rhymeQueue = tracks;
+  rhymeQueueIndex = fromIndex;
+  const audio = new Audio(rhymeAudio(tracks[fromIndex].id));
   rhymeGlobalPlaylist = audio;
   button.classList.add("on");
   button.textContent = "⏸ 停止播放";
@@ -1471,21 +1475,37 @@ document.getElementById("rhyme-playall-button").addEventListener("click", () => 
   const progressEl = document.getElementById("rhyme-global-progress");
   if (bar) bar.hidden = false;
   const updateStatus = () => {
-    if (titleEl) titleEl.textContent = tracks[index].title;
-    if (progressEl) progressEl.textContent = `正在播放 ${index + 1}/${tracks.length} · ${{ themes: "全部", plan: "打卡计划", scene: "场景儿歌", tpr: "TPR儿歌" }[rhymeSection] || ""}`;
+    if (titleEl) titleEl.textContent = tracks[rhymeQueueIndex].title;
+    if (progressEl) progressEl.textContent = `正在播放 ${rhymeQueueIndex + 1}/${tracks.length} · ${{ themes: "全部", plan: "打卡计划", scene: "场景儿歌", tpr: "TPR儿歌" }[rhymeSection] || ""}`;
   };
   updateStatus();
   audio.addEventListener("ended", () => {
-    index += 1;
-    if (index >= tracks.length) { stopRhymeGlobal(); return; }
-    audio.src = rhymeAudio(tracks[index].id);
+    rhymeQueueIndex += 1;
+    if (rhymeQueueIndex >= tracks.length) { stopRhymeGlobal(); return; }
+    audio.src = rhymeAudio(tracks[rhymeQueueIndex].id);
     updateStatus();
     audio.play().catch(stopRhymeGlobal);
   });
   audio.play().catch(stopRhymeGlobal);
+};
+
+document.getElementById("rhyme-playall-button").addEventListener("click", () => {
+  if (rhymeGlobalPlaylist) { stopRhymeGlobal(); return; }
+  stopAllRhymeAudio();
+  const tracks = currentSectionTracks();
+  if (!tracks.length) return;
+  startGlobalQueue(tracks, 0);
 });
 
+const playQueueIndex = (newIndex) => {
+  if (!rhymeQueue.length) return;
+  if (newIndex < 0 || newIndex >= rhymeQueue.length) return;
+  if (rhymeGlobalPlaylist) { rhymeGlobalPlaylist.pause(); rhymeGlobalPlaylist = null; }
+  startGlobalQueue(rhymeQueue, newIndex);
+};
 document.getElementById("rhyme-global-stop").addEventListener("click", stopRhymeGlobal);
+document.getElementById("rhyme-global-prev").addEventListener("click", () => playQueueIndex(rhymeQueueIndex - 1));
+document.getElementById("rhyme-global-next").addEventListener("click", () => playQueueIndex(rhymeQueueIndex + 1));
 
 const currentSectionTracks = () => {
   let songs = [];
@@ -1510,18 +1530,9 @@ document.addEventListener("click", (event) => {
     const theme = RHYME.themes.find((t) => t.id === themeId);
     const tracks = (theme?.songs || []).filter((song) => rhymeAudio(song.id));
     if (!tracks.length) return;
-    let index = 0;
-    const audio = new Audio(rhymeAudio(tracks[0].id));
-    rhymePlaylistAudio = audio;
+    startGlobalQueue(tracks, 0);
     rhymePlayingThemeId = themeId;
     playThemeButton.classList.add("on");
-    audio.addEventListener("ended", () => {
-      index += 1;
-      if (index >= tracks.length || rhymePlayingThemeId !== themeId) { stopRhymePlaylist(); return; }
-      audio.src = rhymeAudio(tracks[index].id);
-      audio.play().catch(stopRhymePlaylist);
-    });
-    audio.play().catch(stopRhymePlaylist);
     return;
   }
   const songPlayButton = event.target.closest("[data-rhyme-play-song]");
