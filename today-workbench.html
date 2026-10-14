@@ -195,6 +195,8 @@ button { cursor: pointer; }
 .rhyme-group-title-line h3 { flex: none; }
 .rhyme-group-title-line small { margin-top: 0; white-space: nowrap; }
 .rhyme-progress-badge { flex: none; padding: 5px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-size: 11.5px; font-weight: 800; }
+.rhyme-play-all { flex: none; padding: 5px 10px; border-radius: 999px; border: 1px solid var(--brand-border); color: var(--brand); font-size: 11.5px; font-weight: 800; cursor: pointer; }
+.rhyme-play-all.on { background: var(--brand); border-color: var(--brand); color: #fff; }
 .rhyme-songs { display: grid; grid-template-columns: minmax(0, 1fr); gap: 7px; }
 .rhyme-song { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
 .rhyme-song.done { border-color: var(--green-border); background: var(--green-soft); }
@@ -1364,7 +1366,7 @@ function renderRhyme() {
 function renderRhymeThemes() {
   return RHYME.themes.map((theme) => {
     const done = theme.songs.filter((song) => isRhymeDone(song.id)).length;
-    return `<article class="rhyme-group"><div class="rhyme-group-head"><div><h3>${escapeHtml(theme.name)}</h3><small>${theme.songCount} 首 · ${escapeHtml(theme.level)}</small></div><span class="rhyme-progress-badge">${done}/${theme.songCount}</span></div><div class="rhyme-songs">${theme.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
+    return `<article class="rhyme-group" data-theme-group="${escapeHtml(theme.id)}"><div class="rhyme-group-head"><div class="rhyme-group-title-line"><h3>${escapeHtml(theme.name)}</h3><small>${theme.songCount} 首 · ${escapeHtml(theme.level)}</small></div><span class="rhyme-play-all" data-rhyme-play-theme="${escapeHtml(theme.id)}">▶ 播放全部</span><span class="rhyme-progress-badge">${done}/${theme.songCount}</span></div><div class="rhyme-songs">${theme.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
   }).join("");
 }
 
@@ -1423,7 +1425,33 @@ document.getElementById("rhyme-subtabs").addEventListener("click", (event) => {
   renderRhyme();
 });
 
+let rhymePlaylistAudio = null;
+let rhymePlayingThemeId = null;
+const stopRhymePlaylist = () => { if (rhymePlaylistAudio) { rhymePlaylistAudio.pause(); rhymePlaylistAudio = null; } rhymePlayingThemeId = null; document.querySelectorAll(".rhyme-play-all.on").forEach((b) => b.classList.remove("on")); };
+
 document.addEventListener("click", (event) => {
+  const playThemeButton = event.target.closest("[data-rhyme-play-theme]");
+  if (playThemeButton) {
+    const themeId = playThemeButton.dataset.rhymePlayTheme;
+    if (rhymePlayingThemeId === themeId) { stopRhymePlaylist(); return; }
+    stopRhymePlaylist();
+    const theme = RHYME.themes.find((t) => t.id === themeId);
+    const tracks = (theme?.songs || []).filter((song) => rhymeAudio(song.id));
+    if (!tracks.length) return;
+    let index = 0;
+    const audio = new Audio(rhymeAudio(tracks[0].id));
+    rhymePlaylistAudio = audio;
+    rhymePlayingThemeId = themeId;
+    playThemeButton.classList.add("on");
+    audio.addEventListener("ended", () => {
+      index += 1;
+      if (index >= tracks.length || rhymePlayingThemeId !== themeId) { stopRhymePlaylist(); return; }
+      audio.src = rhymeAudio(tracks[index].id);
+      audio.play().catch(stopRhymePlaylist);
+    });
+    audio.play().catch(stopRhymePlaylist);
+    return;
+  }
   const openButton = event.target.closest("[data-rhyme-open]");
   if (openButton) {
     rhymePreviewSongId = openButton.dataset.rhymeOpen;
