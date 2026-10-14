@@ -190,6 +190,9 @@ button { cursor: pointer; }
 .rhyme-group-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 11px; }
 .rhyme-group-head h3 { margin: 0; font-size: 14.5px; }
 .rhyme-group-head small { display: block; margin-top: 3px; color: var(--muted-2); font-size: 11px; }
+.rhyme-group-title-line { display: flex; align-items: baseline; gap: 8px; min-width: 0; }
+.rhyme-group-title-line h3 { flex: none; }
+.rhyme-group-title-line small { margin-top: 0; white-space: nowrap; }
 .rhyme-progress-badge { flex: none; padding: 5px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-size: 11.5px; font-weight: 800; }
 .rhyme-songs { display: grid; gap: 7px; }
 .rhyme-song { display: flex; align-items: center; gap: 8px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 13px; background: #fff; }
@@ -1370,7 +1373,7 @@ function renderRhymePlan() {
 function renderRhymeScene() {
   return RHYME.sceneGroups.map((group) => {
     const done = group.songs.filter((song) => isRhymeDone(song.id)).length;
-    return `<article class="rhyme-group"><div class="rhyme-group-head"><div><h3>${group.num}. ${escapeHtml(group.name)}</h3><small>${group.songs.length} 首</small></div><span class="rhyme-progress-badge">${done}/${group.songs.length}</span></div><div class="rhyme-songs">${group.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
+    return `<article class="rhyme-group"><div class="rhyme-group-head"><div class="rhyme-group-title-line"><h3>${group.num}. ${escapeHtml(group.name)}</h3><small>${group.songs.length} 首</small></div><span class="rhyme-progress-badge">${done}/${group.songs.length}</span></div><div class="rhyme-songs">${group.songs.map((song) => rhymeSongRow(song)).join("")}</div></article>`;
   }).join("");
 }
 
