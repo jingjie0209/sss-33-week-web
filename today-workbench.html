@@ -237,12 +237,13 @@ button { cursor: pointer; }
 .game-filter-row button.active { background: linear-gradient(145deg, #4d45cc, #7566e3); border-color: transparent; color: #fff; }
 
 /* ===== 家长 ===== */
-.parent-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.parent-card { padding: 15px; background: #fff; border: 1px solid var(--line); border-radius: 16px; box-shadow: var(--shadow-sm); }
-.parent-card h3 { margin: 0 0 5px; font-size: 13.5px; }
-.parent-card p { margin: 0; color: var(--muted); font-size: 11.5px; line-height: 1.5; }
-.parent-card .stat-line { display: flex; justify-content: space-between; margin-top: 9px; padding-top: 9px; border-top: 1px solid #eceef5; font-size: 12px; }
-.parent-card .stat-line b { color: var(--brand); }
+.parent-grid { display: flex; flex-direction: column; gap: 8px; }
+.parent-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-sm); }
+.parent-card h3 { margin: 0; font-size: 13.5px; flex: none; }
+.parent-card p { display: none; }
+.parent-card .stat-line { display: flex; align-items: baseline; gap: 10px; margin: 0; padding: 0; border: 0; font-size: 11.5px; color: var(--muted-2); }
+.parent-card .stat-line span { white-space: nowrap; }
+.parent-card .stat-line b { color: var(--brand); font-size: 15px; white-space: nowrap; }
 
 /* ===== 详情 ===== */
 .detail-back { display: inline-flex; align-items: center; margin-bottom: 12px; border: 0; background: none; color: #5b53d3; padding: 0; font-weight: 800; font-size: 13px; }
