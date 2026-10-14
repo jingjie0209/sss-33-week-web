@@ -1340,10 +1340,11 @@ const toggleRhymeDone = (songId) => {
 };
 
 function renderRhyme() {
-  const total = rhymeAllSongs().length;
-  const done = rhymeAllSongs().filter((song) => isRhymeDone(song.id)).length;
-  document.getElementById("rhyme-total-label").textContent = `${total} 首儿歌`;
-  document.getElementById("rhyme-total-short").textContent = `/ ${total}`;
+  const themeSongs = RHYME.themes.flatMap((theme) => theme.songs);
+  const themeTotal = themeSongs.length;
+  const done = themeSongs.filter((song) => isRhymeDone(song.id)).length;
+  document.getElementById("rhyme-total-label").textContent = `${themeTotal} 首儿歌`;
+  document.getElementById("rhyme-total-short").textContent = `/ ${themeTotal}`;
   document.getElementById("rhyme-done-label").textContent = done;
   document.querySelectorAll("#rhyme-subtabs button").forEach((b) => b.classList.toggle("active", b.dataset.rhymeSection === rhymeSection));
   const body = document.getElementById("rhyme-body");
