@@ -1158,7 +1158,7 @@ function renderSpeaking() {
   const panel = document.getElementById("card-subtab-panel");
   document.getElementById("card-grid").style.display = "none";
   document.getElementById("filter-hero-badge").style.display = "none";
-  document.getElementById("card-category-seg").style.display = "none";
+  document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
   document.querySelector(".filter-hero").style.display = "none";
   if (activeCardType === "noun") {
     const modes = [["core", "核心问答", 51], ["guess", "描述猜词", 39], ["true-false", "判断正误", 10]];
@@ -1188,7 +1188,7 @@ function renderPatternsTable() {
   const panel = document.getElementById("card-subtab-panel");
   document.getElementById("card-grid").style.display = "none";
   document.getElementById("filter-hero-badge").style.display = "none";
-  document.getElementById("card-category-seg").style.display = "none";
+  document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
   const typeLabel = { noun: "名词卡", verb: "动词卡", adjective: "形容词卡" }[activeCardType];
   const items = (patterns || []).filter((item) => item.type === typeLabel);
   panel.innerHTML = `<section class="module"><div class="module-head"><h2>基础句型</h2><span>${items.length} 条</span></div><div class="module-body" style="padding:0"><table class="detail-table"><thead><tr><th>序号</th><th>句型</th><th>状态</th><th>操作</th></tr></thead><tbody>${items.map((item) => {
@@ -1207,7 +1207,7 @@ function renderNounPatternDetail(number) {
   const panel = document.getElementById("card-subtab-panel");
   document.getElementById("card-grid").style.display = "none";
   document.getElementById("filter-hero-badge").style.display = "none";
-  document.getElementById("card-category-seg").style.display = "none";
+  document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
   const speakingImage = `assets/noun-speaking-cards/card-${String(item.number).padStart(2, "0")}.jpg`;
   const detailRows = (window.SSS_WEB_DATA?.detailRows || []);
   const matchRows = detailRows.filter((row) => row.type === "名词卡" && Number(String(row.pattern || "").match(/(\d+)\s*\./)?.[1]) === item.number);
@@ -1256,7 +1256,7 @@ function renderCardDetail(type, number) {
   if (!card) return;
   document.getElementById("card-grid").style.display = "none";
   document.getElementById("filter-hero-badge").style.display = "none";
-  document.getElementById("card-category-seg").style.display = "none";
+  document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
   const name = cardName(card, type) || `#${number}`;
   const cn = cardCnName(type, card);
   const img = cardImage(card, type);
@@ -1282,7 +1282,7 @@ function renderCardSubtab() {
   if (activeCardSubtab === "cards") {
     document.getElementById("card-grid").style.display = "";
     document.getElementById("filter-hero-badge").style.display = "";
-    document.getElementById("card-category-seg").style.display = "";
+    document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "");
     document.querySelector(".filter-hero").style.display = "";
     document.getElementById("card-subtab-panel").innerHTML = "";
     renderCardCategorySeg();
@@ -1312,14 +1312,6 @@ document.getElementById("card-subtab-seg").addEventListener("click", (event) => 
   renderCardSubtab();
 });
 
-document.getElementById("card-category-seg").addEventListener("click", (event) => {
-  const button = event.target.closest("[data-card-category]");
-  if (!button) return;
-  activeCardCategory = button.dataset.cardCategory;
-  document.querySelectorAll("#card-category-seg button").forEach((item) => item.classList.toggle("active", item === button));
-  renderCards();
-});
-
 document.addEventListener("click", (event) => {
   const mode = event.target.closest("[data-speaking-mode]");
   if (mode) { activeSpeakingMode = mode.dataset.speakingMode; renderSpeaking(); return; }
@@ -1345,7 +1337,7 @@ document.addEventListener("click", (event) => {
     activeCardSubtab = "cards";
     document.getElementById("card-grid").style.display = "";
     document.getElementById("filter-hero-badge").style.display = "";
-    document.getElementById("card-category-seg").style.display = "";
+    document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "");
     document.getElementById("card-subtab-panel").innerHTML = "";
     renderCardCategorySeg();
     renderCards();
