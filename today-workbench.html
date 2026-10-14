@@ -384,10 +384,8 @@ button { cursor: pointer; }
       </div>
       <div class="filter-line filter-line-sub" id="card-subtab-seg">
         <button class="active" data-card-subtab="cards">卡片</button>
-        <button data-card-subtab="speaking">开口神器</button>
         <button data-card-subtab="patterns">基础句型</button>
       </div>
-      <div class="filter-line filter-line-cats" id="card-category-seg"></div>
     </div>
     <div id="card-grid" class="card-grid"></div>
     <div id="card-subtab-panel"></div>
@@ -1132,7 +1130,9 @@ function renderCardCategorySeg() {
     counts.set(label, (counts.get(label) || 0) + 1);
   });
   const entries = [...counts.entries()].sort((a, b) => b[1] - a[1]);
-  document.getElementById("card-category-seg").innerHTML = [["全部", cards.length], ...entries]
+  const categorySeg = document.getElementById("card-category-seg");
+  if (!categorySeg) return;
+  categorySeg.innerHTML = [["全部", cards.length], ...entries]
     .map(([label, count]) => `<button class="${activeCardCategory === label ? "active" : ""}" data-card-category="${escapeHtml(label)}">${escapeHtml(label)} ${count}</button>`).join("");
 }
 
