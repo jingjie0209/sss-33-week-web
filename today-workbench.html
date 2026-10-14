@@ -188,7 +188,9 @@ button { cursor: pointer; }
 .rhyme-hero-progress { text-align: right; flex: none; }
 .rhyme-hero-progress b { display: block; font-size: 28px; font-weight: 900; line-height: 1.1; }
 .rhyme-hero-progress span { color: #dedcff; font-size: 12px; }
-.rhyme-playall-bar { display: flex; align-items: center; gap: 10px; margin: 12px 0 0; }
+.rhyme-hero-actions { display: flex; gap: 8px; margin-top: 14px; flex-wrap: wrap; }
+.rhyme-hero-actions button { padding: 8px 15px; border: 1px solid #ffffff59; border-radius: 999px; background: #ffffff1f; color: #fff; font-size: 12.5px; font-weight: 800; cursor: pointer; }
+.rhyme-hero-actions button.on { background: #fff; border-color: #fff; color: var(--brand); }
 #rhyme-playall-button { padding: 9px 16px; border: 0; border-radius: 999px; background: linear-gradient(145deg, #4d45cc, #7566e3); color: #fff; font-size: 12.5px; font-weight: 800; box-shadow: 0 6px 16px #2c248c26; }
 #rhyme-playall-button.on { background: linear-gradient(145deg, #16815b, #1ea06f); }
 .rhyme-global-player { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(62px + env(safe-area-inset-bottom)); z-index: 45; width: 100%; max-width: 452px; display: flex; align-items: center; gap: 12px; padding: 11px 14px; background: #fffffffb; backdrop-filter: blur(12px); border: 1px solid #e6e8f4; border-radius: 18px; box-shadow: 0 14px 34px #1f26511f; }
@@ -395,8 +397,11 @@ button { cursor: pointer; }
     <section class="module rhyme-hero-module"><div class="rhyme-hero">
       <div><span>SSS 儿歌库</span><strong id="rhyme-total-label">0 首儿歌</strong><p>主题 · 场景 · TPR · 打卡计划，点击进入详情和打卡。</p></div>
       <div class="rhyme-hero-progress"><b id="rhyme-done-label">0</b><span id="rhyme-total-short">/ 0</span></div>
+      <div class="rhyme-hero-actions">
+        <button id="rhyme-playall-button">▶ 一键磨耳朵</button>
+        <button id="rhyme-play-checked-button" hidden>▶ 播放已打卡</button>
+      </div>
     </div></section>
-    <div class="rhyme-playall-bar"><button id="rhyme-playall-button">▶ 播放全部打卡儿歌</button></div>
     <nav class="rhyme-subtabs" id="rhyme-subtabs">
       <button class="active" data-rhyme-section="themes">全部</button>
       <button data-rhyme-section="plan">打卡计划</button>
@@ -1423,6 +1428,8 @@ function renderRhyme() {
   document.getElementById("rhyme-total-label").textContent = `${total} 首儿歌`;
   document.getElementById("rhyme-total-short").textContent = `/ ${total}`;
   document.getElementById("rhyme-done-label").textContent = done;
+  const checkedBtn = document.getElementById("rhyme-play-checked-button");
+  if (checkedBtn) checkedBtn.hidden = checkedTracks().length === 0;
   const body = document.getElementById("rhyme-body");
   if (rhymePreviewSongId) { body.innerHTML = renderRhymeDetail(rhymePreviewSongId); return; }
   if (rhymeSection === "themes") body.innerHTML = renderRhymeThemes();
@@ -1509,19 +1516,26 @@ const stopRhymeGlobal = () => {
   rhymePlayingSongId = null;
   document.querySelectorAll(".rhyme-song-play.playing").forEach((b) => b.classList.remove("playing"));
   const btn = document.getElementById("rhyme-playall-button");
-  if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 播放全部打卡儿歌"; }
+  if (btn) { btn.classList.remove("on"); btn.textContent = "▶ 一键磨耳朵"; }
+  const checkedBtn = document.getElementById("rhyme-play-checked-button");
+  if (checkedBtn) { checkedBtn.classList.remove("on"); checkedBtn.textContent = "▶ 播放已打卡"; }
   const bar = document.getElementById("rhyme-global-player");
   if (bar) bar.hidden = true;
 };
 
-const startGlobalQueue = (tracks, fromIndex) => {
+let rhymeQueueSource = "all";
+const startGlobalQueue = (tracks, fromIndex, source = "all") => {
   const button = document.getElementById("rhyme-playall-button");
+  const checkedBtn = document.getElementById("rhyme-play-checked-button");
+  rhymeQueueSource = source;
   rhymeQueue = tracks;
   rhymeQueueIndex = fromIndex;
   const audio = new Audio(rhymeAudio(tracks[fromIndex].id));
   rhymeGlobalPlaylist = audio;
-  button.classList.add("on");
-  button.textContent = "⏸ 停止播放";
+  button.classList.toggle("on", source !== "checked");
+  checkedBtn.classList.toggle("on", source === "checked");
+  button.textContent = source === "checked" ? "▶ 一键磨耳朵" : "⏸ 停止磨耳朵";
+  checkedBtn.textContent = source === "checked" ? "⏸ 停止已打卡" : "▶ 播放已打卡";
   const bar = document.getElementById("rhyme-global-player");
   const titleEl = document.getElementById("rhyme-global-title");
   const progressEl = document.getElementById("rhyme-global-progress");
@@ -1544,7 +1558,17 @@ const startGlobalQueue = (tracks, fromIndex) => {
 document.getElementById("rhyme-playall-button").addEventListener("click", () => {
   if (rhymeGlobalPlaylist) { stopRhymeGlobal(); return; }
   stopAllRhymeAudio();
-  const tracks = currentSectionTracks();
+  const tracks = rhymeAllSongs().filter((song) => rhymeAudio(song.id));
+  if (!tracks.length) return;
+  startGlobalQueue(tracks, 0);
+});
+
+const checkedTracks = () => rhymeAllSongs().filter((song) => isRhymeDone(song.id) && rhymeAudio(song.id));
+document.getElementById("rhyme-play-checked-button").addEventListener("click", () => {
+  const btn = document.getElementById("rhyme-play-checked-button");
+  if (rhymeGlobalPlaylist && rhymeQueueSource === "checked") { stopRhymeGlobal(); return; }
+  stopAllRhymeAudio();
+  const tracks = checkedTracks();
   if (!tracks.length) return;
   startGlobalQueue(tracks, 0);
 });
@@ -1590,7 +1614,7 @@ document.addEventListener("click", (event) => {
     const theme = RHYME.themes.find((t) => t.id === themeId);
     const tracks = (theme?.songs || []).filter((song) => rhymeAudio(song.id));
     if (!tracks.length) return;
-    startGlobalQueue(tracks, 0);
+    startGlobalQueue(tracks, 0, "theme");
     rhymePlayingThemeId = themeId;
     playThemeButton.classList.add("on");
     return;
@@ -1605,7 +1629,7 @@ document.addEventListener("click", (event) => {
     if (!src) return;
     const song = rhymeSongById.get(songId);
     const singleQueue = [song || { id: songId, title: song?.title || "正在播放", no: song?.no || 0 }];
-    startGlobalQueue(singleQueue, 0);
+    startGlobalQueue(singleQueue, 0, "single");
     rhymePlayingSongId = songId;
     songPlayButton.classList.add("playing");
     return;
