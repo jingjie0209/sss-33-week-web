@@ -247,6 +247,8 @@ button { cursor: pointer; }
 .parent-grid-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .parent-grid-cards .parent-card { flex-direction: column; align-items: flex-start; gap: 4px; padding: 12px 13px; }
 .parent-grid-cards .parent-card .stat-line { width: 100%; justify-content: space-between; }
+.parent-bar { width: 100%; height: 5px; margin-top: 7px; border-radius: 999px; background: #eceef5; overflow: hidden; }
+.parent-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--brand-deep), var(--brand-light)); transition: width .3s ease; }
 .parent-card { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 13px 15px; background: #fff; border: 1px solid var(--line); border-radius: 14px; box-shadow: var(--shadow-sm); }
 .parent-card h3 { margin: 0; font-size: 13.5px; flex: none; }
 .parent-card p { display: none; }
@@ -419,9 +421,9 @@ button { cursor: pointer; }
       <div class="parent-grid parent-grid-today" id="parent-today-cards"></div>
     </div></section>
     <section class="module"><div class="module-head"><div><h2>累计报告</h2></div><span>数据只保存在本机</span></div><div class="module-body">
-      <div class="parent-subtitle">输入端 · 儿歌与卡片打卡</div>
+      <div class="parent-subtitle">输入端 · 儿歌与卡片</div>
       <div class="parent-grid parent-grid-cards" id="parent-cards"></div>
-      <div class="parent-subtitle" style="margin-top:14px">输出端 · 核心句型库</div>
+      <div class="parent-subtitle" style="margin-top:14px">输出端 · 核心句型</div>
       <div class="parent-grid parent-grid-cards" id="parent-output-cards"></div>
     </div></section>
   </div>
@@ -1656,7 +1658,17 @@ function renderParent() {
   const patternByType = { "名词卡": 0, "动词卡": 0, "形容词卡": 0 };
   patterns.forEach((p) => { if (patternByType[p.type] != null) patternByType[p.type] += 1; });
 
-  const cardHtml = ([label, value, note]) => `<article class="parent-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line"><span>${escapeHtml(note)}</span><b>${escapeHtml(value)}</b></div></article>`;
+  const parseValue = (value) => {
+    const m = String(value).match(/^(\d+)\/(\d+)$/);
+    return m ? { done: Number(m[1]), total: Number(m[2]) } : null;
+  };
+  const cardHtml = ([label, value, note]) => {
+    const nums = parseValue(value);
+    const percent = nums ? (nums.total ? Math.round(nums.done / nums.total * 100) : 0) : null;
+    const noteHtml = note ? `<span>${escapeHtml(note)}</span>` : "";
+    const barHtml = nums ? `<div class="parent-bar"><i style="width:${percent}%"></i></div>` : "";
+    return `<article class="parent-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line">${noteHtml}<b>${escapeHtml(value)}</b></div>${barHtml}</article>`;
+  };
 
   const todayInfo = todayInfoSafe();
   const listenStats = todayListenStats();
@@ -1670,7 +1682,7 @@ function renderParent() {
 
   const pct = (done, total) => total ? Math.round(done / total * 100) : 0;
   const inputRows = [
-    ["儿歌进度", `${totalDone}/${songs.length}`, `完成率 ${pct(totalDone, songs.length)}%`],
+    ["儿歌打卡", `${totalDone}/${songs.length}`, `完成率 ${pct(totalDone, songs.length)}%`],
     ...checkinLists.map((list) => {
       const done = list.items.filter((item) => loadState(`${list.id}:checkin`, {})[item.number]).length;
       return [`${list.label}打卡`, `${done}/${list.items.length}`, `完成率 ${pct(done, list.items.length)}%`];
