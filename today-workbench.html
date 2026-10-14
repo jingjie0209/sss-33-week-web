@@ -1662,8 +1662,7 @@ function renderParent() {
   const listenStats = todayListenStats();
   const newRhymeCount = todayNewRhymeCount();
   const todayRows = [
-    ["熏听时长", `${listenStats.minutes} 分钟`, `共 ${listenStats.count} 次`],
-    ["熏听数量", `${listenStats.songCount} 首`, "今日播放"],
+    ["熏听时长", `${listenStats.minutes}min / ${listenStats.songCount}首`, `共 ${listenStats.count} 次`],
     ["新增儿歌", `${newRhymeCount} 首`, "今日标记打卡"],
     ["今日闪卡", `${todayFlashDone()} 张`, "标记已学"],
     ["今日句型", `${todayPatternDone()}/1`, "本周句型"],
