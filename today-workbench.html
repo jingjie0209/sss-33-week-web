@@ -181,7 +181,8 @@ button { cursor: pointer; }
 .card-seg button.active:hover { color: #fff; }
 
 /* ===== 儿歌 ===== */
-.rhyme-hero { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-radius: 20px; background: linear-gradient(140deg, #4f46cf, #7564e4 65%, #9780ef); color: #fff; box-shadow: var(--shadow-lg); }
+.rhyme-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 18px 20px; border-radius: 20px; background: linear-gradient(140deg, #4f46cf, #7564e4 65%, #9780ef); color: #fff; box-shadow: var(--shadow-lg); }
+.rhyme-hero-actions { justify-content: flex-end; }
 .rhyme-hero span { display: block; font-size: 11.5px; font-weight: 800; letter-spacing: .08em; color: #dcd9ff; }
 .rhyme-hero strong { display: block; margin-top: 4px; font-size: 20px; }
 .rhyme-hero p { margin: 5px 0 0; color: #dedcff; font-size: 12px; line-height: 1.55; }
@@ -396,7 +397,7 @@ button { cursor: pointer; }
 
   <div id="view-rhyme" class="tab-view">
     <section class="module rhyme-hero-module"><div class="rhyme-hero">
-      <div><span>SSS 儿歌库</span><strong id="rhyme-total-label">0 首儿歌</strong><p>主题 · 场景 · TPR · 打卡计划，点击进入详情和打卡。</p></div>
+      <div><span>SSS 儿歌库</span><strong id="rhyme-total-label">0 首儿歌</strong></div>
       <div class="rhyme-hero-progress"><b id="rhyme-done-label">0</b><span id="rhyme-total-short">/ 0</span></div>
       <div class="rhyme-hero-actions">
         <button id="rhyme-playall-button">▶ 一键磨耳朵</button>
