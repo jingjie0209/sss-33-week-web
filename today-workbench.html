@@ -1731,7 +1731,7 @@ const patternParts = (pattern) => {
   const verbs = ["run","jump","eat","drink","read","open","close","ride","swim","sleep","sing","dance","draw","wash","push","pull"];
   const adjs = ["big","small","red","blue","yellow","happy","sad","hot","cold","fast","slow","new","old","sweet","soft"];
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  return { noun: pick(nouns), verb: pick(verbs), adj: pick(adjs) };
+  return [pick(nouns), pick(verbs), pick(adjs)];
 };
 
 function renderGamesTab() {
