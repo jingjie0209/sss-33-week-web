@@ -1725,7 +1725,7 @@ document.addEventListener("click", (event) => {
 let gamesSection = "sentence";
 let sentenceRoll = null;
 
-const sentenceDifficulty = "adj";
+let sentenceDifficulty = "adj";
 let sentenceLearnedOnly = false;
 const wordPools = () => {
   const nouns = (window.SSS_NOUN_CARDS || []).map((c) => ({ word: (cardName(c, "noun") || "").toLowerCase(), image: c.image || "" }));
