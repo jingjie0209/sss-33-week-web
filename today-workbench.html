@@ -1725,13 +1725,36 @@ document.addEventListener("click", (event) => {
 let gamesSection = "sentence";
 let sentenceRoll = null;
 
-const patternParts = (pattern) => {
-  // 从 pattern 字符串粗略拆出名词/动词/形容词三类槽位词
-  const nouns = ["cat","dog","apple","banana","ball","book","car","duck","bear","pig","bird","fish","cake","egg","milk","juice","hat","bag","shoe","star"];
-  const verbs = ["run","jump","eat","drink","read","open","close","ride","swim","sleep","sing","dance","draw","wash","push","pull"];
-  const adjs = ["big","small","red","blue","yellow","happy","sad","hot","cold","fast","slow","new","old","sweet","soft"];
+const sentenceDifficulty = "adj";
+let sentenceLearnedOnly = false;
+const wordPools = () => {
+  const nouns = (window.SSS_NOUN_CARDS || []).map((c) => ({ word: (cardName(c, "noun") || "").toLowerCase(), image: c.image || "" }));
+  const verbs = (window.SUSAN_VERB_CARDS || []).map((c) => ({ word: (c.word || "").toLowerCase(), image: c.image || "" }));
+  const adjs = (window.SUSAN_ADJECTIVE_CARDS || []).map((c) => ({ word: (c.word || c.name || "").toLowerCase(), image: c.image || "" }));
+  if (sentenceLearnedOnly) {
+    const learned = (keyPrefix) => Object.entries(cardOutputState).filter(([k, v]) => k.startsWith(keyPrefix) && v >= 1).map(([k]) => Number(k.split(":").pop()));
+    const learnedNounNums = new Set(learned("output:noun-checkin:"));
+    const learnedVerbNums = new Set(learned("output:verb-checkin:"));
+    const learnedAdjNums = new Set(learned("output:adjective-checkin:"));
+    return {
+      nouns: nouns.filter((c) => learnedNounNums.size === 0 || learnedNounNums.has(0)),
+      verbs: verbs.filter((_, i) => learnedVerbNums.has(i + 1)),
+      adjs: adjs.filter((_, i) => learnedAdjNums.has(i + 1))
+    };
+  }
+  return { nouns, verbs, adjs };
+};
+const patternParts = () => {
+  const pools = wordPools();
   const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-  return [pick(nouns), pick(verbs), pick(adjs)];
+  const diff = sentenceDifficulty;
+  const noun = pick(pools.nouns.length ? pools.nouns : [{ word: "thing", image: "" }]);
+  const verb = pick(pools.verbs.length ? pools.verbs : [{ word: "go", image: "" }]);
+  const adj = pick(pools.adjs.length ? pools.adjs : [{ word: "nice", image: "" }]);
+  noun.kind = "noun"; verb.kind = "verb"; adj.kind = "adj";
+  if (diff === "noun") return [noun];
+  if (diff === "noun-verb") return [noun, verb];
+  return [noun, verb, adj];
 };
 
 function renderGamesTab() {
@@ -1747,8 +1770,12 @@ function renderGamesTab() {
   const sentenceEl = document.getElementById("games-section-sentence");
   if (gamesSection === "sentence") {
     sentenceEl.hidden = false;
-    sentenceEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>随机组句 · 抽卡造句</h2></div><span>名词 × 动词 × 形容词</span></div><div class="module-body">
-      <div style="display:flex;gap:8px;margin-bottom:12px"><button class="tiny-action" id="sentence-roll">🎲 抽一组卡</button><button class="tiny-action" id="sentence-clear">清空</button></div>
+    sentenceEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>随机组句 · 抽卡造句</h2></div><select id="sentence-difficulty" style="height:32px;border-radius:10px;border:2px solid var(--line);padding:0 6px;font-weight:800;font-size:11.5px;background:#fff">
+        <option value="noun">名词+形容词</option>
+        <option value="noun-verb">名词+动词</option>
+        <option value="adj" selected>名词+动词+形容词</option>
+      </select></div><div class="module-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><button class="tiny-action" id="sentence-roll">🎲 随机抽卡</button><button class="tiny-action" id="sentence-roll-learned">🎯 抽已学词卡</button><button class="tiny-action" id="sentence-clear">清空</button></div>
       <div id="sentence-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
       <div id="sentence-result" class="module" style="margin:12px 0 0;background:#fafbff"></div>
     </div></section>`;
@@ -1756,15 +1783,24 @@ function renderGamesTab() {
     const resultEl = document.getElementById("sentence-result");
     const renderRoll = () => {
       if (!sentenceRoll) { cardsEl.innerHTML = `<p class="empty-note">点「抽一组卡」开始造句。</p>`; resultEl.innerHTML = ""; return; }
-      cardsEl.innerHTML = sentenceRoll.map((w, i) => `<div style="border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;background:#fff"><small style="color:var(--muted-2);font-size:10.5px">${["名词","动词","形容词"][i]}</small><strong style="display:block;margin-top:5px;font-size:15px;text-transform:capitalize">${escapeHtml(w)}</strong></div>`).join("");
-      const [adj, noun, verb] = [sentenceRoll[2], sentenceRoll[0], sentenceRoll[1]];
-      resultEl.innerHTML = `<div class="module-head"><div><h3>参考句子</h3></div></div><p style="margin:0;font-size:14px;font-weight:800">The ${escapeHtml(adj)} ${escapeHtml(noun)} can ${escapeHtml(verb)}.</p><p style="margin:4px 0 0;color:var(--muted);font-size:12px">和孩子一起替换其中任意一张卡，句子会跟着变。</p>`;
+      cardsEl.innerHTML = sentenceRoll.map((card, i) => `<div style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff"><div style="display:grid;place-items:center;background:#eef0f7;aspect-ratio:1/1">${card.image ? `<img src="${escapeHtml(card.image)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block" loading="lazy">` : `<span style="font-size:26px;font-weight:800;color:var(--muted)">${escapeHtml((card.word || "?").slice(0, 1).toUpperCase())}</span>`}</div><div style="padding:8px 10px 10px;text-align:center"><small style="color:var(--muted-2);font-size:10.5px">${["名词","动词","形容词"][i]}</small><strong style="display:block;margin-top:3px;font-size:14px;text-transform:capitalize">${escapeHtml(card.word)}</strong></div></div>`).join("");
+      const byKind = (kind) => sentenceRoll.find((c) => c.kind === kind);
+      const noun = byKind("noun") || sentenceRoll[0];
+      const verb = byKind("verb");
+      const adj = byKind("adj");
+      let sentence = "";
+      if (adj && verb) sentence = `The ${adj.word} ${noun.word} can ${verb.word}.`;
+      else if (verb) sentence = `The ${noun.word} can ${verb.word}.`;
+      else sentence = `The ${noun.word} is ${adj ? adj.word : "nice"}.`;
+      resultEl.innerHTML = `<div class="module-head"><div><h3>参考句子</h3></div></div><p style="margin:0;font-size:14px;font-weight:800">${escapeHtml(sentence)}</p><p style="margin:4px 0 0;color:var(--muted);font-size:12px">和孩子一起替换其中任意一张卡，句子会跟着变。</p>`;
     };
     renderRoll();
     sentenceEl.onclick = (event) => {
       if (event.target.closest("#sentence-roll")) { sentenceRoll = patternParts(); renderRoll(); }
+      else if (event.target.closest("#sentence-roll-learned")) { sentenceLearnedOnly = true; sentenceRoll = patternParts(); sentenceLearnedOnly = false; renderRoll(); }
       else if (event.target.closest("#sentence-clear")) { sentenceRoll = null; renderRoll(); }
     };
+    document.getElementById("sentence-difficulty").onchange = (event) => { sentenceDifficulty = event.target.value; };
   } else sentenceEl.hidden = true;
 
   // 面板二：我说你猜 - 看句子猜词（全部猜词类游戏）
