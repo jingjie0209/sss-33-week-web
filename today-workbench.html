@@ -1809,8 +1809,7 @@ function renderGamesTab() {
   const guessEl = document.getElementById("games-section-guess");
   if (gamesSection === "guess") {
     guessEl.hidden = false;
-    const guessGames = games.filter((g) => (g.name || "").includes("猜") || (g.name || "").includes("你演我猜"));
-    guessEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>我说你猜</h2></div><span>${guessGames.length} 个游戏</span></div><div class="module-body"><div class="game-list">${guessGames.map(gameCardHtml).join("")}</div></div></section>`;
+    guessEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>我说你猜</h2></div></div></section>`;
   } else guessEl.hidden = true;
 
   // 面板三：游戏 - 全部亲子互动游戏
