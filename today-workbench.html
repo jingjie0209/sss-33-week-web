@@ -1761,8 +1761,10 @@ function renderGamesTab() {
       resultEl.innerHTML = `<div class="module-head"><div><h3>参考句子</h3></div></div><p style="margin:0;font-size:14px;font-weight:800">The ${escapeHtml(adj)} ${escapeHtml(noun)} can ${escapeHtml(verb)}.</p><p style="margin:4px 0 0;color:var(--muted);font-size:12px">和孩子一起替换其中任意一张卡，句子会跟着变。</p>`;
     };
     renderRoll();
-    document.getElementById("sentence-roll").onclick = () => { sentenceRoll = patternParts(); renderRoll(); };
-    document.getElementById("sentence-clear").onclick = () => { sentenceRoll = null; renderRoll(); };
+    sentenceEl.onclick = (event) => {
+      if (event.target.closest("#sentence-roll")) { sentenceRoll = patternParts(); renderRoll(); }
+      else if (event.target.closest("#sentence-clear")) { sentenceRoll = null; renderRoll(); }
+    };
   } else sentenceEl.hidden = true;
 
   // 面板二：我说你猜 - 看句子猜词（全部猜词类游戏）
