@@ -419,15 +419,14 @@ button { cursor: pointer; }
   </div>
 
   <div id="view-games" class="tab-view">
-    <section class="module"><div class="module-head"><div><h2>游戏库</h2></div><span id="games-count-label"></span></div><div class="module-body">
-      <div class="game-filter-row" id="game-filter-row">
-        <button class="active" data-game-filter="all">全部</button>
-        <button data-game-filter="intro">引入 · 动起来</button>
-        <button data-game-filter="review">复习 · Zoom in</button>
-        <button data-game-filter="challenge">闯关情景</button>
-      </div>
-      <div id="games-full-list" class="game-list"></div>
-    </div></section>
+    <nav class="rhyme-subtabs" id="games-subtabs" style="position:static;margin-top:2px">
+      <button class="active" data-games-section="sentence">随机组句</button>
+      <button data-games-section="guess">我说你猜</button>
+      <button data-games-section="all">游戏</button>
+    </nav>
+    <div id="games-section-sentence"></div>
+    <div id="games-section-guess" hidden></div>
+    <div id="games-section-all" hidden></div>
   </div>
 
   <div id="view-parent" class="tab-view">
@@ -474,7 +473,7 @@ button { cursor: pointer; }
   <button class="active" data-tab="today"><i></i>今日</button>
   <button data-tab="cards"><i></i>卡库</button>
   <button data-tab="rhyme"><i></i>儿歌</button>
-  <button data-tab="games"><i></i>游戏</button>
+  <button data-tab="games"><i></i>小工具</button>
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
@@ -1723,23 +1722,92 @@ document.addEventListener("click", (event) => {
 });
 
 /* ---------- Games tab ---------- */
+let gamesSection = "sentence";
+let sentenceRoll = null;
+
+const patternParts = (pattern) => {
+  // 从 pattern 字符串粗略拆出名词/动词/形容词三类槽位词
+  const nouns = ["cat","dog","apple","banana","ball","book","car","duck","bear","pig","bird","fish","cake","egg","milk","juice","hat","bag","shoe","star"];
+  const verbs = ["run","jump","eat","drink","read","open","close","ride","swim","sleep","sing","dance","draw","wash","push","pull"];
+  const adjs = ["big","small","red","blue","yellow","happy","sad","hot","cold","fast","slow","new","old","sweet","soft"];
+  const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  return { noun: pick(nouns), verb: pick(verbs), adj: pick(adjs) };
+};
+
 function renderGamesTab() {
   const games = window.SUSAN_GAMES_DATA || [];
-  const filtered = games.filter((game) => activeGameFilter === "all" || game.type === activeGameFilter);
-  const typeLabel = { intro: "引入", review: "复习", challenge: "闯关" };
-  document.getElementById("games-count-label").textContent = `${filtered.length} 个游戏`;
-  document.getElementById("games-full-list").innerHTML = filtered.map((game) => {
+  const gameCardHtml = (game) => {
     const done = gameState.includes(game.id);
+    const typeLabel = { intro: "引入", review: "复习", challenge: "闯关" };
     const dialogue = (game.dialogue || []).map((line) => `<div class="${line.who}"><b>${line.who === "mom" ? "👩 妈妈" : "🧒 宝宝"}</b>${escapeHtml(line.text)}</div>`).join("");
     return `<article class="game-card"><div class="game-card-head"><h3>${escapeHtml(game.name)}</h3><small>${escapeHtml(typeLabel[game.type] || game.type)} · ${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</small></div><div class="game-card-body"><p>${escapeHtml(game.how || "")}</p><div class="game-props">${(game.props || []).map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div><div class="dialogue">${dialogue}</div><div style="margin-top:10px"><button class="tiny-action${done ? " done" : ""}" data-game-toggle="${escapeHtml(game.id)}">${done ? "已完成 ✓" : "完成游戏"}</button></div></div></article>`;
-  }).join("");
+  };
+
+  // 面板一：随机组句 - 抽卡造句
+  const sentenceEl = document.getElementById("games-section-sentence");
+  if (gamesSection === "sentence") {
+    sentenceEl.hidden = false;
+    sentenceEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>随机组句 · 抽卡造句</h2></div><span>名词 × 动词 × 形容词</span></div><div class="module-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px"><button class="tiny-action" id="sentence-roll">🎲 抽一组卡</button><button class="tiny-action" id="sentence-clear">清空</button></div>
+      <div id="sentence-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+      <div id="sentence-result" class="module" style="margin:12px 0 0;background:#fafbff"></div>
+    </div></section>`;
+    const cardsEl = document.getElementById("sentence-cards");
+    const resultEl = document.getElementById("sentence-result");
+    const renderRoll = () => {
+      if (!sentenceRoll) { cardsEl.innerHTML = `<p class="empty-note">点「抽一组卡」开始造句。</p>`; resultEl.innerHTML = ""; return; }
+      cardsEl.innerHTML = sentenceRoll.map((w, i) => `<div style="border:1px solid var(--line);border-radius:14px;padding:14px 10px;text-align:center;background:#fff"><small style="color:var(--muted-2);font-size:10.5px">${["名词","动词","形容词"][i]}</small><strong style="display:block;margin-top:5px;font-size:15px;text-transform:capitalize">${escapeHtml(w)}</strong></div>`).join("");
+      const [adj, noun, verb] = [sentenceRoll[2], sentenceRoll[0], sentenceRoll[1]];
+      resultEl.innerHTML = `<div class="module-head"><div><h3>参考句子</h3></div></div><p style="margin:0;font-size:14px;font-weight:800">The ${escapeHtml(adj)} ${escapeHtml(noun)} can ${escapeHtml(verb)}.</p><p style="margin:4px 0 0;color:var(--muted);font-size:12px">和孩子一起替换其中任意一张卡，句子会跟着变。</p>`;
+    };
+    renderRoll();
+    document.getElementById("sentence-roll").onclick = () => { sentenceRoll = patternParts(); renderRoll(); };
+    document.getElementById("sentence-clear").onclick = () => { sentenceRoll = null; renderRoll(); };
+  } else sentenceEl.hidden = true;
+
+  // 面板二：我说你猜 - 看句子猜词（全部猜词类游戏）
+  const guessEl = document.getElementById("games-section-guess");
+  if (gamesSection === "guess") {
+    guessEl.hidden = false;
+    const guessGames = games.filter((g) => (g.name || "").includes("猜") || (g.name || "").includes("你演我猜"));
+    guessEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>我说你猜</h2></div><span>${guessGames.length} 个游戏</span></div><div class="module-body"><div class="game-list">${guessGames.map(gameCardHtml).join("")}</div></div></section>`;
+  } else guessEl.hidden = true;
+
+  // 面板三：游戏 - 全部亲子互动游戏
+  const allEl = document.getElementById("games-section-all");
+  if (gamesSection === "all") {
+    allEl.hidden = false;
+    allEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>游戏库</h2></div><span id="games-count-label">${games.length} 个游戏</span></div><div class="module-body">
+      <div class="game-filter-row" id="game-filter-row">
+        <button class="active" data-game-filter="all">全部</button>
+        <button data-game-filter="intro">引入 · 动起来</button>
+        <button data-game-filter="review">复习 · Zoom in</button>
+        <button data-game-filter="challenge">闯关情景</button>
+      </div>
+      <div id="games-full-list" class="game-list"></div>
+    </div></section>`;
+    const listEl = document.getElementById("games-full-list");
+    const renderList = (filter) => {
+      const filtered = games.filter((game) => filter === "all" || game.type === filter);
+      listEl.innerHTML = filtered.map(gameCardHtml).join("");
+    };
+    renderList(activeGameFilter);
+    document.getElementById("game-filter-row").onclick = (event) => {
+      const button = event.target.closest("[data-game-filter]");
+      if (!button) return;
+      activeGameFilter = button.dataset.gameFilter;
+      document.querySelectorAll("#game-filter-row button").forEach((item) => item.classList.toggle("active", item === button));
+      renderList(activeGameFilter);
+    };
+  } else allEl.hidden = true;
+
+  document.querySelectorAll("#games-subtabs button").forEach((b) => b.classList.toggle("active", b.dataset.gamesSection === gamesSection));
 }
 
-document.getElementById("game-filter-row").addEventListener("click", (event) => {
-  const button = event.target.closest("[data-game-filter]");
+document.getElementById("games-subtabs").addEventListener("click", (event) => {
+  const button = event.target.closest("[data-games-section]");
   if (!button) return;
-  activeGameFilter = button.dataset.gameFilter;
-  document.querySelectorAll("#game-filter-row button").forEach((item) => item.classList.toggle("active", item === button));
+  gamesSection = button.dataset.gamesSection;
   renderGamesTab();
 });
 
