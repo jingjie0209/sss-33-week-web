@@ -1840,7 +1840,7 @@ function renderGamesTab() {
       document.getElementById("sentence-primary-host").innerHTML = `<button id="sentence-primary" style="min-width:220px;padding:12px 0;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:14px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">换一句</button>`;
       resultEl.innerHTML = `<div class="module-head"><div><h3 style="margin:0">可以用这些句型</h3></div><small style="color:var(--muted-2);font-size:11px">${patterns.length} 个句型</small></div>
         <div style="display:grid;gap:7px;margin-top:8px">${patterns.map((p, i) => `<div style="padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:13.5px;font-weight:700"><span style="color:var(--muted-2);font-weight:800;margin-right:8px">${i + 1}</span>${escapeHtml(p)}</div>`).join("")}</div>
-        <p style="margin:8px 0 0;color:var(--muted);font-size:12px">和孩子一起替换其中任意一张卡，句子会跟着变。</p>`;
+        `;
     };
     renderRoll();
     sentenceEl.onclick = (event) => {
