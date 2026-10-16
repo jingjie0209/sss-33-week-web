@@ -1728,9 +1728,14 @@ let sentenceRoll = null;
 
 let sentenceDifficulty = "adj";
 let sentenceLearnedOnly = false;
+let activeRollMode = "roll";
 const wordPools = () => {
   const nouns = (window.SSS_NOUN_CARDS || []).map((c) => ({ word: (cardName(c, "noun") || "").toLowerCase(), image: c.image || "" }));
-  const verbs = (window.SUSAN_VERB_CARDS || []).map((c) => ({ word: (c.word || "").toLowerCase(), image: c.image || "" }));
+  const verbs = (window.SUSAN_VERB_CARDS || []).map((c) => {
+    const raw = String(c.word || "");
+    const clean = (raw.split(/[\n\r]/)[0].match(/[a-zA-Z]+/g) || ["go"])[0].toLowerCase();
+    return { word: clean, image: c.image || "" };
+  });
   const adjs = (window.SUSAN_ADJECTIVE_CARDS || []).map((c) => ({ word: (c.word || c.name || "").toLowerCase(), image: c.image || "" }));
   if (sentenceLearnedOnly) {
     const learned = (keyPrefix) => Object.entries(cardOutputState).filter(([k, v]) => k.startsWith(keyPrefix) && v >= 1).map(([k]) => Number(k.split(":").pop()));
@@ -1787,8 +1792,12 @@ function renderGamesTab() {
     const renderRoll = () => {
       const primaryBtn = document.getElementById("sentence-primary");
       if (primaryBtn) primaryBtn.textContent = sentenceRoll ? "换一句" : "开始组句";
+      const rollBtn = document.getElementById("sentence-roll");
+      const learnedBtn = document.getElementById("sentence-roll-learned");
+      if (rollBtn) rollBtn.classList.toggle("active", activeRollMode === "roll");
+      if (learnedBtn) learnedBtn.classList.toggle("active", activeRollMode === "learned");
       if (!sentenceRoll) { cardsEl.innerHTML = `<p class="empty-note">点「开始组句」抽卡造句。</p>`; resultEl.innerHTML = `<div class="module-head" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div><h3 style="margin:0">参考句子</h3></div><button id="sentence-primary" style="padding:9px 18px;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:12.5px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">开始组句</button></div>`; return; }
-      cardsEl.innerHTML = sentenceRoll.map((card, i) => `<div style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff"><div style="display:grid;place-items:center;background:#eef0f7;aspect-ratio:1/1">${card.image ? `<img src="${escapeHtml(card.image)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">` : `<span style="font-size:26px;font-weight:800;color:var(--muted)">${escapeHtml((card.word || "?").slice(0, 1).toUpperCase())}</span>`}</div><div style="padding:8px 10px;display:flex;align-items:baseline;justify-content:center;gap:6px"><small style="color:var(--muted-2);font-size:10.5px">${["名词","动词","形容词"][i]}</small><strong style="font-size:14px;text-transform:capitalize">${escapeHtml(card.word)}</strong></div></div>`).join("");
+      cardsEl.innerHTML = sentenceRoll.map((card, i) => `<div style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff"><div style="display:grid;place-items:center;background:#eef0f7;aspect-ratio:1/1">${card.image ? `<img src="${escapeHtml(card.image)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">` : `<span style="font-size:26px;font-weight:800;color:var(--muted)">${escapeHtml((card.word || "?").slice(0, 1).toUpperCase())}</span>`}</div><div style="padding:8px 10px 10px;text-align:center"><small style="color:var(--muted-2);font-size:10.5px">${["名词","动词","形容词"][i]}</small><strong style="display:block;margin-top:3px;font-size:14px;text-transform:capitalize">${escapeHtml(card.word)}</strong></div></div>`).join("");
       const byKind = (kind) => sentenceRoll.find((c) => c.kind === kind);
       const noun = byKind("noun") || sentenceRoll[0];
       const verb = byKind("verb");
@@ -1801,9 +1810,17 @@ function renderGamesTab() {
     };
     renderRoll();
     sentenceEl.onclick = (event) => {
-      if (event.target.closest("#sentence-primary") || event.target.closest("#sentence-roll")) { sentenceRoll = patternParts(); renderRoll(); }
-      else if (event.target.closest("#sentence-roll-learned")) { sentenceLearnedOnly = true; sentenceRoll = patternParts(); sentenceLearnedOnly = false; renderRoll(); }
-      else if (event.target.closest("#sentence-clear")) { sentenceRoll = null; renderRoll(); }
+      if (event.target.closest("#sentence-primary") || event.target.closest("#sentence-roll")) { activeRollMode = "roll"; sentenceRoll = patternParts(); renderRoll(); }
+      else if (event.target.closest("#sentence-roll-learned")) {
+        activeRollMode = "learned";
+        sentenceLearnedOnly = true;
+        const learned = patternParts();
+        sentenceLearnedOnly = false;
+        if (!learned.every((c) => c.word)) { toast("还没有已学的词卡，先去卡库打卡吧"); return; }
+        sentenceRoll = learned;
+        renderRoll();
+      }
+      else if (event.target.closest("#sentence-clear")) { sentenceRoll = null; activeRollMode = "roll"; renderRoll(); }
     };
     document.getElementById("sentence-difficulty").onchange = (event) => { sentenceDifficulty = event.target.value; };
   } else sentenceEl.hidden = true;
