@@ -1744,6 +1744,7 @@ let sentenceRoll = null;
 let sentenceDifficulty = "adj";
 let sentenceLearnedOnly = false;
 let activeRollMode = "roll";
+const SENTENCE_WORD_CN = { hamburger:"汉堡", noodles:"面条", rice:"米饭", corn:"玉米", juice:"果汁", milk:"牛奶", egg:"鸡蛋", cake:"蛋糕", apple:"苹果", banana:"香蕉", grape:"葡萄", watermelon:"西瓜", carrot:"胡萝卜", potato:"土豆", coconut:"椰子", pumpkin:"南瓜", cat:"猫", dog:"狗", duck:"鸭子", chick:"小鸡", pig:"猪", lion:"狮子", tiger:"老虎", panda:"熊猫", monkey:"猴子", elephant:"大象", bear:"熊", bird:"鸟", fish:"鱼", rabbit:"兔子", horse:"马", owl:"猫头鹰", cow:"奶牛", sheep:"绵羊", hen:"母鸡", deer:"鹿", penguin:"企鹅", fox:"狐狸", pen:"钢笔", pencil:"铅笔", book:"书", cup:"杯子", key:"钥匙", clock:"时钟", desk:"书桌", table:"桌子", door:"门", window:"窗户", bed:"床", sofa:"沙发", building:"大楼", hat:"帽子", cap:"帽子", sock:"袜子", dress:"连衣裙", glasses:"眼镜", watch:"手表", umbrella:"雨伞", car:"汽车", bus:"公交车", van:"面包车", newspaper:"报纸", envelope:"信封", run:"跑", jump:"跳", hop:"单脚跳", walk:"走", swim:"游泳", fly:"飞", sleep:"睡觉", eat:"吃", drink:"喝", sing:"唱歌", dance:"跳舞", read:"读", look:"看", carry:"搬运", push:"推", pull:"拉", clap:"拍手", stomp:"跺脚", think:"思考", measure:"测量", salute:"敬礼", stroke:"轻抚", annoy:"惹恼", big:"大的", small:"小的", red:"红色的", blue:"蓝色的", yellow:"黄色的", green:"绿色的", full:"满的", fresh:"新鲜的", drab:"单调的", dull:"单调的", neat:"整洁的", sad:"伤心的", happy:"开心的", kind:"友善的", noisy:"吵闹的", quiet:"安静的", stale:"不新鲜的", tame:"温顺的", wild:"野生的", agile:"敏捷的", clumsy:"笨拙的", sharp:"锋利的" };
 const wordPools = () => {
   const nouns = (window.SSS_NOUN_CARDS || []).map((c) => ({ word: (cardName(c, "noun") || "").toLowerCase(), image: c.image || "" }));
   const verbs = (window.SUSAN_VERB_CARDS || []).map((c) => {
@@ -1821,27 +1822,27 @@ function renderGamesTab() {
       const noun = byKind("noun") || sentenceRoll[0];
       const verb = byKind("verb");
       const adj = byKind("adj");
+      const cn = (w) => SENTENCE_WORD_CN[w] || "";
       const patterns = [];
       if (adj && verb) {
-        patterns.push(`The ${adj.word} ${noun.word} can ${verb.word}.`);
-        patterns.push(`Look! The ${adj.word} ${noun.word} is going to ${verb.word}.`);
-        patterns.push(`I like the ${adj.word} ${noun.word}. It can ${verb.word}!`);
-        patterns.push(`Can the ${adj.word} ${noun.word} ${verb.word}? Yes, it can!`);
-        patterns.push(`This is a ${adj.word} ${noun.word}. It likes to ${verb.word}.`);
+        patterns.push({ en: `The ${adj.word} ${noun.word} can ${verb.word}.`, zh: `${cn(adj.word)}的${cn(noun.word)}会${cn(verb.word)}。` });
+        patterns.push({ en: `Look! The ${adj.word} ${noun.word} is going to ${verb.word}.`, zh: `看！${cn(adj.word)}的${cn(noun.word)}要去${cn(verb.word)}了。` });
+        patterns.push({ en: `I like the ${adj.word} ${noun.word}. It can ${verb.word}!`, zh: `我喜欢${cn(adj.word)}的${cn(noun.word)}，它会${cn(verb.word)}！` });
+        patterns.push({ en: `Can the ${adj.word} ${noun.word} ${verb.word}? Yes, it can!`, zh: `${cn(adj.word)}的${cn(noun.word)}会${cn(verb.word)}吗？会的！` });
+        patterns.push({ en: `This is a ${adj.word} ${noun.word}. It likes to ${verb.word}.`, zh: `这是一只${cn(adj.word)}的${cn(noun.word)}，它喜欢${cn(verb.word)}。` });
       } else if (verb) {
-        patterns.push(`The ${noun.word} can ${verb.word}.`);
-        patterns.push(`Look! The ${noun.word} is going to ${verb.word}.`);
-        patterns.push(`I like the ${noun.word}. It can ${verb.word}!`);
-        patterns.push(`Can the ${noun.word} ${verb.word}? Yes, it can!`);
-        patterns.push(`This is the ${noun.word}. It likes to ${verb.word}.`);
+        patterns.push({ en: `The ${noun.word} can ${verb.word}.`, zh: `这个${cn(noun.word)}会${cn(verb.word)}。` });
+        patterns.push({ en: `Look! The ${noun.word} is going to ${verb.word}.`, zh: `看！${cn(noun.word)}要去${cn(verb.word)}了。` });
+        patterns.push({ en: `I like the ${noun.word}. It can ${verb.word}!`, zh: `我喜欢这个${cn(noun.word)}，它会${cn(verb.word)}！` });
+        patterns.push({ en: `Can the ${noun.word} ${verb.word}? Yes, it can!`, zh: `${cn(noun.word)}会${cn(verb.word)}吗？会的！` });
+        patterns.push({ en: `This is the ${noun.word}. It likes to ${verb.word}.`, zh: `这是${cn(noun.word)}，它喜欢${cn(verb.word)}。` });
       } else {
-        patterns.push(`The ${noun.word} is ${adj.word}.`);
-        patterns.push(`Look! The ${adj.word} ${noun.word}!`);
-        patterns.push(`I like the ${adj.word} ${noun.word}.`);
-        patterns.push(`Is the ${noun.word} ${adj.word}? Yes, it is!`);
-        patterns.push(`This is a ${adj.word} ${noun.word}. So cute!`);
-      }
-      document.getElementById("sentence-primary-host").innerHTML = `<button id="sentence-primary" style="min-width:220px;padding:12px 0;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:14px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">换一句</button>`;
+        patterns.push({ en: `The ${noun.word} is ${adj.word}.`, zh: `这个${cn(noun.word)}很${cn(adj.word)}。` });
+        patterns.push({ en: `Look! The ${adj.word} ${noun.word}!`, zh: `看！${cn(adj.word)}的${cn(noun.word)}！` });
+        patterns.push({ en: `I like the ${adj.word} ${noun.word}.`, zh: `我喜欢${cn(adj.word)}的${cn(noun.word)}。` });
+        patterns.push({ en: `Is the ${noun.word} ${adj.word}? Yes, it is!`, zh: `${cn(noun.word)}${cn(adj.word)}吗？是的！` });
+        patterns.push({ en: `This is a ${adj.word} ${noun.word}. So cute!`, zh: `这是一只${cn(adj.word)}的${cn(noun.word)}，太可爱了！` });
+      }      document.getElementById("sentence-primary-host").innerHTML = `<button id="sentence-primary" style="min-width:220px;padding:12px 0;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:14px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">换一句</button>`;
       const listHtml = patterns.map((p, i) => `<div style="padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff"><div style="font-size:13.5px;font-weight:700"><span style="color:var(--muted-2);font-weight:800;margin-right:8px">${i + 1}</span>${escapeHtml(p.en)}</div><div style="margin-top:3px;color:var(--muted);font-size:12px">${escapeHtml(p.zh)}</div></div>`).join("");
       resultEl.innerHTML = `<div class="module-head"><div><h3 style="margin:0">可以用这些句型</h3></div><small style="color:var(--muted-2);font-size:11px">${patterns.length} 个句型</small></div>
         <div id="sentence-pattern-list" hidden style="display:grid;gap:7px;margin-top:8px">${listHtml}</div>
