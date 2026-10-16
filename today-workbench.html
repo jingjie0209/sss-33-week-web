@@ -489,6 +489,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 <script src="games-data.js"></script>
 <script src="rhyme-data.js"></script>
 <script src="card-extensions.js"></script>
+<script src="noun-repeat-data.js"></script>
 <script src="things-card-data.js"></script>
 <script src="verb-card-data.js"></script>
 <script src="adjective-card-data.js"></script>
@@ -1916,37 +1917,41 @@ document.getElementById("games-subtabs").addEventListener("click", (event) => {
   renderGamesTab();
 });
 
-/* ---------- 我说你猜：从名词卡亲子对话提取线索，四选一 ---------- */
+/* ---------- 我说你猜：完整学习站"描述猜词"数据（52-90 号卡） ---------- */
 let guessRound = null;
-const GUESS_SKIP_TITLES = /(^|\W)(quack|roar|hi|hello|en|um|please|one more time|let's|its|it's)(\W|$)/i;
-const guessClueLines = (card) => {
-  const lines = (card.dialogue || "").split(/\n/).map((l) => l.trim()).filter(Boolean);
-  const clues = [];
-  const nameLower = card.name.toLowerCase();
-  const nameRe = new RegExp(card.name, "i");
-  const lyricRe = /(if you're|stomp|clap|turn around|shout|hooray|six little|once knew|fat ones|skinny ones|feather on her back|led the others|let's sing|i know a song)/i;
-  const greetingRe = /^(quack|roar|hi|hello|hey|en|um|oh no|please|well|now look)/i;
+const guessCardsData = () => {
+  const repeats = window.SSS_NOUN_REPEAT || [];
+  const nounCards = window.SSS_NOUN_CARDS || [];
+  const norm = (t) => String(t || "").toLowerCase().replace(/\s+/g, " ").trim();
+  const cardByName = new Map(nounCards.map((c) => [norm(c.name), c]));
+  return repeats
+    .filter((r) => r.number >= 52 && r.number <= 90)
+    .map((r) => {
+      const match = cardByName.get(norm(r.name));
+      return { number: r.number, name: r.name, clues: cleanGuessClues(r.text, r.name), image: match ? match.image : "" };
+    })
+    .filter((c) => c.clues.length >= 2);
+};
+const cleanGuessClues = (raw, answer) => {
+  const lines = String(raw || "").split(/\n/).map((l) => l.trim()).filter(Boolean);
+  const answerWord = (answer.split(/[\s-]/)[0] || "").replace(/[^a-zA-Z]/g, "");
+  const revealRe = new RegExp("(it'?s (a|your) |bingo|you are right|yes,? (you are|it is))", "i");
+  const out = [];
   lines.forEach((line) => {
-    const isQuestion = /[?？]\s*$/.test(line);
-    if (isQuestion) return;
-    if (greetingRe.test(line)) return;
-    if (lyricRe.test(line)) return;
-    if (/one more time|read after|mimicking/i.test(line)) return;
-    const hasName = nameRe.test(line);
-    const pronounRef = /\b(it|they|she|he)\b/i.test(line);
-    // 陈述句：要么直接提到词，要么用代词指代且长度像描述
-    if (hasName && line.length > 12) { clues.push(line); return; }
-    if (!hasName && pronounRef && line.length > 18 && clues.length > 0) { clues.push(line); return; }
+    if (/^公众号/.test(line)) return;
+    if (/^\.$/.test(line.trim())) return;
+    if (/^\d+$/.test(line)) return;
+    if (/^[a-z]{1,12}-\d+$/i.test(line)) return;
+    if (revealRe.test(line) && answerWord && line.toLowerCase().includes(answerWord)) return;
+    out.push(line);
   });
-  // 去重 + 最多 5 条
-  const uniq = [...new Set(clues)];
-  return uniq.slice(0, 5);
+  return [...new Set(out)].slice(0, 5);
 };
 
 function startGuessRound() {
-  const nounCards = (window.SSS_NOUN_CARDS || []).filter((c) => c.image && guessClueLines(c).length >= 2);
-  if (nounCards.length < 4) return;
-  const shuffled = [...nounCards].sort(() => Math.random() - 0.5);
+  const all = guessCardsData();
+  if (all.length < 4) return;
+  const shuffled = [...all].sort(() => Math.random() - 0.5);
   const answer = shuffled[0];
   const others = shuffled.slice(1, 4);
   const options = [answer, ...others].sort(() => Math.random() - 0.5);
@@ -1959,18 +1964,21 @@ function renderGuessRound() {
   const optionsEl = document.getElementById("guess-options");
   const revealBtn = document.getElementById("guess-reveal");
   if (!guessRound) { cluesEl.innerHTML = `<p class="empty-note">点「开始猜词」出题。</p>`; optionsEl.innerHTML = ""; if (revealBtn) revealBtn.hidden = true; return; }
-  const { answer } = guessRound;
-  const clues = guessClueLines(answer);
+  const clues = guessRound.answer.clues;
   cluesEl.innerHTML = clues.map((line, i) => `<div style="padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:13px"><b style="color:var(--brand);margin-right:8px">${i + 1}</b>${escapeHtml(line)}</div>`).join("");
-  optionsEl.innerHTML = guessRound.options.map((card) => `<button class="guess-option" data-guess-option-btn="${card.number}" style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;padding:0;cursor:pointer"><img src="${escapeHtml(card.image)}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block" loading="lazy"><div style="padding:7px 8px;font-size:13px;font-weight:800;text-transform:capitalize">${escapeHtml(card.name)}</div></button>`).join("");
+  optionsEl.innerHTML = guessRound.options.map((card) => {
+    const visual = card.image
+      ? `<img src="${escapeHtml(card.image)}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block" loading="lazy">`
+      : `<div style="aspect-ratio:1/1;display:grid;place-items:center;background:#eef0f7"><span style="font-size:30px;font-weight:800;color:var(--muted)">${escapeHtml(card.name.slice(0, 1).toUpperCase())}</span></div>`;
+    return `<button class="guess-option" data-guess-option-btn="${card.number}" style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;padding:0;cursor:pointer">${visual}<div style="padding:7px 8px;font-size:13px;font-weight:800;text-transform:capitalize">${escapeHtml(card.name)}</div></button>`;
+  }).join("");
   if (revealBtn) revealBtn.hidden = true;
 }
 
 function pickGuess(number) {
   if (!guessRound) return;
   const { answer } = guessRound;
-  const buttons = [...document.querySelectorAll("[data-guess-option-btn]")];
-  buttons.forEach((btn) => {
+  [...document.querySelectorAll("[data-guess-option-btn]")].forEach((btn) => {
     const num = btn.dataset.guessPick;
     if (Number(num) === answer.number) { btn.style.borderColor = "var(--green)"; btn.style.background = "var(--green-soft)"; }
     else if (Number(num) === Number(number)) { btn.style.borderColor = "#e5484d"; btn.style.background = "#fde8e8"; }
@@ -1983,8 +1991,7 @@ function pickGuess(number) {
 function revealGuess() {
   if (!guessRound) return;
   const { answer } = guessRound;
-  const buttons = [...document.querySelectorAll("[data-guess-option-btn]")];
-  buttons.forEach((btn) => {
+  [...document.querySelectorAll("[data-guess-option-btn]")].forEach((btn) => {
     if (Number(btn.dataset.guessPick) === answer.number) { btn.style.borderColor = "var(--green)"; btn.style.background = "var(--green-soft)"; }
   });
 }
