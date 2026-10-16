@@ -1969,7 +1969,7 @@ function renderGuessRound() {
   optionsEl.innerHTML = guessRound.options.map((card) => {
     const visual = card.image
       ? `<img src="${escapeHtml(card.image)}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block" loading="lazy">`
-      : `<div style="aspect-ratio:1/1;display:grid;place-items:center;background:#eef0f7"><span style="font-size:30px;font-weight:800;color:var(--muted)">${escapeHtml(card.name.slice(0, 1).toUpperCase())}</span></div>`;
+      : `<div style="aspect-ratio:1/1;display:grid;place-items:center;background:#eef0f7"><span style="font-size:28px;font-weight:800;color:var(--muted)">❓</span></div>`;
     return `<button class="guess-option" data-guess-option-btn="${card.number}" style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;padding:0;cursor:pointer">${visual}<div style="padding:7px 8px;font-size:13px;font-weight:800;text-transform:capitalize">${escapeHtml(card.name)}</div></button>`;
   }).join("");
   if (revealBtn) revealBtn.hidden = true;
