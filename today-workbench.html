@@ -1933,9 +1933,11 @@ const guessCardsData = () => {
   const nounCards = window.SSS_NOUN_CARDS || [];
   const norm = (t) => String(t || "").toLowerCase().replace(/\s+/g, " ").trim();
   const cardByName = new Map(nounCards.map((c) => [norm(c.name), c]));
+  const nameFix = { "Pinao": "Piano", "Envelop": "Envelope", "Traffic  light": "Traffic Light" };
   return repeats
     .filter((r) => r.number >= 52 && r.number <= 90)
     .map((r) => {
+      r = { ...r, name: nameFix[r.name] || r.name };
       const match = cardByName.get(norm(r.name));
       const repeatImg = r.image || `assets/noun-repeat/page-${String(r.number).padStart(3, "0")}.jpg`;
       return { number: r.number, name: r.name, clues: cleanGuessClues(r.text, r.name), image: match ? match.image : repeatImg };
