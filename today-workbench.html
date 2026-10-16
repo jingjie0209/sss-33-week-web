@@ -1794,9 +1794,8 @@ function renderGamesTab() {
       </select></div><div class="module-body">
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><button class="tiny-action" id="sentence-roll">🎲 随机抽卡</button><button class="tiny-action" id="sentence-roll-learned">🎯 抽已学词卡</button><button class="tiny-action" id="sentence-clear">清空</button></div>
       <div id="sentence-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
-      <div id="sentence-result" class="module" style="margin:24px 0 0;background:#fafbff">
-        <div class="module-head" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div><h3 style="margin:0">参考句子</h3></div><button id="sentence-primary" style="padding:9px 18px;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:12.5px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">开始组句</button></div>
-      </div>
+      <div id="sentence-primary-host" style="display:flex;justify-content:center;margin:16px 0"></div>
+      <div id="sentence-result" class="module" style="margin:0;background:#fafbff"></div>
     </div></section>`;
     const cardsEl = document.getElementById("sentence-cards");
     const resultEl = document.getElementById("sentence-result");
