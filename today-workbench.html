@@ -1639,6 +1639,17 @@ document.getElementById("rhyme-play-checked-button").addEventListener("click", (
   startGlobalQueue(tracks, 0);
 });
 
+document.addEventListener("click", (event) => {
+  const collapseButton = event.target.closest("[data-game-collapse]");
+  if (collapseButton) {
+    const card = collapseButton.closest(".game-card");
+    const body = card?.querySelector(".game-card-body");
+    const arrow = collapseButton.querySelector(".game-collapse-arrow");
+    if (body) body.hidden = !body.hidden;
+    if (arrow) arrow.style.transform = body?.hidden ? "" : "rotate(180deg)";
+  }
+});
+
 const playQueueIndex = (newIndex) => {
   if (!rhymeQueue.length) return;
   if (newIndex < 0 || newIndex >= rhymeQueue.length) return;
@@ -1769,7 +1780,7 @@ function renderGamesTab() {
     const done = gameState.includes(game.id);
     const typeLabel = { intro: "引入", review: "复习", challenge: "闯关" };
     const dialogue = (game.dialogue || []).map((line) => `<div class="${line.who}"><b>${line.who === "mom" ? "👩 妈妈" : "🧒 宝宝"}</b>${escapeHtml(line.text)}</div>`).join("");
-    return `<article class="game-card"><div class="game-card-head"><h3>${escapeHtml(game.name)}</h3><small>${escapeHtml(typeLabel[game.type] || game.type)} · ${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</small></div><div class="game-card-body"><p>${escapeHtml(game.how || "")}</p><div class="game-props">${(game.props || []).map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div><div class="dialogue">${dialogue}</div><div style="margin-top:10px"><button class="tiny-action${done ? " done" : ""}" data-game-toggle="${escapeHtml(game.id)}">${done ? "已完成 ✓" : "完成游戏"}</button></div></div></article>`;
+    return `<article class="game-card" data-game-card="${escapeHtml(game.id)}"><button class="game-card-head" type="button" data-game-collapse="${escapeHtml(game.id)}" style="width:100%;border:0;background:transparent;text-align:left;padding:0;display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer"><h3 style="margin:0">${escapeHtml(game.name)}</h3><small style="flex:none;display:flex;align-items:center;gap:8px">${escapeHtml(typeLabel[game.type] || game.type)} · ${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁<span class="game-collapse-arrow" style="display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:10px;transition:transform .2s">▾</span></small></button><div class="game-card-body" hidden><p>${escapeHtml(game.how || "")}</p><div class="game-props">${(game.props || []).map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div><div class="dialogue">${dialogue}</div><div style="margin-top:10px"><button class="tiny-action${done ? " done" : ""}" data-game-toggle="${escapeHtml(game.id)}">${done ? "已完成 ✓" : "完成游戏"}</button></div></div></article>`;
   };
 
   // 面板一：随机组句 - 抽卡造句
