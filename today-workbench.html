@@ -1796,17 +1796,36 @@ function renderGamesTab() {
       const learnedBtn = document.getElementById("sentence-roll-learned");
       if (rollBtn) rollBtn.classList.toggle("active", activeRollMode === "roll");
       if (learnedBtn) learnedBtn.classList.toggle("active", activeRollMode === "learned");
-      if (!sentenceRoll) { cardsEl.innerHTML = `<p class="empty-note">点「开始组句」抽卡造句。</p>`; resultEl.innerHTML = `<div class="module-head" style="display:flex;align-items:center;justify-content:space-between;gap:10px"><div><h3 style="margin:0">参考句子</h3></div><button id="sentence-primary" style="padding:9px 18px;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:12.5px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">开始组句</button></div>`; return; }
+      if (!sentenceRoll) { cardsEl.innerHTML = `<p class="empty-note">点「开始组句」抽卡造句。</p>`; resultEl.innerHTML = `<div style="display:flex;justify-content:flex-end"><button id="sentence-primary" style="padding:10px 22px;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:13px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">开始组句</button></div>`; return; }
       cardsEl.innerHTML = sentenceRoll.map((card, i) => `<div style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff"><div style="display:grid;place-items:center;background:#eef0f7;aspect-ratio:1/1">${card.image ? `<img src="${escapeHtml(card.image)}" alt="" style="width:100%;height:100%;object-fit:cover;display:block">` : `<span style="font-size:26px;font-weight:800;color:var(--muted)">${escapeHtml((card.word || "?").slice(0, 1).toUpperCase())}</span>`}</div><div style="padding:8px 10px 10px;text-align:center"><small style="color:var(--muted-2);font-size:10.5px">${["名词","动词","形容词"][i]}</small><strong style="display:block;margin-top:3px;font-size:14px;text-transform:capitalize">${escapeHtml(card.word)}</strong></div></div>`).join("");
       const byKind = (kind) => sentenceRoll.find((c) => c.kind === kind);
       const noun = byKind("noun") || sentenceRoll[0];
       const verb = byKind("verb");
       const adj = byKind("adj");
-      let sentence = "";
-      if (adj && verb) sentence = `The ${adj.word} ${noun.word} can ${verb.word}.`;
-      else if (verb) sentence = `The ${noun.word} can ${verb.word}.`;
-      else sentence = `The ${noun.word} is ${adj ? adj.word : "nice"}.`;
-      resultEl.innerHTML = `<div class="module-head"><div><h3>参考句子</h3></div></div><p style="margin:0;font-size:14px;font-weight:800">${escapeHtml(sentence)}</p><p style="margin:4px 0 0;color:var(--muted);font-size:12px">和孩子一起替换其中任意一张卡，句子会跟着变。</p>`;
+      const patterns = [];
+      if (adj && verb) {
+        patterns.push(`The ${adj.word} ${noun.word} can ${verb.word}.`);
+        patterns.push(`Look! The ${adj.word} ${noun.word} is going to ${verb.word}.`);
+        patterns.push(`I like the ${adj.word} ${noun.word}. It can ${verb.word}!`);
+        patterns.push(`Can the ${adj.word} ${noun.word} ${verb.word}? Yes, it can!`);
+        patterns.push(`This is a ${adj.word} ${noun.word}. It likes to ${verb.word}.`);
+      } else if (verb) {
+        patterns.push(`The ${noun.word} can ${verb.word}.`);
+        patterns.push(`Look! The ${noun.word} is going to ${verb.word}.`);
+        patterns.push(`I like the ${noun.word}. It can ${verb.word}!`);
+        patterns.push(`Can the ${noun.word} ${verb.word}? Yes, it can!`);
+        patterns.push(`This is the ${noun.word}. It likes to ${verb.word}.`);
+      } else {
+        patterns.push(`The ${noun.word} is ${adj.word}.`);
+        patterns.push(`Look! The ${adj.word} ${noun.word}!`);
+        patterns.push(`I like the ${adj.word} ${noun.word}.`);
+        patterns.push(`Is the ${noun.word} ${adj.word}? Yes, it is!`);
+        patterns.push(`This is a ${adj.word} ${noun.word}. So cute!`);
+      }
+      resultEl.innerHTML = `<div style="display:flex;justify-content:flex-end;margin-bottom:8px"><button id="sentence-primary" style="padding:9px 18px;border:0;border-radius:999px;background:linear-gradient(145deg,#4d45cc,#7566e3);color:#fff;font-weight:800;font-size:12.5px;box-shadow:0 6px 16px #2c248c26;cursor:pointer">换一句</button></div>
+        <div class="module-head"><div><h3 style="margin:0">可以用这些句型</h3></div><small style="color:var(--muted-2);font-size:11px">${patterns.length} 个句型</small></div>
+        <div style="display:grid;gap:7px;margin-top:8px">${patterns.map((p, i) => `<div style="padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:13.5px;font-weight:700"><span style="color:var(--muted-2);font-weight:800;margin-right:8px">${i + 1}</span>${escapeHtml(p)}</div>`).join("")}</div>
+        <p style="margin:8px 0 0;color:var(--muted);font-size:12px">和孩子一起替换其中任意一张卡，句子会跟着变。</p>`;
     };
     renderRoll();
     sentenceEl.onclick = (event) => {
