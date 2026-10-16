@@ -1928,44 +1928,7 @@ document.getElementById("games-subtabs").addEventListener("click", (event) => {
 
 /* ---------- 我说你猜：完整学习站"描述猜词"数据（52-90 号卡） ---------- */
 let guessRound = null;
-const guessCardsData = () => {
-  const repeats = window.SSS_NOUN_REPEAT || [];
-  const nounCards = window.SSS_NOUN_CARDS || [];
-  const norm = (t) => String(t || "").toLowerCase().replace(/\s+/g, " ").trim();
-  const cardByName = new Map(nounCards.map((c) => [norm(c.name), c]));
-  const nameFix = { "Pinao": "Piano", "Envelop": "Envelope", "Traffic  light": "Traffic Light" };
-  return repeats
-    .filter((r) => r.number >= 52 && r.number <= 90)
-    .map((r) => {
-      r = { ...r, name: nameFix[r.name] || r.name };
-      const match = cardByName.get(norm(r.name));
-      const repeatImg = r.image || `assets/noun-repeat/page-${String(r.number).padStart(3, "0")}.jpg`;
-      return { number: r.number, name: r.name, clues: cleanGuessClues(r.text, r.name), image: match ? match.image : repeatImg };
-    })
-    .filter((c) => c.clues.length >= 2);
-};
-const cleanGuessClues = (raw, answer) => {
-  const lines = String(raw || "").split(/\n/).map((l) => l.trim()).filter(Boolean);
-  const answerWord = (answer.split(/[\s-]/)[0] || "").replace(/[^a-zA-Z]/g, "");
-  const revealRe = new RegExp("(it'?s (a|your) |bingo|you are right|yes,? (you are|it is))", "i");
-  const out = [];
-  lines.forEach((line) => {
-    if (/^公众号/.test(line)) return;
-    if (/^\.$/.test(line.trim())) return;
-    if (/^\d+$/.test(line)) return;
-    if (/^[a-z]{1,12}-\d+$/i.test(line)) return;
-    // 剔除寒暄开场（Hello, dear darling / Hello, little one's 等）
-    if (/^(hello|hi)\b[ ,]/i.test(line)) return;
-    // 剔除问题句（猜词线索应该是陈述描述，不是提问）
-    if (/[?？]\s*$/.test(line) || /^(what|can|do|does|is|are|whose|how)\b[^.!?]*\?/i.test(line)) return;
-    // 剔除揭示答案句
-    if (revealRe.test(line) && answerWord && line.toLowerCase().includes(answerWord)) return;
-    // 剔除含"answer"词本身的行（已经泄露）
-    if (answerWord && line.toLowerCase().includes(answerWord)) return;
-    out.push(line);
-  });
-  return [...new Set(out)].slice(0, 5);
-};
+const guessCardsData = () => (window.SSS_GUESS_PROPER || []).filter((c) => c.clues.length >= 2);
 
 function startGuessRound() {
   const all = guessCardsData();
