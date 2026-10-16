@@ -1859,7 +1859,16 @@ function renderGamesTab() {
   const guessEl = document.getElementById("games-section-guess");
   if (gamesSection === "guess") {
     guessEl.hidden = false;
-    guessEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>我说你猜</h2></div></div></section>`;
+    guessEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>我说你猜</h2></div><span>看线索猜词</span></div><div class="module-body">
+      <div style="display:flex;gap:8px;margin-bottom:12px"><button class="tiny-action" id="guess-roll">🎲 开始猜词</button><button class="tiny-action" id="guess-reveal" hidden>看答案</button></div>
+      <div id="guess-clues" style="display:grid;gap:7px;margin-bottom:12px"></div>
+      <div id="guess-options" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
+    </div></section>`;
+    guessEl.onclick = (event) => {
+      if (event.target.closest("#guess-roll")) { startGuessRound(); }
+      else if (event.target.closest("#guess-option-btn")) { pickGuess(event.target.closest("#guess-option-btn").dataset.guessPick); }
+      else if (event.target.closest("#guess-reveal")) { revealGuess(); }
+    };
   } else guessEl.hidden = true;
 
   // 面板三：游戏 - 全部亲子互动游戏
@@ -1899,6 +1908,73 @@ document.getElementById("games-subtabs").addEventListener("click", (event) => {
   gamesSection = button.dataset.gamesSection;
   renderGamesTab();
 });
+
+/* ---------- 我说你猜：从名词卡亲子对话提取线索，四选一 ---------- */
+let guessRound = null;
+const GUESS_SKIP_TITLES = /(^|\W)(quack|roar|hi|hello|en|um|please|one more time|let's|its|it's)(\W|$)/i;
+const guessClueLines = (card) => {
+  const lines = (card.dialogue || "").split(/\n/).map((l) => l.trim()).filter(Boolean);
+  const clues = [];
+  const nameRe = new RegExp(card.name, "i");
+  lines.forEach((line) => {
+    const isQuestion = /[?？]\s*$/.test(line);
+    const hasName = nameRe.test(line);
+    // 只留"描述当前图"的陈述句：不是疑问句、不含明显对话寒暄、不含词本身之外的儿歌句
+    if (isQuestion) return;
+    if (/^(quack|roar|hi|hello|en|um|please)/i.test(line)) return;
+    if (/one more time|read after/i.test(line)) return;
+    if (!hasName) return;
+    clues.push(line);
+  });
+  // 最多 5 条，最少 2 条才有游戏性
+  return clues.slice(0, 5);
+};
+
+function startGuessRound() {
+  const nounCards = (window.SSS_NOUN_CARDS || []).filter((c) => c.image && guessClueLines(c).length >= 2);
+  if (nounCards.length < 4) return;
+  const shuffled = [...nounCards].sort(() => Math.random() - 0.5);
+  const answer = shuffled[0];
+  const others = shuffled.slice(1, 4);
+  const options = [answer, ...others].sort(() => Math.random() - 0.5);
+  guessRound = { answer, options };
+  renderGuessRound();
+}
+
+function renderGuessRound() {
+  const cluesEl = document.getElementById("guess-clues");
+  const optionsEl = document.getElementById("guess-options");
+  const revealBtn = document.getElementById("guess-reveal");
+  if (!guessRound) { cluesEl.innerHTML = `<p class="empty-note">点「开始猜词」出题。</p>`; optionsEl.innerHTML = ""; if (revealBtn) revealBtn.hidden = true; return; }
+  const { answer } = guessRound;
+  const clues = guessClueLines(answer);
+  cluesEl.innerHTML = clues.map((line, i) => `<div style="padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:#fff;font-size:13px"><b style="color:var(--brand);margin-right:8px">${i + 1}</b>${escapeHtml(line)}</div>`).join("");
+  optionsEl.innerHTML = guessRound.options.map((card) => `<button class="guess-option" data-guess-option-btn="${card.number}" style="border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#fff;padding:0;cursor:pointer"><img src="${escapeHtml(card.image)}" alt="" style="width:100%;aspect-ratio:1/1;object-fit:cover;display:block" loading="lazy"><div style="padding:7px 8px;font-size:13px;font-weight:800;text-transform:capitalize">${escapeHtml(card.name)}</div></button>`).join("");
+  if (revealBtn) revealBtn.hidden = true;
+}
+
+function pickGuess(number) {
+  if (!guessRound) return;
+  const { answer } = guessRound;
+  const buttons = [...document.querySelectorAll("[data-guess-option-btn]")];
+  buttons.forEach((btn) => {
+    const num = btn.dataset.guessPick;
+    if (Number(num) === answer.number) { btn.style.borderColor = "var(--green)"; btn.style.background = "var(--green-soft)"; }
+    else if (Number(num) === Number(number)) { btn.style.borderColor = "#e5484d"; btn.style.background = "#fde8e8"; }
+  });
+  const revealBtn = document.getElementById("guess-reveal");
+  if (revealBtn) revealBtn.hidden = false;
+  toast(Number(number) === answer.number ? "猜对啦！🎉" : "不对哦，再看看线索");
+}
+
+function revealGuess() {
+  if (!guessRound) return;
+  const { answer } = guessRound;
+  const buttons = [...document.querySelectorAll("[data-guess-option-btn]")];
+  buttons.forEach((btn) => {
+    if (Number(btn.dataset.guessPick) === answer.number) { btn.style.borderColor = "var(--green)"; btn.style.background = "var(--green-soft)"; }
+  });
+}
 
 /* ---------- Parent tab ---------- */
 function renderParent() {
