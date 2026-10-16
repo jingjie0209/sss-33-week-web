@@ -1850,13 +1850,14 @@ function renderGamesTab() {
     };
     renderRoll();
     sentenceEl.onclick = (event) => {
-      if (event.target.closest("#sentence-primary") || event.target.closest("#sentence-roll")) {
+      if (event.target.closest("#sentence-primary")) {
         activeRollMode = "roll";
         sentenceRoll = patternParts();
         renderRoll();
         const list = document.getElementById("sentence-pattern-list");
         if (list) list.hidden = false;
       }
+      else if (event.target.closest("#sentence-roll")) { activeRollMode = "roll"; sentenceRoll = patternParts(); renderRoll(); }
       else if (event.target.closest("#sentence-roll-learned")) {
         activeRollMode = "learned";
         sentenceLearnedOnly = true;
