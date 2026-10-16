@@ -1915,19 +1915,25 @@ const GUESS_SKIP_TITLES = /(^|\W)(quack|roar|hi|hello|en|um|please|one more time
 const guessClueLines = (card) => {
   const lines = (card.dialogue || "").split(/\n/).map((l) => l.trim()).filter(Boolean);
   const clues = [];
+  const nameLower = card.name.toLowerCase();
   const nameRe = new RegExp(card.name, "i");
+  const lyricRe = /(if you're|stomp|clap|turn around|shout|hooray|six little|once knew|fat ones|skinny ones|feather on her back|led the others|let's sing|i know a song)/i;
+  const greetingRe = /^(quack|roar|hi|hello|hey|en|um|oh no|please|well|now look)/i;
   lines.forEach((line) => {
     const isQuestion = /[?？]\s*$/.test(line);
-    const hasName = nameRe.test(line);
-    // 只留"描述当前图"的陈述句：不是疑问句、不含明显对话寒暄、不含词本身之外的儿歌句
     if (isQuestion) return;
-    if (/^(quack|roar|hi|hello|en|um|please)/i.test(line)) return;
-    if (/one more time|read after/i.test(line)) return;
-    if (!hasName) return;
-    clues.push(line);
+    if (greetingRe.test(line)) return;
+    if (lyricRe.test(line)) return;
+    if (/one more time|read after|mimicking/i.test(line)) return;
+    const hasName = nameRe.test(line);
+    const pronounRef = /\b(it|they|she|he)\b/i.test(line);
+    // 陈述句：要么直接提到词，要么用代词指代且长度像描述
+    if (hasName && line.length > 12) { clues.push(line); return; }
+    if (!hasName && pronounRef && line.length > 18 && clues.length > 0) { clues.push(line); return; }
   });
-  // 最多 5 条，最少 2 条才有游戏性
-  return clues.slice(0, 5);
+  // 去重 + 最多 5 条
+  const uniq = [...new Set(clues)];
+  return uniq.slice(0, 5);
 };
 
 function startGuessRound() {
