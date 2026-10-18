@@ -425,11 +425,9 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <div id="view-games" class="tab-view">
     <nav class="rhyme-subtabs" id="games-subtabs" style="position:static;margin-top:2px">
       <button class="active" data-games-section="sentence">随机组句</button>
-      <button data-games-section="guess">我说你猜</button>
       <button data-games-section="all">游戏</button>
     </nav>
     <div id="games-section-sentence"></div>
-    <div id="games-section-guess" hidden></div>
     <div id="games-section-all" hidden></div>
   </div>
 
@@ -1872,22 +1870,6 @@ function renderGamesTab() {
     };
     document.getElementById("sentence-difficulty").onchange = (event) => { sentenceDifficulty = event.target.value; };
   } else sentenceEl.hidden = true;
-
-  // 面板二：我说你猜 - 看句子猜词（全部猜词类游戏）
-  const guessEl = document.getElementById("games-section-guess");
-  if (gamesSection === "guess") {
-    guessEl.hidden = false;
-    guessEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>我说你猜</h2></div><span>看线索猜词</span></div><div class="module-body">
-      <div style="display:flex;gap:8px;margin-bottom:12px"><button class="tiny-action" id="guess-roll">🎲 开始猜词</button><button class="tiny-action" id="guess-reveal" hidden>看答案</button></div>
-      <div id="guess-clues" style="display:grid;gap:7px;margin-bottom:12px"></div>
-      <div id="guess-options" style="display:grid;grid-template-columns:repeat(2,1fr);gap:8px"></div>
-    </div></section>`;
-    guessEl.onclick = (event) => {
-      if (event.target.closest("#guess-roll")) { startGuessRound(); }
-      else if (event.target.closest("#guess-option-btn")) { pickGuess(event.target.closest("#guess-option-btn").dataset.guessPick); }
-      else if (event.target.closest("#guess-reveal")) { revealGuess(); }
-    };
-  } else guessEl.hidden = true;
 
   // 面板三：游戏 - 全部亲子互动游戏
   const allEl = document.getElementById("games-section-all");
