@@ -270,6 +270,18 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .parent-card .stat-line span { white-space: nowrap; }
 .parent-card .stat-line b { color: var(--brand); font-size: 15px; white-space: nowrap; }
 
+/* ===== 本周计划面板 ===== */
+.week-plan-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
+.week-plan-card .wp-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
+.week-plan-card .wp-head h2 { margin: 0; font-size: 15px; }
+.week-plan-card .wp-step { display: flex; gap: 8px; margin: 10px 0; font-size: 12.5px; }
+.week-plan-card .wp-chip { display: inline-block; padding: 6px 12px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--muted); font-size: 12px; font-weight: 700; cursor: pointer; }
+.week-plan-card .wp-chip.active { background: linear-gradient(145deg,#4d45cc,#7566e3); border-color: transparent; color: #fff; }
+.wp-progress-row { display: flex; align-items: center; gap: 8px; margin: 8px 0; font-size: 12.5px; }
+.wp-bar { flex: 1; height: 7px; background: #eceef5; border-radius: 999px; overflow: hidden; }
+.wp-bar i { display: block; height: 100%; background: linear-gradient(90deg, var(--brand-deep), var(--brand-light)); border-radius: 999px; }
+.wp-review-box { margin-top: 12px; padding: 12px; border: 1px dashed var(--brand-border); border-radius: 14px; background: var(--brand-soft); font-size: 12.5px; display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+
 /* ===== 详情 ===== */
 .detail-back { display: inline-flex; align-items: center; margin-bottom: 12px; border: 0; background: none; color: #5b53d3; padding: 0; font-weight: 800; font-size: 13px; }
 .detail-head { padding: 18px; border-radius: 22px; background: linear-gradient(140deg, #4f46cf, #7564e4 60%, #9780ef); color: #fff; margin-bottom: 13px; box-shadow: var(--shadow-lg); }
@@ -374,6 +386,8 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
     <div class="stat"><span>今日闪卡</span><strong id="stat-cards">0/5</strong><small>点卡片标记学会了</small></div>
     <div class="stat"><span>今日游戏</span><strong id="stat-games">0/3</strong><small>挑 1–3 个玩就算打卡</small></div>
   </div>
+
+  <div id="week-plan-root"></div>
 
   <div id="steps-root"></div>
 
@@ -965,6 +979,7 @@ function render() {
   document.getElementById("stat-songs-sub").textContent = song.title || "";
   document.getElementById("stat-cards").textContent = `${checkedCards}/${flashcards.length}`;
   document.getElementById("stat-games").textContent = `${doneGames}/${games.length}`;
+  renderWeekPlanUpdater(); renderWeekPlan();
   document.getElementById("hero-bar").style.width = `${songs.length ? Math.round(totalDone / songs.length * 100) : 0}%`;
 
   const cover = youtubeThumbnail(song.videoUrl);
@@ -1074,6 +1089,113 @@ document.addEventListener("click", (event) => {
 
 document.getElementById("start-today").addEventListener("click", () => {
   document.getElementById("steps-root").scrollIntoView({ behavior: "smooth", block: "start" });
+});
+
+/* ---------- 本周计划（状态A定制 / 状态B执行） ---------- */
+const WEEK_PLAN_KEY = "sss-week-plan-v1";
+const loadWeekPlan = () => loadState(WEEK_PLAN_KEY, null);
+const saveWeekPlan = (plan) => saveState(WEEK_PLAN_KEY, plan);
+const SENTENCE_WORD_CN2 = {};
+
+function renderWeekPlan() {
+  const root = document.getElementById("week-plan-root");
+  if (!root) return;
+  const plan = loadWeekPlan();
+  if (!plan) { root.innerHTML = renderPlanCustomizer(); bindPlanCustomizer(); }
+  else root.innerHTML = renderPlanExecutor(plan);
+}
+
+function renderPlanCustomizer() {
+  const patterns = (window.SSS_NOUN_DETAILS || []).slice(0, 12);
+  return `<section class="week-plan-card">
+    <div class="wp-head"><h2>📅 新的一周开始啦</h2><span style="margin-left:auto;color:var(--muted-2);font-size:11px">花 1 分钟定制本周计划</span></div>
+    <div class="wp-step"><b>1️⃣ 选核心句型</b><small style="color:var(--muted-2);margin-left:6px">选句型后自动加载理论视频和笔记</small></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${patterns.map((p, i) => `<button class="wp-chip" data-wp-pattern="${i}">${escapeHtml(p.pattern)}</button>`).join("")}</div>
+    <div class="wp-step"><b>2️⃣ 选单词卡</b><small style="color:var(--muted-2);margin-left:6px">建议 10–15 张</small></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${["动物","食物","身体","家居","自然"].map((c) => `<button class="wp-chip" data-wp-cat="${c}">${c}</button>`).join("")}</div>
+    <div class="wp-step"><b>3️⃣ 选小工具 / 游戏</b></div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${["猜词","随机组句","亲子游戏"].map((c) => `<button class="wp-chip" data-wp-tool="${c}">${c}</button>`).join("")}</div>
+    <div class="wp-step"><b>4️⃣ 选儿歌（本周磨耳朵）</b><small style="color:var(--muted-2);margin-left:6px">系统已推荐 3 首</small></div>
+    <button class="button" style="width:100%;justify-content:center;margin-top:8px" id="wp-generate">⭐ 智能推荐一键生成</button>
+    <button class="button secondary" style="width:100%;justify-content:center;margin-top:8px" id="wp-confirm">确认生成本周计划</button>
+  </section>`;
+}
+
+function renderPlanExecutor(plan) {
+  const bar = (pct) => `<span class="wp-bar"><i style="width:${pct}%"></i></span>`;
+  return `<section class="week-plan-card">
+    <div class="wp-head"><h2>📅 第 ${plan.weekNumber} 周 · 今日任务</h2><span style="margin-left:auto;color:var(--brand);font-weight:800">${plan.taskDone}/3 完成</span></div>
+    <div class="wp-step">1. 理论：指认法 (2分钟) <button class="tiny-action" data-wp-task="theory">${plan.theoryDone ? "已观看 ✓" : "去观看"}</button></div>
+    <div class="wp-step">2. 闪卡：chick, duck… <button class="tiny-action" data-wp-task="cards">去学习</button></div>
+    <div class="wp-step">3. 组句：${escapeHtml(plan.pattern)} <button class="tiny-action" data-wp-task="sentence">去练习</button></div>
+    <button class="button" style="width:100%;justify-content:center;margin-top:10px" id="wp-continue">▶ 继续今日任务</button>
+  </section>
+  <section class="week-plan-card">
+    <div class="wp-head"><h2>本周进度</h2><span style="margin-left:auto;color:var(--brand);font-weight:800">${plan.progressPct || 0}% 完成</span></div>
+    <div class="wp-progress-row">📺 理论 ${plan.theoryDone ? "✅ 已看完" : "⬜ 未开始"}</div>
+    <div class="wp-progress-row">👣 句型 ${bar(plan.stagePct || 0)} ${Math.floor((plan.stagePct||0)/20)}/5 阶</div>
+    <div class="wp-progress-row">🃏 单词 ${bar(wordPctOf(plan))} ${plan.wordDone || 0}/${plan.wordTotal || 15} 张</div>
+    <div class="wp-progress-row">🎲 游戏 已玩 ${plan.gameDone || 0}/3 次</div>
+  </section>
+  <section class="week-plan-card">
+    <div class="wp-review-box"><span>🔔 有 ${plan.reviewCount || 5} 张卡片该复习啦</span><button class="tiny-action" data-wp-task="review">去复习</button></div>
+    <button class="tiny-action" style="width:100%;justify-content:center;margin-top:8px" id="wp-edit">⚙️ 修改本周计划</button>
+  </section>`;
+}
+
+function wordPctOf(plan) { return plan.wordTotal ? Math.round((plan.wordDone || 0) / plan.wordTotal * 100) : 0; }
+
+function bindPlanCustomizer() {
+  const root = document.getElementById("week-plan-root");
+  if (!root) return;
+  const sel = { pattern: -1, cats: [], tools: [] };
+  root.addEventListener("click", (event) => {
+    const pBtn = event.target.closest("[data-wp-pattern]");
+    if (pBtn) { sel.pattern = Number(pBtn.dataset.wpPattern); root.querySelectorAll("[data-wp-pattern]").forEach(b => b.classList.toggle("active", b === pBtn)); return; }
+    const cBtn = event.target.closest("[data-wp-cat]");
+    if (cBtn) { const c = cBtn.dataset.wpCat; sel.cats.includes(c) ? sel.cats = sel.cats.filter(x => x !== c) : sel.cats.push(c); cBtn.classList.toggle("active"); return; }
+    const tBtn = event.target.closest("[data-wp-tool]");
+    if (tBtn) { const c = tBtn.dataset.wpTool; sel.tools.includes(c) ? sel.tools = sel.tools.filter(x => x !== c) : sel.tools.push(c); tBtn.classList.toggle("active"); return; }
+    if (event.target.closest("#wp-generate") || event.target.closest("#wp-confirm")) {
+      const patterns = window.SSS_NOUN_DETAILS || [];
+      const plan = {
+        weekNumber: (todayInfo().weekIndex + 1),
+        pattern: sel.pattern >= 0 ? patterns[sel.pattern].pattern : (patterns[0] || {}).pattern || "",
+        patternLearned: false, theoryDone: false,
+        wordTotal: 15, wordDone: 0,
+        stagePct: 0, gameDone: 0, taskDone: 0,
+        progressPct: 0, reviewCount: 5,
+        createdAt: Date.now()
+      };
+      saveWeekPlan(plan);
+      renderWeekPlan();
+      toast("本周计划已生成 🎉");
+    }
+  });
+}
+
+function renderWeekPlanUpdater() {
+  const plan = loadWeekPlan();
+  if (!plan) return;
+  plan.wordDone = Object.values(cardState).filter(Boolean).length;
+  plan.gameDone = gameState.length;
+  plan.taskDone = (plan.theoryDone ? 1 : 0) + ((plan.wordDone || 0) > 0 ? 1 : 0) + ((plan.gameDone || 0) > 0 ? 1 : 0);
+  plan.progressPct = Math.min(100, Math.round(((plan.wordDone || 0) / (plan.wordTotal || 15)) * 70 + (plan.theoryDone ? 15 : 0) + ((plan.gameDone || 0) / 3) * 15));
+  saveWeekPlan(plan);
+}
+
+document.getElementById("week-plan-root").addEventListener("click", (event) => {
+  const taskBtn = event.target.closest("[data-wp-task]");
+  if (taskBtn) {
+    const plan = loadWeekPlan();
+    const task = taskBtn.dataset.wpTask;
+    if (task === "theory" && plan && !plan.theoryDone) { plan.theoryDone = true; saveWeekPlan(plan); renderWeekPlan(); toast("理论已看完 ✅"); }
+    if (task === "cards" || task === "review") switchTab("cards");
+    if (task === "sentence") switchTab("games");
+    return;
+  }
+  if (event.target.closest("#wp-edit")) { saveWeekPlan(null); renderWeekPlan(); toast("可重新定制本周计划"); return; }
+  if (event.target.closest("#wp-continue")) { document.getElementById("steps-root")?.scrollIntoView({ behavior: "smooth" }); }
 });
 
 /* ---------- Tab navigation ---------- */
