@@ -426,7 +426,6 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
     <nav class="rhyme-subtabs" id="games-subtabs" style="position:static;margin-top:2px">
       <button class="active" data-games-section="sentence">随机组句</button>
       <button data-games-section="all">游戏</button>
-      <button data-games-section="report">熏听报告</button>
     </nav>
     <div id="games-section-sentence"></div>
     <div id="games-section-all" hidden></div>
@@ -1933,6 +1932,15 @@ function renderGamesTab() {
   document.querySelectorAll("#games-subtabs button").forEach((b) => b.classList.toggle("active", b.dataset.gamesSection === gamesSection));
 }
 
+document.addEventListener("click", (event) => {
+  const reportCard = event.target.closest("[data-open-report]");
+  if (reportCard) {
+    switchTab("games");
+    gamesSection = "report";
+    renderGamesTab();
+    return;
+  }
+});
 document.getElementById("games-subtabs").addEventListener("click", (event) => {
   const button = event.target.closest("[data-games-section]");
   if (!button) return;
@@ -2003,12 +2011,15 @@ function renderParent() {
     const m = String(value).match(/^(\d+)\/(\d+)$/);
     return m ? { done: Number(m[1]), total: Number(m[2]) } : null;
   };
-  const cardHtml = ([label, value, note]) => {
+  const cardHtml = ([label, value, note, link]) => {
     const nums = parseValue(value);
     const percent = nums ? (nums.total ? Math.round(nums.done / nums.total * 100) : 0) : null;
     const noteHtml = note ? `<span>${escapeHtml(note)}</span>` : "";
     const barHtml = nums ? `<div class="parent-bar"><i style="width:${percent}%"></i></div>` : "";
-    return `<article class="parent-card"><h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line">${noteHtml}<b>${escapeHtml(value)}</b></div>${barHtml}</article>`;
+    const icon = link ? `<span style="position:absolute;right:10px;top:10px;width:22px;height:22px;border-radius:50%;background:var(--brand-soft);display:grid;place-items:center;font-size:12px">📊</span>` : "";
+    const inner = `<h3>${escapeHtml(label)}</h3><p>${escapeHtml(note)}</p><div class="stat-line">${noteHtml}<b>${escapeHtml(value)}</b></div>${barHtml}${icon}`;
+    if (link) return `<article class="parent-card" data-open-report="${link}" style="position:relative;cursor:pointer">${inner}</article>`;
+    return `<article class="parent-card">${inner}</article>`;
   };
 
   const todayInfo = todayInfoSafe();
