@@ -426,9 +426,11 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
     <nav class="rhyme-subtabs" id="games-subtabs" style="position:static;margin-top:2px">
       <button class="active" data-games-section="sentence">随机组句</button>
       <button data-games-section="all">游戏</button>
+      <button data-games-section="report">熏听报告</button>
     </nav>
     <div id="games-section-sentence"></div>
     <div id="games-section-all" hidden></div>
+    <div id="games-section-report" hidden></div>
   </div>
 
   <div id="view-parent" class="tab-view">
@@ -1582,6 +1584,7 @@ const startGlobalQueue = (tracks, fromIndex, source = "all") => {
   };
   updateStatus();
   audio.addEventListener("ended", () => {
+    try { pushPlayHistory(tracks[rhymeQueueIndex].id, tracks[rhymeQueueIndex].title, audio.duration || 0); } catch {}
     rhymeQueueIndex += 1;
     if (rhymeQueueIndex >= tracks.length) { stopRhymeGlobal(); return; }
     audio.src = rhymeAudio(tracks[rhymeQueueIndex].id);
@@ -1677,7 +1680,7 @@ let rhymePlayingSongId = null;
 const stopRhymePlaylist = () => { if (rhymePlaylistAudio) { rhymePlaylistAudio.pause(); rhymePlaylistAudio = null; } rhymePlayingThemeId = null; document.querySelectorAll(".rhyme-play-all.on").forEach((b) => b.classList.remove("on")); };
 const stopRhymeSong = () => {
   if (rhymePlaylistAudio) {
-    try { recordListen(rhymePlaylistAudio.currentTime || 0, rhymePlayingSongId); } catch {}
+    try { pushPlayHistory(rhymePlayingSongId, rhymeSongById.get(rhymePlayingSongId)?.title, rhymePlaylistAudio.currentTime || 0); } catch {}
     rhymePlaylistAudio.pause();
     rhymePlaylistAudio = null;
   }
@@ -1898,6 +1901,34 @@ function renderGamesTab() {
       renderList(activeGameFilter);
     };
   } else allEl.hidden = true;
+
+  const reportEl = document.getElementById("games-section-report");
+  if (gamesSection === "report") {
+    reportEl.hidden = false;
+    const history = loadState("sss-play-history-v1", []);
+    const byDate = {};
+    history.forEach((entry) => {
+      const d = new Date(entry.startedAt);
+      const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+      (byDate[key] = byDate[key] || []).push(entry);
+    });
+    const todayKey = (() => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; })();
+    const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
+    const yKey = `${yesterday.getFullYear()}-${String(yesterday.getMonth() + 1).padStart(2, "0")}-${String(yesterday.getDate()).padStart(2, "0")}`;
+    const label = (key) => key === todayKey ? "今天" : key === yKey ? "昨天" : `${Number(key.split("-")[1])}月${Number(key.split("-")[2])}日`;
+    const fmtClock = (ts) => { const d = new Date(ts); return `${String(d.getHours()).padStart(2, "0")}:${String(d.getMinutes()).padStart(2, "0")}`; };
+    const fmtDur = (s) => `${Math.round(s / 60)}分${Math.round(s % 60)}秒`;
+    const groups = Object.entries(byDate).sort((a, b) => b[0].localeCompare(a[0]));
+    const todayEntries = byDate[todayKey] || [];
+    const totalMin = Math.round(todayEntries.reduce((sum, e) => sum + (e.duration || 0), 0) / 60);
+    reportEl.innerHTML = `<section class="module"><div class="module-head"><div><h2>熏听报告</h2></div><span>${history.length} 条记录</span></div><div class="module-body">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px">
+        <div style="padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:center"><small style="color:var(--muted-2);font-size:11px">今日听时长(分钟)</small><b style="display:block;margin-top:4px;font-size:20px;color:var(--brand)">${totalMin}</b></div>
+        <div style="padding:12px;border:1px solid var(--line);border-radius:14px;background:#fff;text-align:center"><small style="color:var(--muted-2);font-size:11px">今日播放(遍)</small><b style="display:block;margin-top:4px;font-size:20px;color:var(--brand)">${todayEntries.length}</b></div>
+      </div>
+      ${groups.length ? groups.map(([key, items]) => `<section style="margin-bottom:14px"><div style="display:flex;align-items:baseline;gap:8px;margin-bottom:8px"><b style="font-size:13.5px">${label(key)}</b><small style="color:var(--muted-2);font-size:11px">${key}</small><em style="margin-left:auto;color:var(--muted-2);font-style:normal;font-size:11px">${items.length} 首</em></div><ul style="list-style:none;margin:0;padding:0;display:grid;gap:7px">${items.map((e) => `<li style="display:flex;align-items:center;gap:10px;padding:9px 11px;border:1px solid var(--line);border-radius:13px;background:#fff"><span style="flex:none;color:var(--muted-2);font-size:11px">${fmtClock(e.startedAt)}</span><span style="flex:1;min-width:0"><b style="display:block;font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escapeHtml(e.title || "未知儿歌")}</b><small style="color:var(--muted-2);font-size:10.5px">⏱ ${fmtDur(e.duration || 0)}</small></span></li>`).join("")}</ul></section>`).join("") : `<p class="empty-note">暂无播放记录，先去儿歌页播放吧。</p>`}
+    </div></section>`;
+  } else reportEl.hidden = true;
 
   document.querySelectorAll("#games-subtabs button").forEach((b) => b.classList.toggle("active", b.dataset.gamesSection === gamesSection));
 }
