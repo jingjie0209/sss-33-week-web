@@ -66,9 +66,6 @@ button { cursor: pointer; }
 .plan-select select { width: calc(100% - 16px); margin-right: 16px; min-height: 40px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background-color: #fff; color: var(--ink); font-size: 13px; font-weight: 800; appearance: auto; -webkit-appearance: menulist-button; text-overflow: ellipsis; }
 .plan-multi-trigger { width: calc(100% - 16px); margin-right: 16px; min-height: 40px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font-size: 13px; font-weight: 800; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .plan-multi-trigger.has-selection { color: #5B4BD6; border-color: #7C6CF0; background: #EDEAFD; }
-.plan-selected-list { display: grid; gap: 6px; margin-top: 7px; }
-.plan-selected-item { width: 100%; min-height: 38px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font-size: 12.5px; font-weight: 800; text-align: left; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.plan-selected-item.active { border-color: #7C6CF0; background: #EDEAFD; color: #5B4BD6; }
 .plan-multi-list { display: grid; gap: 5px; max-height: 190px; overflow: auto; margin-top: 7px; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
 .plan-card-pages { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 6px; overflow-x: auto; scroll-snap-type: x mandatory; height: 158px; padding-bottom: 2px; scrollbar-width: none; }
 .plan-card-pages::-webkit-scrollbar { display: none; }
@@ -416,8 +413,8 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <div class="plan-select-list" id="plan-select-list">
     <div class="plan-select"><div class="plan-select-head"><b>1</b><span>句型</span><small id="plan-pattern-meta">自动加载理论与笔记</small></div><select id="plan-pattern-select"></select></div>
     <div class="plan-select"><div class="plan-select-head"><b>2</b><span>闪卡</span><small id="plan-word-count">已选 0 张</small></div><div id="plan-word-tabs" class="plan-word-tabs"><button type="button" class="active" data-plan-word-type="noun">名词</button><button type="button" data-plan-word-type="verb">动词</button><button type="button" data-plan-word-type="adjective">形容词</button></div><div id="plan-word-grid" class="plan-word-pages"></div><div id="plan-word-dots" class="plan-word-dots"></div></div>
-    <div class="plan-select"><div class="plan-select-head"><b>3</b><span>儿歌</span><small id="plan-song-count">已选 1 首</small></div><div id="plan-song-list" class="plan-card-pages"></div><div id="plan-song-dots" class="plan-card-dots"></div><div id="plan-song-selected" class="plan-selected-list"></div></div>
-    <div class="plan-select"><div class="plan-select-head"><b>4</b><span>游戏</span><small id="plan-game-count">已选 1 个</small></div><div id="plan-game-list" class="plan-card-pages"></div><div id="plan-game-dots" class="plan-card-dots"></div><div id="plan-game-selected" class="plan-selected-list"></div></div>
+    <div class="plan-select"><div class="plan-select-head"><b>3</b><span>儿歌</span><small id="plan-song-count">已选 1 首</small></div><div id="plan-song-list" class="plan-card-pages"></div><div id="plan-song-dots" class="plan-card-dots"></div></div>
+    <div class="plan-select"><div class="plan-select-head"><b>4</b><span>游戏</span><small id="plan-game-count">已选 1 个</small></div><div id="plan-game-list" class="plan-card-pages"></div><div id="plan-game-dots" class="plan-card-dots"></div></div>
     <button class="button" id="plan-generate" type="button" style="width:100%;justify-content:center;margin-top:4px">确认生成本周计划</button>
   </div>
 
@@ -525,19 +522,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792573657"></script>
-<script src="pattern-data.js?v=1792573657"></script>
-<script src="noun-detail-data.js?v=1792573657"></script>
-<script src="noun-card-data.js?v=1792573657"></script>
-<script src="checkin-data.js?v=1792573657"></script>
-<script src="games-data.js?v=1792573657"></script>
-<script src="rhyme-data.js?v=1792573657"></script>
-<script src="card-extensions.js?v=1792573657"></script>
-<script src="noun-repeat-data.js?v=1792573657"></script>
-<script src="guess-proper-data.js?v=1792573657"></script>
-<script src="things-card-data.js?v=1792573657"></script>
-<script src="verb-card-data.js?v=1792573657"></script>
-<script src="adjective-card-data.js?v=1792573657"></script>
+<script src="data.js?v=1792574151"></script>
+<script src="pattern-data.js?v=1792574151"></script>
+<script src="noun-detail-data.js?v=1792574151"></script>
+<script src="noun-card-data.js?v=1792574151"></script>
+<script src="checkin-data.js?v=1792574151"></script>
+<script src="games-data.js?v=1792574151"></script>
+<script src="rhyme-data.js?v=1792574151"></script>
+<script src="card-extensions.js?v=1792574151"></script>
+<script src="noun-repeat-data.js?v=1792574151"></script>
+<script src="guess-proper-data.js?v=1792574151"></script>
+<script src="things-card-data.js?v=1792574151"></script>
+<script src="verb-card-data.js?v=1792574151"></script>
+<script src="adjective-card-data.js?v=1792574151"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1231,17 +1228,11 @@ function renderPlanSelector() {
   };
   const songList = document.getElementById("plan-song-list");
   const gameList = document.getElementById("plan-game-list");
-  const renderSelected = (items, selected, selectedEl, key) => {
-    const chosen = items.filter(item => selected.has(item[key]));
-    selectedEl.innerHTML = chosen.length ? chosen.map(item => `<button type="button" class="plan-selected-item active" data-plan-multi="${key}" data-plan-value="${escapeHtml(item[key])}">${escapeHtml(item.title || item.name)}</button>`).join("") : "";
-  };
   const renderAllMulti = () => {
     renderCardPicker(allSongs, selectedSongs, songList, document.getElementById("plan-song-dots"), "sheet");
     renderCardPicker(allGames, selectedGames, gameList, document.getElementById("plan-game-dots"), "id");
     document.getElementById("plan-song-count").textContent = `已选 ${selectedSongs.size} 首`;
     document.getElementById("plan-game-count").textContent = `已选 ${selectedGames.size} 个`;
-    renderSelected(allSongs, selectedSongs, document.getElementById("plan-song-selected"), "sheet");
-    renderSelected(allGames, selectedGames, document.getElementById("plan-game-selected"), "id");
   };
   renderAllMulti();
   const renderWords = () => {
