@@ -272,7 +272,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .parent-card .stat-line b { color: var(--brand); font-size: 15px; white-space: nowrap; }
 
 /* ===== 本周计划面板 ===== */
-.week-plan-card { background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
+.week-plan-card { min-width: 0; background: #fff; border: 1px solid var(--line); border-radius: 18px; padding: 16px; margin-bottom: 14px; box-shadow: var(--shadow-sm); }
 .week-plan-card .wp-head { display: flex; align-items: center; gap: 8px; margin-bottom: 10px; }
 .week-plan-card .wp-head h2 { margin: 0; font-size: 15px; }
 .week-plan-card .wp-step { display: flex; gap: 8px; margin: 10px 0; font-size: 12.5px; }
@@ -317,6 +317,23 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .zi-tip { font-size: 12px; line-height: 1.55; }
 
 /* ===== 图片弹窗 ===== */
+.wp-pattern-picker{position:relative;max-width:100%;margin-bottom:8px}
+.wp-pattern-picker input{width:100%;padding:10px 38px 10px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;background:#fff}
+.wp-pattern-trigger{position:absolute;right:5px;top:5px;bottom:5px;width:28px;border:0;border-radius:8px;background:var(--soft);color:var(--brand);font-size:12px;cursor:pointer}
+.wp-pattern-list{position:absolute;z-index:30;left:0;right:0;top:calc(100% + 6px);max-height:210px;overflow:auto;padding:5px;border:1px solid var(--line);border-radius:14px;background:#fff;box-shadow:0 12px 28px rgba(31,20,67,.14);display:none;box-sizing:border-box}
+.wp-pattern-list.open{display:block}
+.wp-pattern-option,.wp-word{border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer}
+.wp-pattern-option{width:100%;min-width:0;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 10px;border-radius:10px;font-size:12px;text-align:left}
+.wp-pattern-option b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.wp-pattern-option + .wp-pattern-option{margin-top:4px}
+.wp-pattern-option span{color:var(--muted-2);font-size:10px;font-weight:800}
+.wp-pattern-option.active,.wp-word.active{border-color:#7C6CF0;background:#EDEAFD;color:#5B4BD6}
+.wp-pattern-empty{padding:12px;text-align:center;color:var(--muted-2);font-size:12px}
+.wp-chip-row{display:flex;gap:6px;overflow-x:auto;padding-bottom:7px;margin-bottom:8px}
+.wp-chip-row button{flex:0 0 auto;padding:6px 10px;border:1px solid var(--line);border-radius:999px;background:#fff;color:var(--ink);font-size:11px;font-weight:800;cursor:pointer}
+.wp-chip-row button.active{border-color:#7C6CF0;background:#EDEAFD;color:#5B4BD6}
+.wp-word-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px;margin-bottom:8px}
+.wp-word{min-height:34px;padding:7px 3px;border-radius:10px;font-size:10px;font-weight:800;text-transform:capitalize;line-height:1.1;word-break:break-word}
 .img-modal { position: fixed; inset: 0; z-index: 60; display: none; background: rgba(15,20,40,.86); padding: 18px 14px calc(18px + env(safe-area-inset-bottom)); overflow-y: auto; }
 .img-modal.open { display: block; }
 .img-modal-inner { max-width: 860px; margin: 0 auto; }
@@ -492,19 +509,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js"></script>
-<script src="pattern-data.js"></script>
-<script src="noun-detail-data.js"></script>
-<script src="noun-card-data.js"></script>
-<script src="checkin-data.js"></script>
-<script src="games-data.js"></script>
-<script src="rhyme-data.js"></script>
-<script src="card-extensions.js"></script>
-<script src="noun-repeat-data.js"></script>
-<script src="guess-proper-data.js"></script>
-<script src="things-card-data.js"></script>
-<script src="verb-card-data.js"></script>
-<script src="adjective-card-data.js"></script>
+<script src="data.js?v=1792553491"></script>
+<script src="pattern-data.js?v=1792553491"></script>
+<script src="noun-detail-data.js?v=1792553491"></script>
+<script src="noun-card-data.js?v=1792553491"></script>
+<script src="checkin-data.js?v=1792553491"></script>
+<script src="games-data.js?v=1792553491"></script>
+<script src="rhyme-data.js?v=1792553491"></script>
+<script src="card-extensions.js?v=1792553491"></script>
+<script src="noun-repeat-data.js?v=1792553491"></script>
+<script src="guess-proper-data.js?v=1792553491"></script>
+<script src="things-card-data.js?v=1792553491"></script>
+<script src="verb-card-data.js?v=1792553491"></script>
+<script src="adjective-card-data.js?v=1792553491"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1104,19 +1121,26 @@ function renderWeekPlan() {
 }
 
 function renderPlanCustomizer() {
-  const patterns = (window.SSS_NOUN_DETAILS || []).slice(0, 51);
+  const patterns = window.SSS_NOUN_DETAILS || [];
   const nounCards = window.SSS_NOUN_CARDS || [];
-  const songs = ((window.RHYME_DATA || {}).planWeeks || []).find(w => w.week === (todayInfo().weekIndex + 1))?.songs || (window.RHYME_DATA || {}).planWeeks?.[0]?.songs || [];
+  const rhymeData = window.RHYME_DATA || {};
+  const weekSongs = (rhymeData.planWeeks || []).find(w => w.week === (todayInfo().weekIndex + 1))?.songs || (rhymeData.planWeeks || [])[0]?.songs || [];
+  const nounCategories = [...new Set(nounCards.map(card => window.SUSAN_CARD_CATEGORIES?.noun?.[card.number]).filter(Boolean))];
+  const firstCategory = nounCategories[0] || "";
   return `<section class="week-plan-card">
     <div class="wp-head"><h2>📅 新的一周开始啦</h2><span style="margin-left:auto;color:var(--muted-2);font-size:11px">花 1 分钟定制本周计划</span></div>
     <div class="wp-step"><b>1️⃣ 选核心句型</b><small style="color:var(--muted-2);margin-left:6px">选句型后自动加载理论视频和笔记</small></div>
-    <input id="wp-pattern-search" placeholder="🔍 搜索句型…" autocomplete="off" style="width:100%;padding:9px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;margin-bottom:8px;background:#fff">
-    <select id="wp-pattern-select" style="width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;background:#fff">
-      ${patterns.map((p, i) => `<option value="${i}">${escapeHtml(p.pattern)}${p.code ? " · " + p.code : ""}</option>`).join("")}
-    </select>
+    <div class="wp-pattern-picker">
+      <input id="wp-pattern-search" placeholder="🔍 搜索句型，如 It's / A6 / yellow" autocomplete="off">
+      <button type="button" class="wp-pattern-trigger" id="wp-pattern-trigger">▾</button>
+      <div id="wp-pattern-list" class="wp-pattern-list">${patterns.map((p, i) => `<button type="button" class="wp-pattern-option" data-wp-pattern-option="${i}"><b>${escapeHtml(p.pattern)}</b><span>${escapeHtml(p.code || "")}</span></button>`).join("")}</div>
+    </div>
     <div class="wp-step" style="margin-top:14px"><b>2️⃣ 选单词卡</b><small style="color:var(--muted-2);margin-left:6px">点击选中，最多 15 张</small></div>
-    <div id="wp-word-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:150px;overflow-y:auto;margin-bottom:10px">
-      ${nounCards.slice(0, 45).map((c, i) => `<button class="wp-word${i < 10 ? " active" : ""}" data-wp-word="${c.number}" style="padding:7px 4px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:11px;font-weight:700;text-transform:capitalize;cursor:pointer">${escapeHtml(c.name)}</button>`).join("")}
+    <div id="wp-word-categories" class="wp-chip-row">
+      ${nounCategories.map((c, i) => `<button type="button" data-wp-word-cat="${escapeHtml(c)}" class="${i === 0 ? "active" : ""}">${escapeHtml(c)}</button>`).join("")}
+    </div>
+    <div id="wp-word-grid" class="wp-word-grid">
+      ${nounCards.filter(c => (window.SUSAN_CARD_CATEGORIES?.noun?.[c.number] || "") === firstCategory).slice(0, 15).map((c, i) => `<button type="button" class="wp-word${i < 10 ? " active" : ""}" data-wp-word="${c.number}">${escapeHtml(c.name)}</button>`).join("")}
     </div>
     <small id="wp-word-count" style="color:var(--muted-2);font-size:11px">已选 10 张</small>
     <div class="wp-step" style="margin-top:14px"><b>3️⃣ 选小工具 / 游戏</b></div>
@@ -1127,7 +1151,7 @@ function renderPlanCustomizer() {
     </select>
     <div class="wp-step" style="margin-top:14px"><b>4️⃣ 选儿歌（本周磨耳朵）</b></div>
     <select id="wp-song-select" style="width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;background:#fff">
-      ${songs.map((s) => `<option value="${escapeHtml(s.title)}">${escapeHtml(s.title)}</option>`).join("")}
+      ${weekSongs.map((s, i) => `<option value="${escapeHtml(s.title)}"${i === 0 ? " selected" : ""}>${escapeHtml(s.title)}</option>`).join("")}
     </select>
     <button class="button" style="width:100%;justify-content:center;margin-top:16px" id="wp-confirm">确认生成本周计划</button>
   </section>`;
@@ -1136,59 +1160,95 @@ function renderPlanCustomizer() {
 function bindPlanCustomizer() {
   const root = document.getElementById("week-plan-root");
   if (!root) return;
+  const patterns = window.SSS_NOUN_DETAILS || [];
+  const allNounCards = window.SSS_NOUN_CARDS || [];
+  const nounCategories = window.SUSAN_CARD_CATEGORIES?.noun || {};
   const selected = { pattern: 0, words: new Set(), tool: "随机组句", song: "" };
-  // 默认选前 10 个词
-  root.querySelectorAll(".wp-word").forEach((b, i) => { if (i < 10) selected.words.add(b.dataset.wpWord); });
-  const updateCount = () => {
+  root.querySelectorAll(".wp-word.active").forEach(btn => selected.words.add(btn.dataset.wpWord));
+  root.querySelectorAll("#wp-song-select option").forEach(option => { if (option.selected) selected.song = option.value; });
+  const updateWordCount = () => {
     const el = document.getElementById("wp-word-count");
     if (el) el.textContent = `已选 ${selected.words.size} 张`;
   };
+  const renderWords = (category) => {
+    const grid = document.getElementById("wp-word-grid");
+    if (!grid) return;
+    const cards = allNounCards.filter(card => (nounCategories[card.number] || "") === category).slice(0, 15);
+    grid.innerHTML = cards.map(card => `<button type="button" class="wp-word${selected.words.has(String(card.number)) ? " active" : ""}" data-wp-word="${card.number}">${escapeHtml(card.name)}</button>`).join("");
+  };
+  const closePatternList = () => document.getElementById("wp-pattern-list")?.classList.remove("open");
+  const setPattern = (index) => {
+    const item = patterns[index];
+    if (!item) return;
+    selected.pattern = index;
+    const search = document.getElementById("wp-pattern-search");
+    if (search) search.value = item.pattern;
+    root.querySelectorAll(".wp-pattern-option").forEach(btn => btn.classList.toggle("active", Number(btn.dataset.wpPatternOption) === index));
+    closePatternList();
+  };
+  setPattern(0);
+  const filterPatterns = () => {
+    const query = (document.getElementById("wp-pattern-search")?.value || "").trim().toLowerCase();
+    const list = document.getElementById("wp-pattern-list");
+    if (!list) return;
+    const matched = patterns.map((item, index) => ({ item, index })).filter(({ item }) => {
+      const haystack = [item.pattern, item.code, ...(item.forms || []).map(form => form.value), ...(item.extraCases || [])].join(" ").toLowerCase();
+      return !query || haystack.includes(query);
+    });
+    list.innerHTML = matched.length ? matched.map(({ item, index }) => `<button type="button" class="wp-pattern-option${index === selected.pattern ? " active" : ""}" data-wp-pattern-option="${index}"><b>${escapeHtml(item.pattern)}</b><span>${escapeHtml(item.code || "")}</span></button>`).join("") : `<div class="wp-pattern-empty">没有匹配的句型</div>`;
+    list.classList.add("open");
+  };
+  document.getElementById("wp-pattern-search")?.addEventListener("input", filterPatterns);
+  document.getElementById("wp-pattern-search")?.addEventListener("focus", filterPatterns);
+  document.getElementById("wp-pattern-trigger")?.addEventListener("click", () => {
+    const list = document.getElementById("wp-pattern-list");
+    if (!list) return;
+    if (!list.classList.contains("open")) filterPatterns(); else closePatternList();
+  });
+  root.addEventListener("input", (event) => {
+    if (event.target.id === "wp-tool-select") selected.tool = event.target.value;
+    if (event.target.id === "wp-song-select") selected.song = event.target.value;
+  });
   root.addEventListener("click", (event) => {
+    const patternOption = event.target.closest("[data-wp-pattern-option]");
+    if (patternOption) { setPattern(Number(patternOption.dataset.wpPatternOption)); return; }
+    const categoryButton = event.target.closest("[data-wp-word-cat]");
+    if (categoryButton) {
+      root.querySelectorAll("[data-wp-word-cat]").forEach(btn => btn.classList.toggle("active", btn === categoryButton));
+      renderWords(categoryButton.dataset.wpWordCat);
+      return;
+    }
     const w = event.target.closest(".wp-word");
     if (w) {
       const num = w.dataset.wpWord;
-      if (selected.words.has(num) && selected.words.size <= 15) { selected.words.delete(num); w.classList.remove("active"); }
-      else if (!selected.words.has(num) && selected.words.size < 15) { selected.words.add(num); w.classList.add("active"); }
+      if (selected.words.has(num)) { selected.words.delete(num); w.classList.remove("active"); }
+      else if (selected.words.size < 15) { selected.words.add(num); w.classList.add("active"); }
       else toast("最多选择 15 张");
-      updateCount();
+      updateWordCount();
       return;
     }
-    if (event.target.closest("#wp-confirm")) {
-      const patterns = window.SSS_NOUN_DETAILS || [];
-      const patternSel = document.getElementById("wp-pattern-select");
-      const pattern = patterns[Number(patternSel?.value || 0)] || patterns[0];
-      const toolSel = document.getElementById("wp-tool-select");
-      const songSel = document.getElementById("wp-song-select");
-      const plan = {
-        weekNumber: (todayInfo().weekIndex + 1),
-        pattern: pattern?.pattern || "",
-        patternLearned: false, theoryDone: false,
-        wordTotal: selected.words.size || 10, wordDone: 0,
-        stagePct: 0, gameDone: 0, taskDone: 0,
-        progressPct: 0, reviewCount: 5,
-        tools: toolSel?.value || "随机组句",
-        song: songSel?.value || "",
-        words: [...selected.words],
-        createdAt: Date.now()
-      };
-      saveWeekPlan(plan);
-      renderWeekPlan();
-      toast("本周计划已生成 🎉");
-    }
+    if (event.target.closest("#wp-pattern-trigger")) return;
+    if (!event.target.closest(".wp-pattern-picker")) closePatternList();
+    if (!event.target.closest("#wp-confirm")) return;
+    const pattern = patterns[selected.pattern];
+    if (!pattern || !selected.words.size) { toast("请先选择句型和至少 1 张词卡"); return; }
+    const plan = {
+      weekNumber: (todayInfo().weekIndex + 1),
+      pattern: pattern.pattern || "",
+      patternNumber: pattern.number,
+      patternLearned: false, theoryDone: false,
+      wordTotal: selected.words.size, wordDone: 0,
+      stagePct: 0, gameDone: 0, taskDone: 0,
+      progressPct: 0, reviewCount: 5,
+      tools: selected.tool,
+      song: selected.song,
+      words: [...selected.words],
+      createdAt: Date.now()
+    };
+    saveWeekPlan(plan);
+    renderWeekPlan();
+    toast("本周计划已生成 🎉");
   });
-  const search = document.getElementById("wp-pattern-search");
-  if (search) {
-  const doFilter = (event) => {
-    const q = event.target.value.toLowerCase();
-    const sel = document.getElementById("wp-pattern-select");
-    const allPatterns = (window.SSS_NOUN_DETAILS || []).slice(0, 51);
-    const filtered = allPatterns.filter((p) => !q || (p.pattern || "").toLowerCase().includes(q) || (p.code || "").toLowerCase().includes(q));
-    sel.innerHTML = filtered.map((p, i) => `<option value="${(window.SSS_NOUN_DETAILS || []).indexOf(p)}">${escapeHtml(p.pattern)}${p.code ? " · " + p.code : ""}</option>`).join("") || `<option value="0">无匹配句型</option>`;
-    sel.selectedIndex = 0;
-  };
-  search.addEventListener("input", doFilter);
-  search.addEventListener("keyup", doFilter);
-  }
 }
 
 function renderPlanExecutor(plan) {
@@ -1214,35 +1274,6 @@ function renderPlanExecutor(plan) {
 }
 
 function wordPctOf(plan) { return plan.wordTotal ? Math.round((plan.wordDone || 0) / plan.wordTotal * 100) : 0; }
-
-function bindPlanCustomizer() {
-  const root = document.getElementById("week-plan-root");
-  if (!root) return;
-  const sel = { pattern: -1, cats: [], tools: [] };
-  root.addEventListener("click", (event) => {
-    const pBtn = event.target.closest("[data-wp-pattern]");
-    if (pBtn) { sel.pattern = Number(pBtn.dataset.wpPattern); root.querySelectorAll("[data-wp-pattern]").forEach(b => b.classList.toggle("active", b === pBtn)); return; }
-    const cBtn = event.target.closest("[data-wp-cat]");
-    if (cBtn) { const c = cBtn.dataset.wpCat; sel.cats.includes(c) ? sel.cats = sel.cats.filter(x => x !== c) : sel.cats.push(c); cBtn.classList.toggle("active"); return; }
-    const tBtn = event.target.closest("[data-wp-tool]");
-    if (tBtn) { const c = tBtn.dataset.wpTool; sel.tools.includes(c) ? sel.tools = sel.tools.filter(x => x !== c) : sel.tools.push(c); tBtn.classList.toggle("active"); return; }
-    if (event.target.closest("#wp-generate") || event.target.closest("#wp-confirm")) {
-      const patterns = window.SSS_NOUN_DETAILS || [];
-      const plan = {
-        weekNumber: (todayInfo().weekIndex + 1),
-        pattern: sel.pattern >= 0 ? patterns[sel.pattern].pattern : (patterns[0] || {}).pattern || "",
-        patternLearned: false, theoryDone: false,
-        wordTotal: 15, wordDone: 0,
-        stagePct: 0, gameDone: 0, taskDone: 0,
-        progressPct: 0, reviewCount: 5,
-        createdAt: Date.now()
-      };
-      saveWeekPlan(plan);
-      renderWeekPlan();
-      toast("本周计划已生成 🎉");
-    }
-  });
-}
 
 function renderWeekPlanUpdater() {
   const plan = loadWeekPlan();
