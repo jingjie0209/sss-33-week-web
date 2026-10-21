@@ -51,9 +51,7 @@ button { cursor: pointer; }
 /* ===== Hero（渐变紫） ===== */
 .hero { position: relative; overflow: hidden; padding: 22px 22px 26px; border-radius: 22px; background: linear-gradient(140deg, #4f46cf, #7564e4 60%, #9780ef); color: #fff; box-shadow: var(--shadow-lg); }
 .hero-kicker { margin: 0; color: #dcd9ff; font-size: 11.5px; font-weight: 800; letter-spacing: .1em; }
-.hero-desc { min-height: 21px; margin: 0; color: #dedcff; font-size: 12.5px; line-height: 1.65; }
 .hero-encourage { margin: 7px 0 8px; color: #fff; font-size: 24px; font-weight: 900; line-height: 1.22; }
-.hero-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 18px; }
 .hero-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: #ffffff3d; }
 .hero-progress i { display: block; width: 0; height: 100%; background: #fff; transition: width .3s ease; }
 
@@ -388,12 +386,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <div id="view-today" class="tab-view active">
   <section class="hero">
     <p class="hero-kicker">SUSAN LEARNING DESK · TODAY</p>
-    <p class="hero-desc">围绕本周句型，完成一轮输入、闪卡、游戏和亲子阅读。短一点、重复多一点，孩子更容易开口。</p>
     <p class="hero-encourage" id="hero-encourage">今天开口，就是进步。</p>
-    <div class="hero-actions">
-      <a class="button" id="open-song" href="index.html" target="_blank" rel="noopener">打开今日儿歌拆解 ↗</a>
-      <button class="button secondary" id="start-today" type="button">开始今天</button>
-    </div>
     <div class="hero-progress"><i id="hero-bar"></i></div>
   </section>
 
@@ -1019,13 +1012,12 @@ function render() {
   document.getElementById("hero-encourage").textContent = dailyEncouragement();
 
   const cover = youtubeThumbnail(song.videoUrl);
-  const openSong = document.getElementById("open-song");
-  openSong.href = `index.html?song=${encodeURIComponent(song.sheet || "")}`;
+  const openSongHref = `index.html?song=${encodeURIComponent(song.sheet || "")}`;
 
   const stepDefs = [
     {
       key: "warmup", num: 1, title: "暖场输入", time: "1分钟", desc: "放本周儿歌，宝宝自由玩，不用坐着。听完一遍就算过。",
-      action: `<a class="tiny-action" href="${escapeHtml(openSong.href)}" target="_blank" rel="noopener">打开儿歌</a>`,
+      action: `<a class="tiny-action" href="${escapeHtml(openSongHref)}" target="_blank" rel="noopener">打开儿歌</a>`,
     },
     {
       key: "flashcards", num: 2, title: "今日闪卡", time: "2分钟", desc: "点卡片翻看，每张停 3 秒，说 2 遍。5 张都点了算完成。",
@@ -1119,10 +1111,6 @@ document.addEventListener("click", (event) => {
     toast(isDone(songToggle.dataset.toggleSong) ? "已完成儿歌打卡" : "已取消打卡");
     render();
   }
-});
-
-document.getElementById("start-today").addEventListener("click", () => {
-  document.getElementById("steps-root").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 /* ---------- 本周计划（状态A定制 / 状态B执行） ---------- */
