@@ -515,19 +515,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792571399"></script>
-<script src="pattern-data.js?v=1792571399"></script>
-<script src="noun-detail-data.js?v=1792571399"></script>
-<script src="noun-card-data.js?v=1792571399"></script>
-<script src="checkin-data.js?v=1792571399"></script>
-<script src="games-data.js?v=1792571399"></script>
-<script src="rhyme-data.js?v=1792571399"></script>
-<script src="card-extensions.js?v=1792571399"></script>
-<script src="noun-repeat-data.js?v=1792571399"></script>
-<script src="guess-proper-data.js?v=1792571399"></script>
-<script src="things-card-data.js?v=1792571399"></script>
-<script src="verb-card-data.js?v=1792571399"></script>
-<script src="adjective-card-data.js?v=1792571399"></script>
+<script src="data.js?v=1792571880"></script>
+<script src="pattern-data.js?v=1792571880"></script>
+<script src="noun-detail-data.js?v=1792571880"></script>
+<script src="noun-card-data.js?v=1792571880"></script>
+<script src="checkin-data.js?v=1792571880"></script>
+<script src="games-data.js?v=1792571880"></script>
+<script src="rhyme-data.js?v=1792571880"></script>
+<script src="card-extensions.js?v=1792571880"></script>
+<script src="noun-repeat-data.js?v=1792571880"></script>
+<script src="guess-proper-data.js?v=1792571880"></script>
+<script src="things-card-data.js?v=1792571880"></script>
+<script src="verb-card-data.js?v=1792571880"></script>
+<script src="adjective-card-data.js?v=1792571880"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1257,6 +1257,7 @@ function renderPlanSelector() {
       document.getElementById("plan-word-count").textContent = `已选 ${selectedWords.size} 张`;
       return;
     }
+    if (event.target.closest("#plan-word-grid") || event.target.closest("#plan-word-dots")) return;
     const dotButton = event.target.closest("[data-plan-word-page]");
     if (dotButton) {
       const pageIndex = Number(dotButton.dataset.planWordPage);
@@ -1298,6 +1299,10 @@ function renderPlanSelector() {
     document.getElementById("week-plan-root")?.scrollIntoView({ behavior: "smooth", block: "start" });
     toast("本周计划已生成 🎉");
   };
+  wordGrid?.addEventListener("scroll", () => {
+    const pageIndex = Math.min(document.querySelectorAll("#plan-word-dots button").length - 1, Math.max(0, Math.round(wordGrid.scrollLeft / Math.max(1, wordGrid.clientWidth))));
+    root.querySelectorAll("#plan-word-dots button").forEach((item, index) => item.classList.toggle("active", index === pageIndex));
+  }, { passive: true });
 }
 
 document.getElementById("week-plan-root").addEventListener("click", (event) => {
