@@ -72,7 +72,7 @@ button { cursor: pointer; }
 .plan-multi-list { display: grid; gap: 5px; max-height: 190px; overflow: auto; margin-top: 7px; padding: 6px; border: 1px solid var(--line); border-radius: 12px; background: #fff; }
 .plan-card-pages { display: grid; grid-auto-flow: column; grid-auto-columns: 100%; gap: 6px; overflow-x: auto; scroll-snap-type: x mandatory; height: 158px; padding-bottom: 2px; scrollbar-width: none; }
 .plan-card-pages::-webkit-scrollbar { display: none; }
-.plan-card-page { display: grid; grid-template-columns: repeat(2, minmax(0,1fr)); grid-template-rows: repeat(3, 44px); gap: 6px; scroll-snap-align: start; min-width: 0; align-content:start; }
+.plan-card-page { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); grid-template-rows: repeat(3, 44px); gap: 6px; scroll-snap-align: start; min-width: 0; align-content:start; }
 .plan-card-dots { display: flex; justify-content: center; gap: 5px; margin-top: 8px; }
 .plan-card-dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 50%; background: #d9dcea; }
 .plan-card-dots button.active { background: #7C6CF0; }
@@ -525,19 +525,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792572958"></script>
-<script src="pattern-data.js?v=1792572958"></script>
-<script src="noun-detail-data.js?v=1792572958"></script>
-<script src="noun-card-data.js?v=1792572958"></script>
-<script src="checkin-data.js?v=1792572958"></script>
-<script src="games-data.js?v=1792572958"></script>
-<script src="rhyme-data.js?v=1792572958"></script>
-<script src="card-extensions.js?v=1792572958"></script>
-<script src="noun-repeat-data.js?v=1792572958"></script>
-<script src="guess-proper-data.js?v=1792572958"></script>
-<script src="things-card-data.js?v=1792572958"></script>
-<script src="verb-card-data.js?v=1792572958"></script>
-<script src="adjective-card-data.js?v=1792572958"></script>
+<script src="data.js?v=1792573657"></script>
+<script src="pattern-data.js?v=1792573657"></script>
+<script src="noun-detail-data.js?v=1792573657"></script>
+<script src="noun-card-data.js?v=1792573657"></script>
+<script src="checkin-data.js?v=1792573657"></script>
+<script src="games-data.js?v=1792573657"></script>
+<script src="rhyme-data.js?v=1792573657"></script>
+<script src="card-extensions.js?v=1792573657"></script>
+<script src="noun-repeat-data.js?v=1792573657"></script>
+<script src="guess-proper-data.js?v=1792573657"></script>
+<script src="things-card-data.js?v=1792573657"></script>
+<script src="verb-card-data.js?v=1792573657"></script>
+<script src="adjective-card-data.js?v=1792573657"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1221,7 +1221,7 @@ function renderPlanSelector() {
   const selectedGames = new Set(plan?.gameIds?.length ? plan.gameIds : [allGames[0]?.id].filter(Boolean));
   const renderCardPicker = (items, selected, listEl, dotsEl, key) => {
     const pages = [];
-    for (let index = 0; index < items.length; index += 6) pages.push(items.slice(index, index + 6));
+    for (let index = 0; index < items.length; index += 9) pages.push(items.slice(index, index + 9));
     listEl.innerHTML = pages.map(page => `<div class="plan-card-page">${page.map(item => `<button type="button" class="plan-multi-item${selected.has(item[key]) ? " active" : ""}" data-plan-multi="${key}" data-plan-value="${escapeHtml(item[key])}">${escapeHtml(item.title || item.name)}</button>`).join("")}</div>`).join("");
     dotsEl.innerHTML = pages.map((_, index) => `<button type="button" class="${index === 0 ? "active" : ""}" data-plan-picker-dot="${key}:${index}" aria-label="第${index + 1}页"></button>`).join("");
   };
