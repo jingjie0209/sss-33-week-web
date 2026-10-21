@@ -499,19 +499,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792563982"></script>
-<script src="pattern-data.js?v=1792563982"></script>
-<script src="noun-detail-data.js?v=1792563982"></script>
-<script src="noun-card-data.js?v=1792563982"></script>
-<script src="checkin-data.js?v=1792563982"></script>
-<script src="games-data.js?v=1792563982"></script>
-<script src="rhyme-data.js?v=1792563982"></script>
-<script src="card-extensions.js?v=1792563982"></script>
-<script src="noun-repeat-data.js?v=1792563982"></script>
-<script src="guess-proper-data.js?v=1792563982"></script>
-<script src="things-card-data.js?v=1792563982"></script>
-<script src="verb-card-data.js?v=1792563982"></script>
-<script src="adjective-card-data.js?v=1792563982"></script>
+<script src="data.js?v=1792564523"></script>
+<script src="pattern-data.js?v=1792564523"></script>
+<script src="noun-detail-data.js?v=1792564523"></script>
+<script src="noun-card-data.js?v=1792564523"></script>
+<script src="checkin-data.js?v=1792564523"></script>
+<script src="games-data.js?v=1792564523"></script>
+<script src="rhyme-data.js?v=1792564523"></script>
+<script src="card-extensions.js?v=1792564523"></script>
+<script src="noun-repeat-data.js?v=1792564523"></script>
+<script src="guess-proper-data.js?v=1792564523"></script>
+<script src="things-card-data.js?v=1792564523"></script>
+<script src="verb-card-data.js?v=1792564523"></script>
+<script src="adjective-card-data.js?v=1792564523"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1156,18 +1156,26 @@ function renderWeekPlanUpdater() {
 
 function renderPlanSelector() {
   const root = document.getElementById("plan-select-list");
-  if (!root || loadWeekPlan()) return;
+  if (!root) return;
+  const plan = loadWeekPlan();
+  const selectorKey = `${todayInfo().weekIndex}:${plan?.createdAt || "new"}`;
+  if (root.dataset.selectorKey === selectorKey) return;
+  root.dataset.selectorKey = selectorKey;
+  document.getElementById("plan-generate").textContent = plan ? "重新生成本周计划" : "确认生成本周计划";
   const patternSelect = document.getElementById("plan-pattern-select");
   const songSelect = document.getElementById("plan-song-select");
   const gameSelect = document.getElementById("plan-game-select");
   const wordGrid = document.getElementById("plan-word-grid");
-  const selectedWords = new Set((window.SSS_NOUN_CARDS || []).slice(0, 10).map(card => String(card.number)));
+  const validWordIds = new Set((window.SSS_NOUN_CARDS || []).map(card => String(card.number)));
+  const savedWords = (plan?.words || []).map(String).filter(number => validWordIds.has(number));
+  const selectedWords = new Set(savedWords.length ? savedWords : (window.SSS_NOUN_CARDS || []).slice(0, 10).map(card => String(card.number)));
   const allSongs = (window.SSS_WEB_DATA?.songs || []).slice().sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "en", { sensitivity: "base" }));
   const allGames = (window.SUSAN_GAMES_DATA || []).slice().sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "zh-Hans-CN", { sensitivity: "base" }));
   const details = window.SSS_NOUN_DETAILS || [];
   const currentWeek = (window.SSS_WEB_DATA?.weeks || [])[todayInfo().weekIndex] || {};
   const weekPattern = patternForWeek(currentWeek);
-  const defaultPatternIndex = Math.max(0, details.findIndex(item => item.pattern === weekPattern.pattern));
+  const wantedPattern = plan?.patternNumber ? details.findIndex(item => item.number === Number(plan.patternNumber)) : details.findIndex(item => item.pattern === weekPattern.pattern);
+  const defaultPatternIndex = Math.max(0, wantedPattern);
   const ensureDefault = (select) => { if (select && select.options.length && select.selectedIndex < 0) select.selectedIndex = 0; };
   if (patternSelect) {
     patternSelect.innerHTML = details.map((item, index) => `<option value="${index}"${index === defaultPatternIndex ? " selected" : ""}>${escapeHtml(item.pattern)} · ${escapeHtml(item.code || "")}</option>`).join("");
@@ -1176,11 +1184,13 @@ function renderPlanSelector() {
   }
   if (songSelect) {
     songSelect.innerHTML = allSongs.map(item => `<option value="${escapeHtml(item.sheet)}">${escapeHtml(item.title)}</option>`).join("");
+    if (plan?.songSheet && allSongs.some(item => item.sheet === plan.songSheet)) songSelect.value = plan.songSheet;
     document.getElementById("plan-song-meta").textContent = `${allSongs.length} 首儿歌`;
     ensureDefault(songSelect);
   }
   if (gameSelect) {
     gameSelect.innerHTML = allGames.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("");
+    if (plan?.gameId && allGames.some(item => item.id === plan.gameId)) gameSelect.value = plan.gameId;
     document.getElementById("plan-game-meta").textContent = `${allGames.length} 个游戏`;
     ensureDefault(gameSelect);
   }
