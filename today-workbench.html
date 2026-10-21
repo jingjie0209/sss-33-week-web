@@ -1104,19 +1104,86 @@ function renderWeekPlan() {
 }
 
 function renderPlanCustomizer() {
-  const patterns = (window.SSS_NOUN_DETAILS || []).slice(0, 12);
+  const patterns = (window.SSS_NOUN_DETAILS || []).slice(0, 51);
+  const nounCards = window.SSS_NOUN_CARDS || [];
+  const songs = ((window.RHYME_DATA || {}).planWeeks || []).find(w => w.week === (todayInfo().weekIndex + 1))?.songs || (window.RHYME_DATA || {}).planWeeks?.[0]?.songs || [];
   return `<section class="week-plan-card">
     <div class="wp-head"><h2>📅 新的一周开始啦</h2><span style="margin-left:auto;color:var(--muted-2);font-size:11px">花 1 分钟定制本周计划</span></div>
     <div class="wp-step"><b>1️⃣ 选核心句型</b><small style="color:var(--muted-2);margin-left:6px">选句型后自动加载理论视频和笔记</small></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${patterns.map((p, i) => `<button class="wp-chip" data-wp-pattern="${i}">${escapeHtml(p.pattern)}</button>`).join("")}</div>
-    <div class="wp-step"><b>2️⃣ 选单词卡</b><small style="color:var(--muted-2);margin-left:6px">建议 10–15 张</small></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${["动物","食物","身体","家居","自然"].map((c) => `<button class="wp-chip" data-wp-cat="${c}">${c}</button>`).join("")}</div>
-    <div class="wp-step"><b>3️⃣ 选小工具 / 游戏</b></div>
-    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px">${["猜词","随机组句","亲子游戏"].map((c) => `<button class="wp-chip" data-wp-tool="${c}">${c}</button>`).join("")}</div>
-    <div class="wp-step"><b>4️⃣ 选儿歌（本周磨耳朵）</b><small style="color:var(--muted-2);margin-left:6px">系统已推荐 3 首</small></div>
-    <button class="button" style="width:100%;justify-content:center;margin-top:8px" id="wp-generate">⭐ 智能推荐一键生成</button>
-    <button class="button secondary" style="width:100%;justify-content:center;margin-top:8px" id="wp-confirm">确认生成本周计划</button>
+    <input id="wp-pattern-search" placeholder="🔍 搜索句型…" autocomplete="off" style="width:100%;padding:9px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;margin-bottom:8px;background:#fff">
+    <select id="wp-pattern-select" style="width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;background:#fff">
+      ${patterns.map((p, i) => `<option value="${i}">${escapeHtml(p.pattern)}${p.code ? " · " + p.code : ""}</option>`).join("")}
+    </select>
+    <div class="wp-step" style="margin-top:14px"><b>2️⃣ 选单词卡</b><small style="color:var(--muted-2);margin-left:6px">点击选中，最多 15 张</small></div>
+    <div id="wp-word-grid" style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px;max-height:150px;overflow-y:auto;margin-bottom:10px">
+      ${nounCards.slice(0, 45).map((c, i) => `<button class="wp-word${i < 10 ? " active" : ""}" data-wp-word="${c.number}" style="padding:7px 4px;border:1px solid var(--line);border-radius:10px;background:#fff;font-size:11px;font-weight:700;text-transform:capitalize;cursor:pointer">${escapeHtml(c.name)}</button>`).join("")}
+    </div>
+    <small id="wp-word-count" style="color:var(--muted-2);font-size:11px">已选 10 张</small>
+    <div class="wp-step" style="margin-top:14px"><b>3️⃣ 选小工具 / 游戏</b></div>
+    <select id="wp-tool-select" style="width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;background:#fff">
+      <option value="猜词">猜词</option>
+      <option value="随机组句" selected>随机组句</option>
+      <option value="亲子游戏">亲子游戏</option>
+    </select>
+    <div class="wp-step" style="margin-top:14px"><b>4️⃣ 选儿歌（本周磨耳朵）</b></div>
+    <select id="wp-song-select" style="width:100%;padding:10px 12px;border:2px solid var(--line);border-radius:12px;font-size:13px;background:#fff">
+      ${songs.map((s) => `<option value="${escapeHtml(s.title)}">${escapeHtml(s.title)}</option>`).join("")}
+    </select>
+    <button class="button" style="width:100%;justify-content:center;margin-top:16px" id="wp-confirm">确认生成本周计划</button>
   </section>`;
+}
+
+function bindPlanCustomizer() {
+  const root = document.getElementById("week-plan-root");
+  if (!root) return;
+  const selected = { pattern: 0, words: new Set(), tool: "随机组句", song: "" };
+  // 默认选前 10 个词
+  root.querySelectorAll(".wp-word").forEach((b, i) => { if (i < 10) selected.words.add(b.dataset.wpWord); });
+  const updateCount = () => {
+    const el = document.getElementById("wp-word-count");
+    if (el) el.textContent = `已选 ${selected.words.size} 张`;
+  };
+  root.addEventListener("click", (event) => {
+    const w = event.target.closest(".wp-word");
+    if (w) {
+      const num = w.dataset.wpWord;
+      if (selected.words.has(num) && selected.words.size <= 15) { selected.words.delete(num); w.classList.remove("active"); }
+      else if (!selected.words.has(num) && selected.words.size < 15) { selected.words.add(num); w.classList.add("active"); }
+      else toast("最多选择 15 张");
+      updateCount();
+      return;
+    }
+    if (event.target.closest("#wp-confirm")) {
+      const patterns = window.SSS_NOUN_DETAILS || [];
+      const patternSel = document.getElementById("wp-pattern-select");
+      const pattern = patterns[Number(patternSel?.value || 0)] || patterns[0];
+      const toolSel = document.getElementById("wp-tool-select");
+      const songSel = document.getElementById("wp-song-select");
+      const plan = {
+        weekNumber: (todayInfo().weekIndex + 1),
+        pattern: pattern?.pattern || "",
+        patternLearned: false, theoryDone: false,
+        wordTotal: selected.words.size || 10, wordDone: 0,
+        stagePct: 0, gameDone: 0, taskDone: 0,
+        progressPct: 0, reviewCount: 5,
+        tools: toolSel?.value || "随机组句",
+        song: songSel?.value || "",
+        words: [...selected.words],
+        createdAt: Date.now()
+      };
+      saveWeekPlan(plan);
+      renderWeekPlan();
+      toast("本周计划已生成 🎉");
+    }
+  });
+  const search = document.getElementById("wp-pattern-search");
+  if (search) search.addEventListener("input", (event) => {
+    const q = event.target.value.toLowerCase();
+    const sel = document.getElementById("wp-pattern-select");
+    [...sel.options].forEach((opt, idx) => { opt.hidden = q && !opt.textContent.toLowerCase().includes(q); });
+    const firstVisible = [...sel.options].find(o => !o.hidden);
+    if (firstVisible) sel.value = firstVisible.value;
+  });
 }
 
 function renderPlanExecutor(plan) {
