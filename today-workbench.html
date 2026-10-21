@@ -1180,9 +1180,10 @@ function bindPlanCustomizer() {
   if (search) search.addEventListener("input", (event) => {
     const q = event.target.value.toLowerCase();
     const sel = document.getElementById("wp-pattern-select");
-    [...sel.options].forEach((opt) => { opt.hidden = !!q && !opt.textContent.toLowerCase().includes(q); });
-    const firstVisible = [...sel.options].find(o => !o.hidden);
-    if (firstVisible) sel.value = firstVisible.value;
+    const allPatterns = (window.SSS_NOUN_DETAILS || []).slice(0, 51);
+    const filtered = allPatterns.filter((p) => !q || (p.pattern || "").toLowerCase().includes(q) || (p.code || "").toLowerCase().includes(q));
+    sel.innerHTML = filtered.map((p, i) => `<option value="${(window.SSS_NOUN_DETAILS || []).indexOf(p)}">${escapeHtml(p.pattern)}${p.code ? " · " + p.code : ""}</option>`).join("") || `<option value="0">无匹配句型</option>`;
+    sel.selectedIndex = 0;
   });
 }
 
