@@ -1177,14 +1177,18 @@ function bindPlanCustomizer() {
     }
   });
   const search = document.getElementById("wp-pattern-search");
-  if (search) search.addEventListener("input", (event) => {
+  if (search) {
+  const doFilter = (event) => {
     const q = event.target.value.toLowerCase();
     const sel = document.getElementById("wp-pattern-select");
     const allPatterns = (window.SSS_NOUN_DETAILS || []).slice(0, 51);
     const filtered = allPatterns.filter((p) => !q || (p.pattern || "").toLowerCase().includes(q) || (p.code || "").toLowerCase().includes(q));
     sel.innerHTML = filtered.map((p, i) => `<option value="${(window.SSS_NOUN_DETAILS || []).indexOf(p)}">${escapeHtml(p.pattern)}${p.code ? " · " + p.code : ""}</option>`).join("") || `<option value="0">无匹配句型</option>`;
     sel.selectedIndex = 0;
-  });
+  };
+  search.addEventListener("input", doFilter);
+  search.addEventListener("keyup", doFilter);
+  }
 }
 
 function renderPlanExecutor(plan) {
