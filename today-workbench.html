@@ -1180,7 +1180,7 @@ function bindPlanCustomizer() {
   if (search) search.addEventListener("input", (event) => {
     const q = event.target.value.toLowerCase();
     const sel = document.getElementById("wp-pattern-select");
-    [...sel.options].forEach((opt, idx) => { opt.hidden = q && !opt.textContent.toLowerCase().includes(q); });
+    [...sel.options].forEach((opt) => { opt.hidden = !!q && !opt.textContent.toLowerCase().includes(q); });
     const firstVisible = [...sel.options].find(o => !o.hidden);
     if (firstVisible) sel.value = firstVisible.value;
   });
