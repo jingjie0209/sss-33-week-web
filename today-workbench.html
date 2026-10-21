@@ -63,7 +63,7 @@ button { cursor: pointer; }
 .plan-select-head b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: var(--brand-soft); color: #5850d0; font-size: 12px; }
 .plan-select-head span { font-size: 14px; font-weight: 800; }
 .plan-select-head small { margin-left: auto; color: var(--muted-2); font-size: 10.5px; }
-.plan-select select { width: 100%; min-height: 40px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background-color: #fff; color: var(--ink); font-size: 13px; font-weight: 800; appearance: auto; -webkit-appearance: menulist-button; text-overflow: ellipsis; }
+.plan-select select { width: calc(100% - 16px); margin-right: 16px; min-height: 40px; padding: 8px 10px; border: 1px solid var(--line); border-radius: 12px; background-color: #fff; color: var(--ink); font-size: 13px; font-weight: 800; appearance: auto; -webkit-appearance: menulist-button; text-overflow: ellipsis; }
 
 /* ===== 按钮 ===== */
 .button { min-height: 42px; border: 1px solid transparent; border-radius: 14px; padding: 10px 16px; background: var(--yellow); color: #3e310e; font-weight: 900; font-size: 13.5px; display: inline-flex; align-items: center; text-decoration: none; box-shadow: 0 6px 16px #f5c45152; }
@@ -328,6 +328,11 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .wp-word-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
 .wp-word{border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;min-height:34px;padding:7px 3px;border-radius:10px;font-size:10px;font-weight:800;text-transform:capitalize;line-height:1.1;word-break:break-word}
 .wp-word.active{border-color:#7C6CF0;background:#EDEAFD;color:#5B4BD6}
+.wp-word.mastered::after{content:"已掌握";position:absolute;right:3px;top:3px;padding:1px 4px;border-radius:6px;background:#16815b;color:#fff;font-size:7px;line-height:1.3}
+.wp-word.mastered{position:relative;border-color:#bce8d5}
+.plan-word-tabs{display:flex;gap:6px;margin-bottom:8px}
+.plan-word-tabs button{flex:1;min-height:32px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink);font-size:11.5px;font-weight:800;cursor:pointer}
+.plan-word-tabs button.active{border-color:#7C6CF0;background:#EDEAFD;color:#5B4BD6}
 .img-modal { position: fixed; inset: 0; z-index: 60; display: none; background: rgba(15,20,40,.86); padding: 18px 14px calc(18px + env(safe-area-inset-bottom)); overflow-y: auto; }
 .img-modal.open { display: block; }
 .img-modal-inner { max-width: 860px; margin: 0 auto; }
@@ -389,7 +394,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <div class="plan-select-title"><h2>开始制定周计划</h2><span>4 项选完，生成执行面板</span></div>
   <div class="plan-select-list" id="plan-select-list">
     <div class="plan-select"><div class="plan-select-head"><b>1</b><span>句型</span><small id="plan-pattern-meta">自动加载理论与笔记</small></div><select id="plan-pattern-select"></select></div>
-    <div class="plan-select"><div class="plan-select-head"><b>2</b><span>闪卡</span><small id="plan-word-count">已选 0 张</small></div><div id="plan-word-grid" class="wp-word-grid"></div></div>
+    <div class="plan-select"><div class="plan-select-head"><b>2</b><span>闪卡</span><small id="plan-word-count">已选 0 张</small></div><div id="plan-word-tabs" class="plan-word-tabs"><button type="button" class="active" data-plan-word-type="noun">名词</button><button type="button" data-plan-word-type="verb">动词</button><button type="button" data-plan-word-type="adjective">形容词</button></div><div id="plan-word-grid" class="wp-word-grid"></div></div>
     <div class="plan-select"><div class="plan-select-head"><b>3</b><span>儿歌</span><small id="plan-song-meta">儿歌库</small></div><select id="plan-song-select"></select></div>
     <div class="plan-select"><div class="plan-select-head"><b>4</b><span>游戏</span><small id="plan-game-meta">小工具游戏</small></div><select id="plan-game-select"></select></div>
     <button class="button" id="plan-generate" type="button" style="width:100%;justify-content:center;margin-top:4px">确认生成本周计划</button>
@@ -499,19 +504,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792564523"></script>
-<script src="pattern-data.js?v=1792564523"></script>
-<script src="noun-detail-data.js?v=1792564523"></script>
-<script src="noun-card-data.js?v=1792564523"></script>
-<script src="checkin-data.js?v=1792564523"></script>
-<script src="games-data.js?v=1792564523"></script>
-<script src="rhyme-data.js?v=1792564523"></script>
-<script src="card-extensions.js?v=1792564523"></script>
-<script src="noun-repeat-data.js?v=1792564523"></script>
-<script src="guess-proper-data.js?v=1792564523"></script>
-<script src="things-card-data.js?v=1792564523"></script>
-<script src="verb-card-data.js?v=1792564523"></script>
-<script src="adjective-card-data.js?v=1792564523"></script>
+<script src="data.js?v=1792570771"></script>
+<script src="pattern-data.js?v=1792570771"></script>
+<script src="noun-detail-data.js?v=1792570771"></script>
+<script src="noun-card-data.js?v=1792570771"></script>
+<script src="checkin-data.js?v=1792570771"></script>
+<script src="games-data.js?v=1792570771"></script>
+<script src="rhyme-data.js?v=1792570771"></script>
+<script src="card-extensions.js?v=1792570771"></script>
+<script src="noun-repeat-data.js?v=1792570771"></script>
+<script src="guess-proper-data.js?v=1792570771"></script>
+<script src="things-card-data.js?v=1792570771"></script>
+<script src="verb-card-data.js?v=1792570771"></script>
+<script src="adjective-card-data.js?v=1792570771"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1166,9 +1171,13 @@ function renderPlanSelector() {
   const songSelect = document.getElementById("plan-song-select");
   const gameSelect = document.getElementById("plan-game-select");
   const wordGrid = document.getElementById("plan-word-grid");
-  const validWordIds = new Set((window.SSS_NOUN_CARDS || []).map(card => String(card.number)));
-  const savedWords = (plan?.words || []).map(String).filter(number => validWordIds.has(number));
-  const selectedWords = new Set(savedWords.length ? savedWords : (window.SSS_NOUN_CARDS || []).slice(0, 10).map(card => String(card.number)));
+  let planWordType = "noun";
+  const wordSources = () => ({
+    noun: window.SSS_NOUN_CARDS || [],
+    verb: window.SUSAN_VERB_CARDS || [],
+    adjective: window.SUSAN_ADJECTIVE_CARDS || [],
+  });
+  const selectedWords = new Set((plan?.words || []).map(String));
   const allSongs = (window.SSS_WEB_DATA?.songs || []).slice().sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "en", { sensitivity: "base" }));
   const allGames = (window.SUSAN_GAMES_DATA || []).slice().sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "zh-Hans-CN", { sensitivity: "base" }));
   const details = window.SSS_NOUN_DETAILS || [];
@@ -1194,14 +1203,30 @@ function renderPlanSelector() {
     document.getElementById("plan-game-meta").textContent = `${allGames.length} 个游戏`;
     ensureDefault(gameSelect);
   }
+  const planStageFor = (type, number) => {
+    const outputState = loadState("sss-workbench-card-output-v1", {});
+    return Number(outputState[`output:${type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin"}:${number}`] || 0);
+  };
+  const renderWords = () => {
+    const cards = wordSources()[planWordType] || [];
+    wordGrid.innerHTML = cards.map(card => {
+      const mastered = planStageFor(planWordType, card.number) >= 1;
+      const label = cardName(card, planWordType);
+      return `<button type="button" class="wp-word${selectedWords.has(`${planWordType}:${card.number}`) ? " active" : ""}${mastered ? " mastered" : ""}" data-plan-word="${planWordType}:${card.number}">${escapeHtml(label)}</button>`;
+    }).join("");
+    document.getElementById("plan-word-count").textContent = `已选 ${selectedWords.size} 张`;
+  };
   if (wordGrid) {
-    const renderWords = () => {
-      wordGrid.innerHTML = (window.SSS_NOUN_CARDS || []).map(card => `<button type="button" class="wp-word${selectedWords.has(String(card.number)) ? " active" : ""}" data-plan-word="${card.number}">${escapeHtml(card.name)}</button>`).join("");
-      document.getElementById("plan-word-count").textContent = `已选 ${selectedWords.size} 张`;
-    };
     renderWords();
   }
   root.onclick = (event) => {
+    const typeButton = event.target.closest("[data-plan-word-type]");
+    if (typeButton) {
+      planWordType = typeButton.dataset.planWordType;
+      root.querySelectorAll("#plan-word-tabs button").forEach(item => item.classList.toggle("active", item === typeButton));
+      renderWords();
+      return;
+    }
     const wordButton = event.target.closest("[data-plan-word]");
     if (wordButton) {
       const number = wordButton.dataset.planWord;
