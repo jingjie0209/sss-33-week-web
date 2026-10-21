@@ -51,9 +51,8 @@ button { cursor: pointer; }
 /* ===== Hero（渐变紫） ===== */
 .hero { position: relative; overflow: hidden; padding: 22px 22px 26px; border-radius: 22px; background: linear-gradient(140deg, #4f46cf, #7564e4 60%, #9780ef); color: #fff; box-shadow: var(--shadow-lg); }
 .hero-kicker { margin: 0; color: #dcd9ff; font-size: 11.5px; font-weight: 800; letter-spacing: .1em; }
-.hero h1 { margin: 7px 0 8px; font-size: 24px; line-height: 1.22; }
 .hero-desc { min-height: 21px; margin: 0; color: #dedcff; font-size: 12.5px; line-height: 1.65; }
-.hero-encourage { margin: 10px 0 0; color: #f4f2ff; font-size: 13px; font-weight: 900; line-height: 1.35; }
+.hero-encourage { margin: 7px 0 8px; color: #fff; font-size: 24px; font-weight: 900; line-height: 1.22; }
 .hero-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 18px; }
 .hero-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: #ffffff3d; }
 .hero-progress i { display: block; width: 0; height: 100%; background: #fff; transition: width .3s ease; }
@@ -369,7 +368,6 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 @media (max-width: 720px) {
   .step { grid-template-columns: 40px minmax(0, 1fr); }
   .step-actions { grid-column: 2; margin-top: 8px; }
-  .hero h1 { font-size: 21px; }
 }
 </style>
 </head>
@@ -390,9 +388,8 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <div id="view-today" class="tab-view active">
   <section class="hero">
     <p class="hero-kicker">SUSAN LEARNING DESK · TODAY</p>
-    <h1 id="hero-title">今天，和宝宝一起把一句话说出来。</h1>
     <p class="hero-desc">围绕本周句型，完成一轮输入、闪卡、游戏和亲子阅读。短一点、重复多一点，孩子更容易开口。</p>
-    <p class="hero-encourage" id="hero-encourage">今天也慢慢来，开口就是进步。</p>
+    <p class="hero-encourage" id="hero-encourage">今天开口，就是进步。</p>
     <div class="hero-actions">
       <a class="button" id="open-song" href="index.html" target="_blank" rel="noopener">打开今日儿歌拆解 ↗</a>
       <button class="button secondary" id="start-today" type="button">开始今天</button>
@@ -1022,8 +1019,6 @@ function render() {
   document.getElementById("hero-encourage").textContent = dailyEncouragement();
 
   const cover = youtubeThumbnail(song.videoUrl);
-  const heroTitle = document.getElementById("hero-title");
-  heroTitle.textContent = song.title ? `${song.title}` : "今天，和宝宝一起把一句话说出来。";
   const openSong = document.getElementById("open-song");
   openSong.href = `index.html?song=${encodeURIComponent(song.sheet || "")}`;
 
