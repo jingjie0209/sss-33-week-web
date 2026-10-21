@@ -63,7 +63,7 @@ button { cursor: pointer; }
 .plan-select-head b { display: grid; place-items: center; width: 24px; height: 24px; border-radius: 8px; background: var(--brand-soft); color: #5850d0; font-size: 12px; }
 .plan-select-head span { font-size: 14px; font-weight: 800; }
 .plan-select-head small { margin-left: auto; color: var(--muted-2); font-size: 10.5px; }
-.plan-select select { width: 100%; min-height: 40px; padding: 8px 32px 8px 10px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font-size: 12.5px; font-weight: 700; appearance:none; background-image: linear-gradient(45deg,transparent 49%,#7c6cf0 50%),linear-gradient(-45deg,transparent 49%,#7c6cf0 50%); background-size: 7px 7px; background-position: calc(100% - 17px) 55%,calc(100% - 12px) 55%; background-repeat: no-repeat; }
+.plan-select select { width: 100%; min-height: 40px; padding: 8px 32px 8px 10px; border: 1px solid var(--line); border-radius: 12px; background-color: #fff; color: var(--ink); font-size: 13px; font-weight: 800; appearance: auto; -webkit-appearance: menulist-button; text-overflow: ellipsis; }
 
 /* ===== 按钮 ===== */
 .button { min-height: 42px; border: 1px solid transparent; border-radius: 14px; padding: 10px 16px; background: var(--yellow); color: #3e310e; font-weight: 900; font-size: 13.5px; display: inline-flex; align-items: center; text-decoration: none; box-shadow: 0 6px 16px #f5c45152; }
@@ -1168,6 +1168,7 @@ function renderPlanSelector() {
   const currentWeek = (window.SSS_WEB_DATA?.weeks || [])[todayInfo().weekIndex] || {};
   const weekPattern = patternForWeek(currentWeek);
   const defaultPatternIndex = Math.max(0, details.findIndex(item => item.pattern === weekPattern.pattern));
+  const ensureDefault = (select) => { if (select && select.options.length && select.selectedIndex < 0) select.selectedIndex = 0; };
   if (patternSelect) {
     patternSelect.innerHTML = details.map((item, index) => `<option value="${index}"${index === defaultPatternIndex ? " selected" : ""}>${escapeHtml(item.pattern)} · ${escapeHtml(item.code || "")}</option>`).join("");
     patternSelect.onchange = () => document.getElementById("plan-pattern-meta").textContent = `${details[Number(patternSelect.value)]?.code || ""} · 自动加载理论与笔记`;
@@ -1176,10 +1177,12 @@ function renderPlanSelector() {
   if (songSelect) {
     songSelect.innerHTML = allSongs.map(item => `<option value="${escapeHtml(item.sheet)}">${escapeHtml(item.title)}</option>`).join("");
     document.getElementById("plan-song-meta").textContent = `${allSongs.length} 首儿歌`;
+    ensureDefault(songSelect);
   }
   if (gameSelect) {
     gameSelect.innerHTML = allGames.map(item => `<option value="${escapeHtml(item.id)}">${escapeHtml(item.name)}</option>`).join("");
     document.getElementById("plan-game-meta").textContent = `${allGames.length} 个游戏`;
+    ensureDefault(gameSelect);
   }
   if (wordGrid) {
     const renderWords = () => {
