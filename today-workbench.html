@@ -165,13 +165,15 @@ button { cursor: pointer; }
 .filter-hero::before { content: ""; position: absolute; left: -30px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: #ffffff17; pointer-events: none; }
 .filter-hero::after { content: ""; position: absolute; right: -40px; top: 30%; width: 180px; height: 180px; border-radius: 50%; background: #ffffff0d; pointer-events: none; }
 .filter-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; position: relative; z-index: 2; }
-.filter-hero-badge { padding: 6px 12px; border-radius: 999px; background: #ffffff1f; font-size: 11px; font-weight: 800; color: #fff; }
+.filter-hero-badge { position: absolute; right: 14px; bottom: 10px; padding: 5px 12px; border-radius: 999px; background: #ffffff1f; font-size: 11px; font-weight: 800; color: #fff; }
 .filter-line { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 2; }
 .filter-line::-webkit-scrollbar { display: none; }
 .filter-line button { flex: none; min-height: 32px; padding: 6px 14px; border: 0; border-radius: 999px; background: #ffffff21; color: #eae7ff; font-size: 12.5px; font-weight: 700; }
 .filter-line button.active { background: #fff; color: #4f46cf; box-shadow: 0 4px 12px #1f26512e; }
-.filter-line-main { margin-bottom: 9px; }
-.filter-line-main button { font-size: 13px; font-weight: 800; }
+.filter-line-main { margin-bottom: 9px; gap: 16px; }
+.filter-line-main button { font-size: 14px; font-weight: 800; background: transparent; border: 0; color: #ffffffb3; padding: 4px 2px 8px; border-radius: 0; position: relative; }
+.filter-line-main button.active { background: transparent; color: #fff; }
+.filter-line-main button.active::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 3px; border-radius: 3px 3px 0 0; background: #fff; }
 .filter-line-sub { margin-bottom: 9px; }
 .filter-line-cats button { background: #ffffff14; font-size: 12px; }
 
@@ -394,9 +396,6 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 
   <div id="view-cards" class="tab-view">
     <div class="filter-hero">
-      <div class="filter-hero-top">
-        <div class="filter-hero-badge" id="filter-hero-badge">已掌握 0</div>
-      </div>
       <div class="filter-line filter-line-main" id="card-type-seg">
         <button class="active" data-card-type="noun">名词</button>
         <button data-card-type="verb">动词</button>
