@@ -53,7 +53,7 @@ button { cursor: pointer; }
 .hero-kicker { margin: 0; color: #dcd9ff; font-size: 11.5px; font-weight: 800; letter-spacing: .1em; }
 .hero h1 { margin: 7px 0 8px; font-size: 24px; line-height: 1.22; }
 .hero-desc { min-height: 21px; margin: 0; color: #dedcff; font-size: 12.5px; line-height: 1.65; }
-.hero-encourage { margin: 10px 0 0; color: #f4f2ff; font-size: 12.5px; font-weight: 800; line-height: 1.45; }
+.hero-encourage { margin: 10px 0 0; color: #f4f2ff; font-size: 13px; font-weight: 900; line-height: 1.35; }
 .hero-actions { display: flex; gap: 9px; flex-wrap: wrap; margin-top: 18px; }
 .hero-progress { position: absolute; left: 0; right: 0; bottom: 0; height: 5px; background: #ffffff3d; }
 .hero-progress i { display: block; width: 0; height: 100%; background: #fff; transition: width .3s ease; }
@@ -977,38 +977,20 @@ const toast = (message) => {
 
 const dayNames = ["周一", "周二", "周三", "周四", "周五", "周六", "周日"];
 const encouragementList = [
-  "今天也慢慢来，开口就是进步。",
-  "每一次重复，都在帮宝宝搭一句新句子。",
-  "不怕说错，敢说出来就已经很棒了。",
-  "今天的小声音，是明天的大表达。",
-  "短一点没关系，稳定陪伴最重要。",
-  "和宝宝一起玩起来，语言就藏游戏里。",
-  "每天 12 分钟，比一次学很久更有效。",
-  "你今天开始，就是宝宝最好的起点。",
-  "多一次互动，宝宝就多一分安全感。",
-  "节奏由宝宝定，你只负责陪伴和鼓励。",
-  "今天的目标不是学多，而是开口。",
-  "把句子唱出来，宝宝会记得更牢。",
-  "小小的打卡，正在长成大大的进步。",
-  "不用完美，有回应就是好课堂。",
-  "今天也许只学会一句，但它已经开始生长。",
-  "你放慢一点，宝宝就能跟得更稳。",
-  "笑一笑再开口，宝宝更愿意模仿。",
-  "重复是宝宝的学习方式，你做得刚刚好。",
-  "哪怕只有 3 分钟，也值得认真开始。",
-  "坚持到今天，真的已经很不简单。",
-  "让宝宝选一张卡，兴趣会带他往前走。",
-  "一边动一边说，句子会更容易记住。",
-  "今天的多听，是明天的开口准备。",
-  "你每一句回应，宝宝都在认真收藏。",
-  "把练习变成游戏，压力就会变小。",
-  "今天不急，慢慢说，宝宝听得清。",
-  "和宝宝一起犯错，也是一种勇敢。",
-  "每次开口，都是在给语言浇水。",
-  "稳定的小练习，会慢慢变成习惯。",
-  "今天也从一句话开始，就已经足够。",
-  "宝宝需要听到很多遍，才能勇敢说出来。",
-  "你今天陪读的样子，就是最好的示范。"
+  "今天开口，就是进步。",
+  "小坚持，大改变。",
+  "你已经做得很好。",
+  "慢慢来，别停下。",
+  "每天一句，悄悄变强。",
+  "再听一遍，就更熟了。",
+  "敢说就是赢。",
+  "今天也从一句话开始。",
+  "陪伴本身就是答案。",
+  "重复多了，就开口了。",
+  "不急，我们继续。",
+  "你的坚持，宝宝听得见。",
+  "今天也很棒。",
+  "小小打卡，大大底气。"
 ];
 const dailyEncouragement = () => {
   const now = new Date();
