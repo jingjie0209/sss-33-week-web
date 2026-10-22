@@ -136,6 +136,9 @@ button { cursor: pointer; }
 .step.compact .step-num { width: 30px; height: 30px; font-size: 12px; }
 .step.compact .step-title { margin: 0; font-size: 13.5px; }
 .step.compact .step-desc { display: none; }
+.theory-line { min-height: 40px; display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 0 0; }
+.theory-line strong { font-size: 14px; }
+.theory-line.done strong { color: var(--muted-2); }
 .song-no { display: inline-grid; place-items: center; min-width: 24px; margin-right: 8px; padding: 2px 5px; border-radius: 8px; background: #f1f2f6; color: var(--muted-2); font-size: 10.5px; }
 .card-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
 @media (max-width: 380px) { .flashcards { grid-template-columns: 1fr; } .card-grid { grid-template-columns: repeat(3, 1fr); gap: 6px; } }
@@ -550,19 +553,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792639497"></script>
-<script src="pattern-data.js?v=1792639497"></script>
-<script src="noun-detail-data.js?v=1792639497"></script>
-<script src="noun-card-data.js?v=1792639497"></script>
-<script src="checkin-data.js?v=1792639497"></script>
-<script src="games-data.js?v=1792639497"></script>
-<script src="rhyme-data.js?v=1792639497"></script>
-<script src="card-extensions.js?v=1792639497"></script>
-<script src="noun-repeat-data.js?v=1792639497"></script>
-<script src="guess-proper-data.js?v=1792639497"></script>
-<script src="things-card-data.js?v=1792639497"></script>
-<script src="verb-card-data.js?v=1792639497"></script>
-<script src="adjective-card-data.js?v=1792639497"></script>
+<script src="data.js?v=1792640256"></script>
+<script src="pattern-data.js?v=1792640256"></script>
+<script src="noun-detail-data.js?v=1792640256"></script>
+<script src="noun-card-data.js?v=1792640256"></script>
+<script src="checkin-data.js?v=1792640256"></script>
+<script src="games-data.js?v=1792640256"></script>
+<script src="rhyme-data.js?v=1792640256"></script>
+<script src="card-extensions.js?v=1792640256"></script>
+<script src="noun-repeat-data.js?v=1792640256"></script>
+<script src="guess-proper-data.js?v=1792640256"></script>
+<script src="things-card-data.js?v=1792640256"></script>
+<script src="verb-card-data.js?v=1792640256"></script>
+<script src="adjective-card-data.js?v=1792640256"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1065,20 +1068,20 @@ function render() {
   }).filter(card => card.number);
   const planGames = (plan?.gameIds || []).map(id => (window.SUSAN_GAMES_DATA || []).find(game => game.id === id)).filter(Boolean);
   const theoryDone = Boolean(plan?.theoryDone || stepState.theory);
-    const icons = { theory: "💡", flashcards: "🃏", games: "🎲" };
+    const icons = { theory: "1", flashcards: "2", games: "3" };
     const stepDefs = [
     {
-      key: "theory", num: 1, title: `理论学习 · ${plan?.pattern || pattern.pattern || "It's a/an ..."}`, time: "", desc: "",
+      key: "theory", num: 1, title: "理论学习", time: "", desc: "", patternText: plan?.pattern || pattern.pattern || "It's a/an ...",
       action: `<button class="tiny-action${theoryDone ? " done" : ""}" data-step-toggle="theory">${theoryDone ? "已完成 ✓" : "去学习"}</button>`,
       compact: true,
     },
     {
-      key: "flashcards", num: 2, title: "本周闪卡", time: "", desc: "",
+      key: "flashcards", num: 2, title: `本周闪卡 ${planFlashcards.length}`, time: "", desc: "",
       custom: renderPlanFlashcards(planFlashcards),
       compact: true,
     },
     {
-      key: "games", num: 3, title: "本周游戏", time: "", desc: "",
+      key: "games", num: 3, title: `本周游戏 ${planGames.length}`, time: "", desc: "",
       custom: renderGames(planGames.length ? planGames : games),
       compact: true,
     },
@@ -1090,10 +1093,10 @@ function render() {
       : step.key === "sentence" ? Boolean(stepState[step.key])
       : Boolean(stepState[step.key]);
     const actions = step.custom ? "" : (step.action || "");
-    return `<section class="module"><div class="module-head"><div><h2><span class="module-icon">${icons[step.key]}</span>${escapeHtml(step.title)}</h2></div><span>${step.time}</span></div><div class="module-body">${step.compact && !step.custom ? `<div class="step compact ${done ? "done" : ""}"><div class="step-num">${done ? "✓" : step.num}</div><div><span class="step-title">${escapeHtml(step.title)}</span></div><div class="step-actions">${actions}</div></div>` : ""}${step.custom ? `<div>${step.custom}</div>` : ""}</div></section>`;
+    return `<section class="module"><div class="module-head"><div><h2><span class="module-icon">${icons[step.key]}</span>${escapeHtml(step.title)}</h2></div><span>${step.time}</span></div><div class="module-body">${step.compact && !step.custom ? `<div class="theory-line ${done ? "done" : ""}"><strong>${escapeHtml(step.patternText)}</strong><button class="tiny-action${done ? " done" : ""}" data-step-toggle="theory">${done ? "已完成 ✓" : "去学习"}</button></div>` : ""}${step.custom ? `<div>${step.custom}</div>` : ""}</div></section>`;
   }).join("");
 
-  document.getElementById("steps-root").insertAdjacentHTML("beforeend", `<section class="module"><div class="module-head"><div><h2><span class="module-icon">🎵</span>本周儿歌</h2></div><span>${weekDone}/${weekSongs.length} 已完成</span></div><div class="module-body"><div class="song-list">${weekSongs.map((item, index) => `<div class="song-item ${isDone(item.sheet) ? "done" : ""}"><div><strong><span class="song-no">${String(index + 1).padStart(2, "0")}</span>${escapeHtml(item.title)}</strong></div><div style="display:flex;align-items:center;gap:8px"><button class="tiny-action" data-toggle-song="${escapeHtml(item.sheet)}">${isDone(item.sheet) ? "取消" : "完成"}</button></div></div>`).join("")}</div></div></section>`);
+  document.getElementById("steps-root").insertAdjacentHTML("beforeend", `<section class="module"><div class="module-head"><div><h2><span class="module-icon">4</span>本周儿歌 ${weekSongs.length}</h2></div><span>${weekDone}/${weekSongs.length} 已完成</span></div><div class="module-body"><div class="song-list">${weekSongs.map((item, index) => `<div class="song-item ${isDone(item.sheet) ? "done" : ""}"><div><strong><span class="song-no">${String(index + 1).padStart(2, "0")}</span>${escapeHtml(item.title)}</strong></div><div style="display:flex;align-items:center;gap:8px"><button class="tiny-action" data-toggle-song="${escapeHtml(item.sheet)}">${isDone(item.sheet) ? "取消" : "完成"}</button></div></div>`).join("")}</div></div></section>`);
 }
 
 function renderFlashcards(cards) {
@@ -1225,11 +1228,18 @@ function renderPlanSelector() {
   collapsed.hidden = !(plan && !editMode);
   root.classList.toggle("collapsed", Boolean(plan) && !editMode);
   if (plan && !editMode) {
+    const selectedFlashcards = (plan.words || []).map((value) => {
+      const [type, numberText] = String(value).split(":");
+      const key = `output:${type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin"}:${numberText}`;
+      return Number(loadState("sss-workbench-card-output-v1", {})[key] || 0) >= 1;
+    });
+    const learnedCount = selectedFlashcards.filter(Boolean).length;
+    const checkedSongs = (plan.songSheets || []).filter(sheet => isDone(sheet)).length;
     const summary = [
-      `1. 句型：${plan.pattern || "-"}`,
-      `2. 闪卡：已选 ${plan.wordTotal || 0} 张`,
-      `3. 儿歌：${plan.song || "-"}`,
-      `4. 游戏：${plan.tools || "-"}`
+      `理论：${plan.theoryDone ? "完成" : "未完成"}`,
+      `闪卡：${learnedCount}/${plan.words?.length || 0}`,
+      `儿歌：${checkedSongs}/${plan.songSheets?.length || 0}`,
+      `游戏：${plan.gameDone || 0}/${plan.gameIds?.length || 0}`
     ];
     collapsedSummary.textContent = summary.join("\n");
     return;
