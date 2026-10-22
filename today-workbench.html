@@ -484,6 +484,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
       </div>
       <div class="filter-line filter-line-sub" id="card-subtab-seg">
         <button class="active" data-card-subtab="cards">卡片</button>
+        <button data-card-subtab="patterns">基础句型</button>
       </div>
     </div>
     <div id="card-grid" class="card-grid"></div>
@@ -571,7 +572,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 </nav>
 
 <script src="data.js?v=1792650251"></script>
-<script src="pattern-data.js?v=1792650251"></script>
+<script src="pattern-data.js?v=1792650896"></script>
 <script src="noun-detail-data.js?v=1792650251"></script>
 <script src="noun-card-data.js?v=1792650251"></script>
 <script src="checkin-data.js?v=1792650251"></script>
@@ -1668,6 +1669,7 @@ function renderCardSubtab() {
     return;
   }
   if (activeCardSubtab === "speaking") { renderSpeaking(); return; }
+  if (activeCardSubtab === "patterns") { renderPatternsTable(); return; }
 }
 
 
