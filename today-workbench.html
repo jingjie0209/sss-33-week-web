@@ -57,6 +57,13 @@ button { cursor: pointer; }
 .plan-select-title { display: flex; align-items: baseline; gap: 8px; margin: 20px 0 8px; }
 .plan-select-title h2 { margin: 0; font-size: 19px; }
 .plan-select-title span { color: var(--muted-2); font-size: 11.5px; }
+.plan-collapsed { padding: 13px 15px; background: #fff; border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-sm); }
+.plan-collapsed-head { display: flex; align-items: center; gap: 8px; }
+.plan-collapsed-head h2 { margin: 0; font-size: 15px; }
+.plan-collapsed-head span { margin-left: auto; color: var(--brand); font-size: 11px; font-weight: 800; }
+.plan-collapsed-summary { margin: 8px 0 0; color: var(--muted-2); font-size: 11.5px; line-height: 1.6; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.plan-collapsed .tiny-action { min-height: 34px; margin-top: 10px; width: 100%; justify-content: center; }
+.plan-select-list.collapsed { display: none; }
 .plan-select-list { display: grid; gap: 9px; }
 .plan-select { position: relative; padding: 13px 15px; background: var(--card); border: 1px solid var(--line); border-radius: 18px; box-shadow: var(--shadow-sm); }
 .plan-select-head { display: flex; align-items: center; gap: 9px; margin-bottom: 7px; }
@@ -409,7 +416,12 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
     <div class="hero-progress"><i id="hero-bar"></i></div>
   </section>
 
-  <div class="plan-select-title"><h2>开始制定周计划</h2><span>4 项选完，生成执行面板</span></div>
+  <div id="plan-collapsed" class="plan-collapsed" hidden>
+    <div class="plan-collapsed-head"><h2>📅 本周计划</h2><span id="plan-collapsed-status">已生成</span></div>
+    <p class="plan-collapsed-summary" id="plan-collapsed-summary"></p>
+    <button class="tiny-action" id="plan-edit" type="button">✏️ 编辑本周计划</button>
+  </div>
+  <div class="plan-select-title" id="plan-select-title"><h2>开始制定周计划</h2><span>4 项选完，生成执行面板</span></div>
   <div class="plan-select-list" id="plan-select-list">
     <div class="plan-select"><div class="plan-select-head"><b>1</b><span>句型</span><small id="plan-pattern-meta">自动加载理论与笔记</small></div><select id="plan-pattern-select"></select></div>
     <div class="plan-select"><div class="plan-select-head"><b>2</b><span>闪卡</span><small id="plan-word-count">已选 0 张</small></div><div id="plan-word-tabs" class="plan-word-tabs"><button type="button" class="active" data-plan-word-type="noun">名词</button><button type="button" data-plan-word-type="verb">动词</button><button type="button" data-plan-word-type="adjective">形容词</button></div><div id="plan-word-grid" class="plan-word-pages"></div><div id="plan-word-dots" class="plan-word-dots"></div></div>
@@ -522,19 +534,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792574151"></script>
-<script src="pattern-data.js?v=1792574151"></script>
-<script src="noun-detail-data.js?v=1792574151"></script>
-<script src="noun-card-data.js?v=1792574151"></script>
-<script src="checkin-data.js?v=1792574151"></script>
-<script src="games-data.js?v=1792574151"></script>
-<script src="rhyme-data.js?v=1792574151"></script>
-<script src="card-extensions.js?v=1792574151"></script>
-<script src="noun-repeat-data.js?v=1792574151"></script>
-<script src="guess-proper-data.js?v=1792574151"></script>
-<script src="things-card-data.js?v=1792574151"></script>
-<script src="verb-card-data.js?v=1792574151"></script>
-<script src="adjective-card-data.js?v=1792574151"></script>
+<script src="data.js?v=1792635424"></script>
+<script src="pattern-data.js?v=1792635424"></script>
+<script src="noun-detail-data.js?v=1792635424"></script>
+<script src="noun-card-data.js?v=1792635424"></script>
+<script src="checkin-data.js?v=1792635424"></script>
+<script src="games-data.js?v=1792635424"></script>
+<script src="rhyme-data.js?v=1792635424"></script>
+<script src="card-extensions.js?v=1792635424"></script>
+<script src="noun-repeat-data.js?v=1792635424"></script>
+<script src="guess-proper-data.js?v=1792635424"></script>
+<script src="things-card-data.js?v=1792635424"></script>
+<script src="verb-card-data.js?v=1792635424"></script>
+<script src="adjective-card-data.js?v=1792635424"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1181,6 +1193,22 @@ function renderPlanSelector() {
   const root = document.getElementById("plan-select-list");
   if (!root) return;
   const plan = loadWeekPlan();
+  const editMode = root.dataset.editMode === "1";
+  const collapsed = document.getElementById("plan-collapsed");
+  const collapsedSummary = document.getElementById("plan-collapsed-summary");
+  document.getElementById("plan-select-title").hidden = Boolean(plan) && !editMode;
+  collapsed.hidden = !(plan && !editMode);
+  root.classList.toggle("collapsed", Boolean(plan) && !editMode);
+  if (plan && !editMode) {
+    const summary = [
+      `1. 句型：${plan.pattern || "-"}`,
+      `2. 闪卡：已选 ${plan.wordTotal || 0} 张`,
+      `3. 儿歌：${plan.song || "-"}`,
+      `4. 游戏：${plan.tools || "-"}`
+    ];
+    collapsedSummary.textContent = summary.join("\n");
+    return;
+  }
   const selectorKey = `${todayInfo().weekIndex}:${plan?.createdAt || "new"}`;
   if (root.dataset.selectorKey === selectorKey) return;
   root.dataset.selectorKey = selectorKey;
@@ -1321,6 +1349,7 @@ function renderPlanSelector() {
     });
     saveState(GAME_KEY, []);
     gameState = [];
+    delete root.dataset.editMode;
     render();
     document.getElementById("week-plan-root")?.scrollIntoView({ behavior: "smooth", block: "start" });
     toast("本周计划已生成 🎉");
@@ -1348,8 +1377,14 @@ document.getElementById("week-plan-root").addEventListener("click", (event) => {
     if (task === "sentence") switchTab("games");
     return;
   }
-  if (event.target.closest("#wp-edit")) { saveWeekPlan(null); renderWeekPlan(); toast("可重新定制本周计划"); return; }
+  if (event.target.closest("#wp-edit")) { const root=document.getElementById("plan-select-list"); root.dataset.editMode="1"; renderPlanSelector(); renderWeekPlan(); document.getElementById("plan-select-list")?.scrollIntoView({behavior:"smooth",block:"start"}); toast("可编辑本周计划"); return; }
   if (event.target.closest("#wp-continue")) { document.getElementById("steps-root")?.scrollIntoView({ behavior: "smooth" }); }
+});
+document.getElementById("plan-edit").addEventListener("click", () => {
+  const root = document.getElementById("plan-select-list");
+  root.dataset.editMode = "1";
+  renderPlanSelector();
+  root.scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
 /* ---------- Tab navigation ---------- */
