@@ -61,7 +61,12 @@ button { cursor: pointer; }
 .plan-collapsed-head { display: flex; align-items: center; gap: 8px; }
 .plan-collapsed-head h2 { margin: 0; font-size: 15px; }
 .plan-collapsed-head span { margin-left: auto; color: var(--brand); font-size: 11px; font-weight: 800; }
-.plan-collapsed-summary { margin: 8px 0 0; color: var(--muted-2); font-size: 11.5px; line-height: 1.6; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; }
+.plan-progress { display: grid; gap: 8px; margin: 10px 0 0; }
+.progress-row { display: grid; grid-template-columns: 44px minmax(0,1fr) 38px; align-items: center; gap: 8px; font-size: 11.5px; font-weight: 800; }
+.progress-row span:first-child { color: var(--ink); }
+.progress-row .progress-bar { height: 7px; border-radius: 999px; background: #eceef5; overflow: hidden; }
+.progress-row .progress-bar i { display: block; height: 100%; border-radius: 999px; background: linear-gradient(90deg, var(--brand-deep), var(--brand-light)); transition: width .3s ease; }
+.progress-row .progress-count { color: var(--muted-2); font-size: 10.5px; text-align: right; }
 .plan-collapsed .tiny-action { min-height: 34px; margin-top: 10px; width: 100%; justify-content: center; }
 .plan-select-list.collapsed { display: none; }
 .plan-select-list { display: grid; gap: 9px; }
@@ -437,7 +442,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 
   <div id="plan-collapsed" class="plan-collapsed" hidden>
     <div class="plan-collapsed-head"><h2>📅 本周计划</h2><span id="plan-collapsed-status">已生成</span></div>
-    <p class="plan-collapsed-summary" id="plan-collapsed-summary"></p>
+    <div class="plan-progress" id="plan-collapsed-summary"></div>
     <button class="tiny-action" id="plan-edit" type="button">✏️ 编辑本周计划</button>
   </div>
   <div class="plan-select-title" id="plan-select-title"><h2>开始制定周计划</h2><span>4 项选完，生成执行面板</span></div>
@@ -553,19 +558,19 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792640256"></script>
-<script src="pattern-data.js?v=1792640256"></script>
-<script src="noun-detail-data.js?v=1792640256"></script>
-<script src="noun-card-data.js?v=1792640256"></script>
-<script src="checkin-data.js?v=1792640256"></script>
-<script src="games-data.js?v=1792640256"></script>
-<script src="rhyme-data.js?v=1792640256"></script>
-<script src="card-extensions.js?v=1792640256"></script>
-<script src="noun-repeat-data.js?v=1792640256"></script>
-<script src="guess-proper-data.js?v=1792640256"></script>
-<script src="things-card-data.js?v=1792640256"></script>
-<script src="verb-card-data.js?v=1792640256"></script>
-<script src="adjective-card-data.js?v=1792640256"></script>
+<script src="data.js?v=1792641189"></script>
+<script src="pattern-data.js?v=1792641189"></script>
+<script src="noun-detail-data.js?v=1792641189"></script>
+<script src="noun-card-data.js?v=1792641189"></script>
+<script src="checkin-data.js?v=1792641189"></script>
+<script src="games-data.js?v=1792641189"></script>
+<script src="rhyme-data.js?v=1792641189"></script>
+<script src="card-extensions.js?v=1792641189"></script>
+<script src="noun-repeat-data.js?v=1792641189"></script>
+<script src="guess-proper-data.js?v=1792641189"></script>
+<script src="things-card-data.js?v=1792641189"></script>
+<script src="verb-card-data.js?v=1792641189"></script>
+<script src="adjective-card-data.js?v=1792641189"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1132,7 +1137,7 @@ function renderGames(games) {
     const done = gameState.includes(game.id);
     const dialogue = (game.dialogue || []).map((line) => `<div class="${line.who}"><b>${line.who === "mom" ? "👩 妈妈" : "🧒 宝宝"}</b>${escapeHtml(line.text)}</div>`).join("");
     const props = (game.props || []).filter(Boolean);
-    return `<article class="game-card"><div class="game-card-head"><h3>${escapeHtml(game.name)}</h3><small>${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</small></div><div class="game-card-body"><p>${escapeHtml(game.how || "")}</p>${props.length ? `<div class="game-props">${props.map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div>` : ""}<div class="dialogue">${dialogue}</div></div></article>`;
+    return `<article class="game-card"><button class="game-card-head" type="button" data-game-collapse="${escapeHtml(game.id)}" style="width:100%;border:0;background:transparent;text-align:left;padding:12px 12px;display:flex;align-items:center;gap:10px;cursor:pointer"><span class="game-no" style="flex:none;min-width:26px;padding:3px 6px;border-radius:8px;background:#f1f2f6;color:var(--muted-2);font-size:10.5px;font-weight:800;text-align:center;box-sizing:border-box">${String(games.indexOf(game) + 1).padStart(2, "0")}</span><h3 style="margin:0;flex:1;min-width:0;font-size:13.5px">${escapeHtml(game.name)}</h3><small style="flex:none;display:flex;align-items:center;gap:8px;color:var(--muted-2);font-size:10.5px"><span style="white-space:nowrap">${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</span><span class="game-collapse-arrow" style="flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:10px;transition:transform .2s;box-sizing:border-box">▾</span></small></button><div class="game-card-body" hidden><p>${escapeHtml(game.how || "")}</p>${props.length ? `<div class="game-props">${props.map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div>` : ""}<div class="dialogue">${dialogue}</div></div><button class="tiny-action${done ? " done" : ""}" data-game-complete="${escapeHtml(game.id)}" style="width:calc(100% - 24px);margin:0 12px 12px">${done ? "已完成 ✓" : "标记完成"}</button></article>`;
   }).join("")}</div>`;
 }
 
@@ -1167,6 +1172,15 @@ document.addEventListener("click", (event) => {
   if (game) {
     const id = game.dataset.gameToggle;
     gameState = gameState.includes(id) ? gameState.filter((item) => item !== id) : [...gameState, id];
+    saveState(GAME_KEY, gameState);
+    toast(gameState.includes(id) ? "完成游戏，干得漂亮！" : "已取消");
+    render();
+    return;
+  }
+  const gameComplete = event.target.closest("[data-game-complete]");
+  if (gameComplete) {
+    const id = gameComplete.dataset.gameComplete;
+    gameState = gameState.includes(id) ? gameState.filter(item => item !== id) : [...gameState, id];
     saveState(GAME_KEY, gameState);
     toast(gameState.includes(id) ? "完成游戏，干得漂亮！" : "已取消");
     render();
@@ -1235,13 +1249,17 @@ function renderPlanSelector() {
     });
     const learnedCount = selectedFlashcards.filter(Boolean).length;
     const checkedSongs = (plan.songSheets || []).filter(sheet => isDone(sheet)).length;
-    const summary = [
-      `理论：${plan.theoryDone ? "完成" : "未完成"}`,
-      `闪卡：${learnedCount}/${plan.words?.length || 0}`,
-      `儿歌：${checkedSongs}/${plan.songSheets?.length || 0}`,
-      `游戏：${plan.gameDone || 0}/${plan.gameIds?.length || 0}`
+    const playedGames = (plan.gameIds || []).filter(id => gameState.includes(id)).length;
+    const progressRows = [
+      { label: "理论", count: plan.theoryDone ? 1 : 0, total: 1 },
+      { label: "闪卡", count: learnedCount, total: plan.words?.length || 0 },
+      { label: "儿歌", count: checkedSongs, total: plan.songSheets?.length || 0 },
+      { label: "游戏", count: playedGames, total: plan.gameIds?.length || 0 }
     ];
-    collapsedSummary.textContent = summary.join("\n");
+    collapsedSummary.innerHTML = progressRows.map(row => {
+      const percent = row.total ? Math.round(row.count / row.total * 100) : 0;
+      return `<div class="progress-row"><span>${escapeHtml(row.label)}</span><span class="progress-bar"><i style="width:${percent}%"></i></span><span class="progress-count">${row.count}/${row.total}</span></div>`;
+    }).join("");
     return;
   }
   const selectorKey = `${todayInfo().weekIndex}:${plan?.createdAt || "new"}`;
@@ -2118,7 +2136,7 @@ function renderGamesTab() {
     const done = gameState.includes(game.id);
     const typeLabel = { intro: "引入", review: "复习", challenge: "闯关" };
     const dialogue = (game.dialogue || []).map((line) => `<div class="${line.who}"><b>${line.who === "mom" ? "👩 妈妈" : "🧒 宝宝"}</b>${escapeHtml(line.text)}</div>`).join("");
-    return `<article class="game-card" data-game-card="${escapeHtml(game.id)}"><button class="game-card-head" type="button" data-game-collapse="${escapeHtml(game.id)}" style="width:100%;border:0;background:transparent;text-align:left;padding:12px 12px;display:flex;align-items:center;gap:10px;cursor:pointer"><span class="game-no" style="flex:none;min-width:26px;padding:3px 6px;border-radius:8px;background:#f1f2f6;color:var(--muted-2);font-size:10.5px;font-weight:800;text-align:center;box-sizing:border-box">${String(gameIndex + 1).padStart(2, "0")}</span><h3 style="margin:0;flex:1;min-width:0;font-size:13.5px">${escapeHtml(game.name)}</h3><small style="flex:none;display:flex;align-items:center;gap:8px;color:var(--muted-2);font-size:10.5px"><span style="white-space:nowrap">${escapeHtml(typeLabel[game.type] || game.type)} · ${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</span><span class="game-collapse-arrow" style="flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:10px;transition:transform .2s;box-sizing:border-box">▾</span></small></button><div class="game-card-body" hidden><p>${escapeHtml(game.how || "")}</p><div class="game-props">${(game.props || []).map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div><div class="dialogue">${dialogue}</div></div></article>`;
+    return `<article class="game-card" data-game-card="${escapeHtml(game.id)}"><button class="game-card-head" type="button" data-game-collapse="${escapeHtml(game.id)}" style="width:100%;border:0;background:transparent;text-align:left;padding:12px 12px;display:flex;align-items:center;gap:10px;cursor:pointer"><span class="game-no" style="flex:none;min-width:26px;padding:3px 6px;border-radius:8px;background:#f1f2f6;color:var(--muted-2);font-size:10.5px;font-weight:800;text-align:center;box-sizing:border-box">${String(gameIndex + 1).padStart(2, "0")}</span><h3 style="margin:0;flex:1;min-width:0;font-size:13.5px">${escapeHtml(game.name)}</h3><small style="flex:none;display:flex;align-items:center;gap:8px;color:var(--muted-2);font-size:10.5px"><span style="white-space:nowrap">${escapeHtml(typeLabel[game.type] || game.type)} · ${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</span><span class="game-collapse-arrow" style="flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:10px;transition:transform .2s;box-sizing:border-box">▾</span></small></button><div class="game-card-body" hidden><p>${escapeHtml(game.how || "")}</p>${props.length ? `<div class="game-props">${props.map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div>` : ""}<div class="dialogue">${dialogue}</div></div><button class="tiny-action${gameState.includes(game.id) ? " done" : ""}" data-game-complete="${escapeHtml(game.id)}" style="width:calc(100% - 24px);margin:0 12px 12px">${gameState.includes(game.id) ? "已完成 ✓" : "标记完成"}</button></article>`;
   };
 
   // 面板一：随机组句 - 抽卡造句
