@@ -571,19 +571,20 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792652556"></script>
-<script src="pattern-data.js?v=1792652556"></script>
-<script src="noun-detail-data.js?v=1792652556"></script>
-<script src="noun-card-data.js?v=1792652556"></script>
-<script src="checkin-data.js?v=1792652556"></script>
-<script src="games-data.js?v=1792652556"></script>
-<script src="rhyme-data.js?v=1792652556"></script>
-<script src="card-extensions.js?v=1792652556"></script>
-<script src="noun-repeat-data.js?v=1792652556"></script>
-<script src="guess-proper-data.js?v=1792652556"></script>
-<script src="things-card-data.js?v=1792652556"></script>
-<script src="verb-card-data.js?v=1792652556"></script>
-<script src="adjective-card-data.js?v=1792652556"></script>
+<script src="data.js?v=1792654992"></script>
+<script src="pattern-data.js?v=1792654992"></script>
+<script src="grammar-links-data.js?v=1792654992"></script>
+<script src="noun-detail-data.js?v=1792654992"></script>
+<script src="noun-card-data.js?v=1792654992"></script>
+<script src="checkin-data.js?v=1792654992"></script>
+<script src="games-data.js?v=1792654992"></script>
+<script src="rhyme-data.js?v=1792654992"></script>
+<script src="card-extensions.js?v=1792654992"></script>
+<script src="noun-repeat-data.js?v=1792654992"></script>
+<script src="guess-proper-data.js?v=1792654992"></script>
+<script src="things-card-data.js?v=1792654992"></script>
+<script src="verb-card-data.js?v=1792654992"></script>
+<script src="adjective-card-data.js?v=1792654992"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1568,6 +1569,7 @@ function renderPatternsTable() {
   document.getElementById("card-grid").style.display = "none";
   document.getElementById("filter-hero-badge").style.display = "none";
   document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
+  document.querySelector("#view-cards .filter-hero").style.display = "";
   const typeLabel = { noun: "名词卡", verb: "动词卡", adjective: "形容词卡" }[activeCardType];
   const items = (patterns || []).filter((item) => item.type === typeLabel);
   panel.innerHTML = `<section class="module"><div class="module-head"><h2>基础句型</h2><span>${items.length} 条</span></div><div class="module-body" style="padding:0"><table class="detail-table patterns-table"><thead><tr><th>序号</th><th>句型</th><th>状态</th><th>操作</th></tr></thead><tbody>${items.map((item) => {
@@ -1584,13 +1586,22 @@ function renderNounPatternDetail(number) {
   const item = (window.SSS_NOUN_DETAILS || []).find((entry) => entry.number === Number(number));
   if (!item) return;
   const panel = document.getElementById("card-subtab-panel");
+  document.querySelector("#view-cards .filter-hero").style.display = "none";
   document.getElementById("card-grid").style.display = "none";
   document.getElementById("filter-hero-badge").style.display = "none";
   document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
   const done = patternIsDone("名词卡", item.number);
+  const grammarLink = (window.SUSAN_GRAMMAR_LINKS || []).find(link => link.code === `A-${String(item.number).padStart(3, "0")}`);
+  const theoryLink = (pattern) => pattern ? `https://jingjie0209.github.io/susan-grammar-study-notes/${encodeURI(pattern)}` : "";
+  const linkButtons = [
+    grammarLink?.video ? { label: "▶ 原视频", href: grammarLink.video } : null,
+    grammarLink?.core ? { label: "📘 精简理论", href: theoryLink(grammarLink.core) } : null,
+    grammarLink?.detail ? { label: "📗 详细理论", href: theoryLink(grammarLink.detail) } : null,
+    grammarLink?.ladder ? { label: "🪜 句型阶梯", href: theoryLink(grammarLink.ladder) } : null
+  ].filter(Boolean);
   panel.innerHTML = `
     <button class="detail-back" data-back-patterns>← 返回基础句型</button>
-    <section class="detail-head"><span>名词句型 · ${escapeHtml(item.code)}</span><h1>${escapeHtml(item.pattern)}</h1><p>原表句型变化</p></section>
+    <section class="detail-head"><span>名词句型 · ${escapeHtml(item.code)}</span><h1>${escapeHtml(item.pattern)}</h1><div class="video-btn-row">${linkButtons.map(link => `<a class="tiny-action" href="${escapeHtml(link.href)}" target="_blank" rel="noopener">${escapeHtml(link.label)}</a>`).join("")}</div></section>
     <section class="module"><div class="module-head"><h2>句型变化</h2><span>来源于原表</span></div><div class="module-body" style="padding:0"><table class="detail-table"><thead><tr><th>句式</th><th>原表例句</th><th>是否完成</th></tr></thead><tbody>${item.forms.map((form) => `<tr><td><strong>${escapeHtml(form.label)}</strong></td><td>${escapeHtml(form.value)}</td><td>${statusBadgeHtml(done)}</td></tr>`).join("")}</tbody></table></div></section>
     <div style="margin-top:10px"><button class="tiny-action${done ? " done" : ""}" data-toggle-pattern="名词卡:${item.number}">${done ? "取消完成整句型" : "标记完成整句型"}</button></div>`;
 }
