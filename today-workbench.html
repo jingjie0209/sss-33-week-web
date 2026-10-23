@@ -587,21 +587,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792725464"></script>
-<script src="pattern-data.js?v=1792725464"></script>
-<script src="grammar-links-data.js?v=1792725464"></script>
-<script src="grammar-content-data.js?v=1792725464"></script>
-<script src="noun-detail-data.js?v=1792725464"></script>
-<script src="noun-card-data.js?v=1792725464"></script>
-<script src="checkin-data.js?v=1792725464"></script>
-<script src="games-data.js?v=1792725464"></script>
-<script src="rhyme-data.js?v=1792725464"></script>
-<script src="card-extensions.js?v=1792725464"></script>
-<script src="noun-repeat-data.js?v=1792725464"></script>
-<script src="guess-proper-data.js?v=1792725464"></script>
-<script src="things-card-data.js?v=1792725464"></script>
-<script src="verb-card-data.js?v=1792725464"></script>
-<script src="adjective-card-data.js?v=1792725464"></script>
+<script src="data.js?v=1792725681"></script>
+<script src="pattern-data.js?v=1792725681"></script>
+<script src="grammar-links-data.js?v=1792725681"></script>
+<script src="grammar-content-data.js?v=1792725681"></script>
+<script src="noun-detail-data.js?v=1792725681"></script>
+<script src="noun-card-data.js?v=1792725681"></script>
+<script src="checkin-data.js?v=1792725681"></script>
+<script src="games-data.js?v=1792725681"></script>
+<script src="rhyme-data.js?v=1792725681"></script>
+<script src="card-extensions.js?v=1792725681"></script>
+<script src="noun-repeat-data.js?v=1792725681"></script>
+<script src="guess-proper-data.js?v=1792725681"></script>
+<script src="things-card-data.js?v=1792725681"></script>
+<script src="verb-card-data.js?v=1792725681"></script>
+<script src="adjective-card-data.js?v=1792725681"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1108,7 +1108,7 @@ function render() {
     const stepDefs = [
     {
       key: "theory", num: 1, title: "理论学习", time: "", desc: "", patternText: plan?.pattern || pattern.pattern || "It's a/an ...",
-      action: `<button class="tiny-action${theoryDone ? " done" : ""}" data-step-toggle="theory">${theoryDone ? "已完成 ✓" : "去学习"}</button>`,
+      action: `<button class="tiny-action${theoryDone ? " done" : ""}" data-theory-open>${theoryDone ? "已完成 ✓" : "去学习"}</button>`,
       compact: true,
     },
     {
@@ -1215,6 +1215,20 @@ document.addEventListener("click", (event) => {
     saveState(GAME_KEY, gameState);
     toast(gameState.includes(id) ? "完成游戏，干得漂亮！" : "已取消");
     render();
+    return;
+  }
+  const theoryOpen = event.target.closest("[data-theory-open]");
+  if (theoryOpen) {
+    const plan = loadWeekPlan();
+    const fallbackPattern = patternForWeek(todayInfo().week);
+    const number = plan?.patternNumber ?? (window.SSS_NOUN_DETAILS || []).find(item => item.pattern === (plan?.pattern || fallbackPattern.pattern))?.number ?? fallbackPattern.number ?? 1;
+    switchTab("cards");
+    activeCardType = "noun";
+    document.querySelectorAll("#card-type-seg button").forEach(button => button.classList.toggle("active", button.dataset.cardType === "noun"));
+    activeCardSubtab = "patterns";
+    renderCardSubtab();
+    renderNounPatternDetail(number);
+    window.scrollTo({ top: 0, behavior: "smooth" });
     return;
   }
   const step = event.target.closest("[data-step-toggle]");
