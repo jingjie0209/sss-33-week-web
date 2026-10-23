@@ -587,21 +587,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792725681"></script>
-<script src="pattern-data.js?v=1792725681"></script>
-<script src="grammar-links-data.js?v=1792725681"></script>
-<script src="grammar-content-data.js?v=1792725681"></script>
-<script src="noun-detail-data.js?v=1792725681"></script>
-<script src="noun-card-data.js?v=1792725681"></script>
-<script src="checkin-data.js?v=1792725681"></script>
-<script src="games-data.js?v=1792725681"></script>
-<script src="rhyme-data.js?v=1792725681"></script>
-<script src="card-extensions.js?v=1792725681"></script>
-<script src="noun-repeat-data.js?v=1792725681"></script>
-<script src="guess-proper-data.js?v=1792725681"></script>
-<script src="things-card-data.js?v=1792725681"></script>
-<script src="verb-card-data.js?v=1792725681"></script>
-<script src="adjective-card-data.js?v=1792725681"></script>
+<script src="data.js?v=1792726173"></script>
+<script src="pattern-data.js?v=1792726173"></script>
+<script src="grammar-links-data.js?v=1792726173"></script>
+<script src="grammar-content-data.js?v=1792726173"></script>
+<script src="noun-detail-data.js?v=1792726173"></script>
+<script src="noun-card-data.js?v=1792726173"></script>
+<script src="checkin-data.js?v=1792726173"></script>
+<script src="games-data.js?v=1792726173"></script>
+<script src="rhyme-data.js?v=1792726173"></script>
+<script src="card-extensions.js?v=1792726173"></script>
+<script src="noun-repeat-data.js?v=1792726173"></script>
+<script src="guess-proper-data.js?v=1792726173"></script>
+<script src="things-card-data.js?v=1792726173"></script>
+<script src="verb-card-data.js?v=1792726173"></script>
+<script src="adjective-card-data.js?v=1792726173"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1129,7 +1129,7 @@ function render() {
       : step.key === "sentence" ? Boolean(stepState[step.key])
       : Boolean(stepState[step.key]);
     const actions = step.custom ? "" : (step.action || "");
-    return `<section class="module"><div class="module-head"><div><h2><span class="module-icon">${icons[step.key]}</span>${escapeHtml(step.title)}</h2></div><span>${step.time}</span></div><div class="module-body">${step.compact && !step.custom ? `<div class="theory-line ${done ? "done" : ""}"><strong data-open-noun-pattern="${plan?.patternNumber ?? (window.SSS_NOUN_DETAILS || []).find(item => item.pattern === step.patternText)?.number ?? 1}">${escapeHtml(step.patternText)}</strong><button class="tiny-action${done ? " done" : ""}" data-step-toggle="theory">${done ? "已完成 ✓" : "去学习"}</button></div>` : ""}${step.custom ? `<div>${step.custom}</div>` : ""}</div></section>`;
+    return `<section class="module"><div class="module-head"><div><h2><span class="module-icon">${icons[step.key]}</span>${escapeHtml(step.title)}</h2></div><span>${step.time}</span></div><div class="module-body">${step.compact && !step.custom ? `<div class="theory-line ${done ? "done" : ""}"><strong data-open-noun-pattern="${plan?.patternNumber ?? (window.SSS_NOUN_DETAILS || []).find(item => item.pattern === step.patternText)?.number ?? 1}">${escapeHtml(step.patternText)}</strong><button class="tiny-action${done ? " done" : ""}" data-theory-open>${done ? "已完成 ✓" : "去学习"}</button></div>` : ""}${step.custom ? `<div>${step.custom}</div>` : ""}</div></section>`;
   }).join("");
 
   document.getElementById("steps-root").insertAdjacentHTML("beforeend", `<section class="module"><div class="module-head"><div><h2><span class="module-icon">4</span>本周儿歌 ${weekSongs.length}</h2></div><span>${weekDone}/${weekSongs.length} 已完成</span></div><div class="module-body"><div class="song-list">${weekSongs.map((item, index) => `<div class="song-item ${isDone(item.sheet) ? "done" : ""}"><div><strong><span class="song-no">${String(index + 1).padStart(2, "0")}</span>${escapeHtml(item.title)}</strong></div><div style="display:flex;align-items:center;gap:8px"><button class="tiny-action" data-toggle-song="${escapeHtml(item.sheet)}">${isDone(item.sheet) ? "取消" : "完成"}</button></div></div>`).join("")}</div></div></section>`);
