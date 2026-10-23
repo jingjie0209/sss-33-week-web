@@ -221,11 +221,14 @@ button { cursor: pointer; }
 .status-badge.done { background: var(--green-soft); color: var(--green); }
 
 /* ===== 卡库筛选 Hero（参考"北京必游榜"样式） ===== */
-.filter-hero { padding: 17px 15px 26px; border-radius: 26px 26px 30px 30px; margin-bottom: 10px; color: #fff; background: linear-gradient(145deg, #5148d9, #7564e4 56%, #9d8bff); box-shadow: 0 20px 42px #4f46e530; position: relative; overflow: hidden; }
+.filter-hero { padding: 17px 15px 46px; border-radius: 26px 26px 30px 30px; margin-bottom: 10px; color: #fff; background: linear-gradient(145deg, #5148d9, #7564e4 56%, #9d8bff); box-shadow: 0 20px 42px #4f46e530; position: relative; overflow: hidden; }
 .filter-hero::before { content: ""; position: absolute; left: -30px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: #ffffff17; pointer-events: none; }
 .filter-hero::after { content: ""; position: absolute; right: -40px; top: 30%; width: 180px; height: 180px; border-radius: 50%; background: #ffffff0d; pointer-events: none; }
 .filter-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; position: relative; z-index: 2; }
-.filter-hero-badge { position: absolute; right: 14px; bottom: 10px; padding: 5px 12px; border-radius: 999px; background: #ffffff1f; font-size: 11px; font-weight: 800; color: #fff; }
+.filter-hero-bottombar { position: absolute; left: 0; right: 0; bottom: 0; display: flex; align-items: center; gap: 10px; padding: 8px 20px 10px; background: #ffffff14; }
+.filter-hero-bar { flex: 1; height: 6px; border-radius: 999px; background: #ffffff3d; overflow: hidden; }
+.filter-hero-bar i { display: block; height: 100%; width: 0; border-radius: 999px; background: #fff; transition: width .3s ease; }
+.filter-hero-count { flex: none; color: #dedcff; font-size: 11.5px; font-weight: 800; }
 .filter-line { display: flex; gap: 7px; overflow-x: auto; scrollbar-width: none; position: relative; z-index: 2; }
 .filter-line::-webkit-scrollbar { display: none; }
 .filter-line button { flex: none; min-height: 32px; padding: 6px 14px; border: 0; border-radius: 999px; background: #ffffff21; color: #eae7ff; font-size: 12.5px; font-weight: 700; }
@@ -488,7 +491,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 
   <div id="view-cards" class="tab-view">
     <div class="filter-hero">
-      <div class="filter-hero-badge" id="filter-hero-badge">已学 0</div>
+      <div class="filter-hero-bottombar"><div class="filter-hero-bar"><i id="filter-hero-fill" style="width:0%"></i></div><span class="filter-hero-count" id="filter-hero-badge">0/100</span></div>
       <div class="filter-line filter-line-main" id="card-type-seg">
         <button class="active" data-card-type="noun">名词</button>
         <button data-card-type="verb">动词</button>
@@ -584,21 +587,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792724841"></script>
-<script src="pattern-data.js?v=1792724841"></script>
-<script src="grammar-links-data.js?v=1792724841"></script>
-<script src="grammar-content-data.js?v=1792724841"></script>
-<script src="noun-detail-data.js?v=1792724841"></script>
-<script src="noun-card-data.js?v=1792724841"></script>
-<script src="checkin-data.js?v=1792724841"></script>
-<script src="games-data.js?v=1792724841"></script>
-<script src="rhyme-data.js?v=1792724841"></script>
-<script src="card-extensions.js?v=1792724841"></script>
-<script src="noun-repeat-data.js?v=1792724841"></script>
-<script src="guess-proper-data.js?v=1792724841"></script>
-<script src="things-card-data.js?v=1792724841"></script>
-<script src="verb-card-data.js?v=1792724841"></script>
-<script src="adjective-card-data.js?v=1792724841"></script>
+<script src="data.js?v=1792725063"></script>
+<script src="pattern-data.js?v=1792725063"></script>
+<script src="grammar-links-data.js?v=1792725063"></script>
+<script src="grammar-content-data.js?v=1792725063"></script>
+<script src="noun-detail-data.js?v=1792725063"></script>
+<script src="noun-card-data.js?v=1792725063"></script>
+<script src="checkin-data.js?v=1792725063"></script>
+<script src="games-data.js?v=1792725063"></script>
+<script src="rhyme-data.js?v=1792725063"></script>
+<script src="card-extensions.js?v=1792725063"></script>
+<script src="noun-repeat-data.js?v=1792725063"></script>
+<script src="guess-proper-data.js?v=1792725063"></script>
+<script src="things-card-data.js?v=1792725063"></script>
+<script src="verb-card-data.js?v=1792725063"></script>
+<script src="adjective-card-data.js?v=1792725063"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1545,7 +1548,8 @@ function renderCards() {
   }).join("") || `<div class="empty">没有符合条件的卡片</div>`;
   const checkinId = checkinIdFor(activeCardType);
   const mastered = cards.filter((card) => checkinState[`${checkinId}:${card.number}`]).length;
-  document.getElementById("filter-hero-badge").textContent = `已学 ${mastered}/${cards.length}`;
+  document.getElementById("filter-hero-badge").textContent = `${mastered}/${cards.length}`;
+  document.getElementById("filter-hero-fill").style.width = `${cards.length ? Math.round(mastered / cards.length * 100) : 0}%`;
 }
 
 function renderSpeaking() {
