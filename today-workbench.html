@@ -352,9 +352,13 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .detail-table { width: 100%; border-collapse: collapse; table-layout: fixed; }
 .detail-table th, .detail-table td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #eceef5; font-size: 12.5px; line-height: 1.5; }
 .detail-table th { color: var(--muted-2); font-size: 11px; font-weight: 700; }
+.patterns-table th { white-space: nowrap; }
 .patterns-table th:nth-child(1), .patterns-table td:nth-child(1) { width: 36px; }
-.patterns-table th:nth-child(3), .patterns-table td:nth-child(3) { width: 58px; }
+.patterns-table th:nth-child(3), .patterns-table td:nth-child(3) { width: 0; }
 .patterns-table th:nth-child(4), .patterns-table td:nth-child(4) { width: 52px; }
+.patterns-table .status-badge { display: none; }
+.patterns-table .pattern-detail-link { font-weight: 400; color: var(--ink); }
+.patterns-table .pattern-cell { display: block; font-weight: 400; }
 .patterns-table .tiny-action { min-height: 32px; padding: 6px 8px; font-size: 11px; white-space: nowrap; }
 .patterns-table .status-badge { display: inline-block; white-space: nowrap; }
 .pattern-cell { min-width: 0; overflow-wrap: anywhere; }
@@ -580,21 +584,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792723539"></script>
-<script src="pattern-data.js?v=1792723539"></script>
-<script src="grammar-links-data.js?v=1792723539"></script>
-<script src="grammar-content-data.js?v=1792723539"></script>
-<script src="noun-detail-data.js?v=1792723539"></script>
-<script src="noun-card-data.js?v=1792723539"></script>
-<script src="checkin-data.js?v=1792723539"></script>
-<script src="games-data.js?v=1792723539"></script>
-<script src="rhyme-data.js?v=1792723539"></script>
-<script src="card-extensions.js?v=1792723539"></script>
-<script src="noun-repeat-data.js?v=1792723539"></script>
-<script src="guess-proper-data.js?v=1792723539"></script>
-<script src="things-card-data.js?v=1792723539"></script>
-<script src="verb-card-data.js?v=1792723539"></script>
-<script src="adjective-card-data.js?v=1792723539"></script>
+<script src="data.js?v=1792724841"></script>
+<script src="pattern-data.js?v=1792724841"></script>
+<script src="grammar-links-data.js?v=1792724841"></script>
+<script src="grammar-content-data.js?v=1792724841"></script>
+<script src="noun-detail-data.js?v=1792724841"></script>
+<script src="noun-card-data.js?v=1792724841"></script>
+<script src="checkin-data.js?v=1792724841"></script>
+<script src="games-data.js?v=1792724841"></script>
+<script src="rhyme-data.js?v=1792724841"></script>
+<script src="card-extensions.js?v=1792724841"></script>
+<script src="noun-repeat-data.js?v=1792724841"></script>
+<script src="guess-proper-data.js?v=1792724841"></script>
+<script src="things-card-data.js?v=1792724841"></script>
+<script src="verb-card-data.js?v=1792724841"></script>
+<script src="adjective-card-data.js?v=1792724841"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1582,13 +1586,13 @@ function renderPatternsTable() {
   document.querySelector("#view-cards .filter-hero").style.display = "";
   const typeLabel = { noun: "名词卡", verb: "动词卡", adjective: "形容词卡" }[activeCardType];
   const items = (patterns || []).filter((item) => item.type === typeLabel);
-  panel.innerHTML = `<section class="module"><div class="module-head"><h2>基础句型</h2><span>${items.length} 条</span></div><div class="module-body" style="padding:0"><table class="detail-table patterns-table"><thead><tr><th>序号</th><th>句型</th><th>状态</th><th>操作</th></tr></thead><tbody>${items.map((item) => {
+  panel.innerHTML = `<section class="module"><div class="module-head"><h2>基础句型</h2><span>${items.length} 条</span></div><div class="module-body" style="padding:0"><table class="detail-table patterns-table"><thead><tr><th>序号</th><th>句型</th><th>操作</th></tr></thead><tbody>${items.map((item) => {
     const done = patternIsDone(typeLabel, item.number);
     const clickable = activeCardType === "noun" && (window.SSS_NOUN_DETAILS || []).some((entry) => entry.number === item.number);
     const patternCell = clickable
       ? `<button class="pattern-detail-link" data-noun-pattern="${item.number}">${escapeHtml(item.pattern)}</button>`
       : `<strong>${escapeHtml(item.pattern)}</strong>`;
-    return `<tr><td>${item.number}</td><td><span class="pattern-cell">${patternCell}</span></td><td>${statusBadgeHtml(done)}</td><td><button class="tiny-action" data-toggle-pattern="${escapeHtml(typeLabel)}:${item.number}">${done ? "取消完成" : "完成"}</button></td></tr>`;
+    return `<tr><td>${item.number}</td><td><span class="pattern-cell">${patternCell}</span></td><td><button class="tiny-action" data-toggle-pattern="${escapeHtml(typeLabel)}:${item.number}">${done ? "取消完成" : "完成"}</button></td></tr>`;
   }).join("")}</tbody></table></div></section>`;
 }
 
