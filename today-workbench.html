@@ -307,7 +307,7 @@ button { cursor: pointer; }
 .rhyme-tpr-row { display: flex; justify-content: space-between; gap: 10px; padding: 9px 11px; border: 1px solid var(--line); border-radius: 12px; background: #fafbff; font-size: 12.5px; }
 .rhyme-tpr-row b { color: var(--ink); }
 .rhyme-tpr-row span { color: var(--muted-2); }
-.empty-note { color: var(--muted-2); font-size: 12px; }
+.empty-note { color: var(--muted-2); font-size: 12px; white-space: nowrap; width: fit-content; max-width: 100%; overflow: visible; }
 
 /* ===== 游戏筛选 ===== */
 .game-filter-row { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -587,21 +587,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1792725063"></script>
-<script src="pattern-data.js?v=1792725063"></script>
-<script src="grammar-links-data.js?v=1792725063"></script>
-<script src="grammar-content-data.js?v=1792725063"></script>
-<script src="noun-detail-data.js?v=1792725063"></script>
-<script src="noun-card-data.js?v=1792725063"></script>
-<script src="checkin-data.js?v=1792725063"></script>
-<script src="games-data.js?v=1792725063"></script>
-<script src="rhyme-data.js?v=1792725063"></script>
-<script src="card-extensions.js?v=1792725063"></script>
-<script src="noun-repeat-data.js?v=1792725063"></script>
-<script src="guess-proper-data.js?v=1792725063"></script>
-<script src="things-card-data.js?v=1792725063"></script>
-<script src="verb-card-data.js?v=1792725063"></script>
-<script src="adjective-card-data.js?v=1792725063"></script>
+<script src="data.js?v=1792725294"></script>
+<script src="pattern-data.js?v=1792725294"></script>
+<script src="grammar-links-data.js?v=1792725294"></script>
+<script src="grammar-content-data.js?v=1792725294"></script>
+<script src="noun-detail-data.js?v=1792725294"></script>
+<script src="noun-card-data.js?v=1792725294"></script>
+<script src="checkin-data.js?v=1792725294"></script>
+<script src="games-data.js?v=1792725294"></script>
+<script src="rhyme-data.js?v=1792725294"></script>
+<script src="card-extensions.js?v=1792725294"></script>
+<script src="noun-repeat-data.js?v=1792725294"></script>
+<script src="guess-proper-data.js?v=1792725294"></script>
+<script src="things-card-data.js?v=1792725294"></script>
+<script src="verb-card-data.js?v=1792725294"></script>
+<script src="adjective-card-data.js?v=1792725294"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -2199,7 +2199,7 @@ function renderGamesTab() {
         <option value="adj" selected>名词+动词+形容词</option>
       </select></div><div class="module-body">
       <div style="display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap"><button class="tiny-action" id="sentence-roll">🎲 随机抽卡</button><button class="tiny-action" id="sentence-roll-learned">🎯 抽已学词卡</button><button class="tiny-action" id="sentence-clear">清空</button></div>
-      <div id="sentence-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px"></div>
+      <div id="sentence-cards" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;justify-items:center"></div>
       <div id="sentence-primary-host" style="display:flex;justify-content:center;margin:16px 0"></div>
       <div id="sentence-result" class="module" style="margin:0;background:#fafbff"></div>
     </div></section>`;
