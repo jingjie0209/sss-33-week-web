@@ -20,6 +20,8 @@
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; background: var(--canvas); color: var(--ink); font-family: "Avenir Next", "SF Pro Text", ui-sans-serif, system-ui, -apple-system, "PingFang SC", "Microsoft YaHei", sans-serif; -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+body.auth-locked > :not(.auth-gate) { visibility: hidden !important; }
+body.auth-locked { overflow: hidden; }
 body::before { content: ""; position: fixed; inset: 0; z-index: -1; background: radial-gradient(circle at 16% 10%, #ece9ff 0%, transparent 36%), radial-gradient(circle at 88% 20%, #fff3d7 0%, transparent 30%), var(--canvas); opacity: .72; }
 button, input, select { font: inherit; }
 button { cursor: pointer; }
@@ -433,6 +435,17 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .page-foot p { margin: 0 0 5px; }
 .toast { position: fixed; left: 50%; bottom: 96px; z-index: 80; transform: translateX(-50%); padding: 10px 16px; border-radius: 999px; color: #fff; background: #171c38; font-size: 12px; box-shadow: 0 10px 26px #1f26512e; }
 
+.auth-gate { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px; background: radial-gradient(circle at 18% 15%, #ece9ff 0%, transparent 38%), radial-gradient(circle at 85% 25%, #fff4d9 0%, transparent 32%), var(--canvas); }
+.auth-gate[hidden] { display: none; }
+.auth-card { width: min(360px, 100%); padding: 28px 24px; border: 1px solid #e9e6fb; border-radius: 28px; background: #fff; box-shadow: 0 22px 50px #2b255820; text-align: center; }
+.auth-mark { width: 52px; height: 52px; margin: 0 auto 14px; display: grid; place-items: center; border-radius: 18px; background: linear-gradient(145deg,#6154e8,#8271ff); color: #fff; font-weight: 950; font-size: 14px; box-shadow: 0 10px 22px #4f46e540; }
+.auth-card h1 { margin: 0; font-size: 19px; }
+.auth-card p { margin: 7px 0 18px; color: var(--muted-2); font-size: 12.5px; }
+.auth-card input { width: 100%; min-height: 44px; margin-bottom: 12px; padding: 10px 14px; border: 1px solid var(--line); border-radius: 14px; background: #fbfbff; font-size: 14px; text-align: center; }
+.auth-card .button { width: 100%; }
+.auth-error { display: block; margin-top: 10px; color: #b42318; font-size: 11.5px; font-weight: 800; }
+.auth-error[hidden] { display: none; }
+
 /* ===== 底部 Tab（毛玻璃白底 + 渐变激活态） ===== */
 .tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 50; width: 100%; max-width: 480px; display: flex; justify-content: space-around; gap: 2px; padding: 8px 9px calc(9px + env(safe-area-inset-bottom)); background: #ffffffee; backdrop-filter: blur(20px) saturate(1.25); border-top: 1px solid #f0f1fa; box-shadow: 0 -10px 26px #1f265112; }
 .tabbar button { flex: 1; display: grid; justify-items: center; gap: 3px; padding: 7px 2px; border: 0; border-radius: 14px; background: none; color: #8b90a9; font-size: 10.5px; font-weight: 850; }
@@ -578,6 +591,17 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   </div>
 </div>
 
+<div class="auth-gate" id="auth-gate">
+  <div class="auth-card">
+    <div class="auth-mark">SSS</div>
+    <h1>请输入访问密钥</h1>
+    <p>本学习台仅供授权家庭使用。</p>
+    <input id="auth-key" type="password" placeholder="输入密钥" autocomplete="off">
+    <button class="button" id="auth-submit" type="button">进入学习台</button>
+    <small id="auth-error" class="auth-error" hidden>密钥不正确，请重试。</small>
+  </div>
+</div>
+
 <nav class="tabbar" id="tabbar">
   <button class="active" data-tab="today"><i></i>今日</button>
   <button data-tab="cards"><i></i>卡库</button>
@@ -586,21 +610,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793005129"></script>
-<script src="pattern-data.js?v=1793005129"></script>
-<script src="grammar-links-data.js?v=1793005129"></script>
-<script src="grammar-content-data.js?v=1793005129"></script>
-<script src="noun-detail-data.js?v=1793005129"></script>
-<script src="noun-card-data.js?v=1793005129"></script>
-<script src="checkin-data.js?v=1793005129"></script>
-<script src="games-data.js?v=1793005129"></script>
-<script src="rhyme-data.js?v=1793005129"></script>
-<script src="card-extensions.js?v=1793005129"></script>
-<script src="noun-repeat-data.js?v=1793005129"></script>
-<script src="guess-proper-data.js?v=1793005129"></script>
-<script src="things-card-data.js?v=1793005129"></script>
-<script src="verb-card-data.js?v=1793005129"></script>
-<script src="adjective-card-data.js?v=1793005129"></script>
+<script src="data.js?v=1793006294"></script>
+<script src="pattern-data.js?v=1793006294"></script>
+<script src="grammar-links-data.js?v=1793006294"></script>
+<script src="grammar-content-data.js?v=1793006294"></script>
+<script src="noun-detail-data.js?v=1793006294"></script>
+<script src="noun-card-data.js?v=1793006294"></script>
+<script src="checkin-data.js?v=1793006294"></script>
+<script src="games-data.js?v=1793006294"></script>
+<script src="rhyme-data.js?v=1793006294"></script>
+<script src="card-extensions.js?v=1793006294"></script>
+<script src="noun-repeat-data.js?v=1793006294"></script>
+<script src="guess-proper-data.js?v=1793006294"></script>
+<script src="things-card-data.js?v=1793006294"></script>
+<script src="verb-card-data.js?v=1793006294"></script>
+<script src="adjective-card-data.js?v=1793006294"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -2558,6 +2582,21 @@ window.addEventListener("storage", (event) => {
   songState = loadState(STORAGE_KEY, {});
   render();
 });
+
+const ACCESS_KEY = "SUSAN-2026";
+const AUTH_KEY_STORE = "sss-workbench-access-v1";
+const authGate = document.getElementById("auth-gate");
+const isAuthorized = () => sessionStorage.getItem(AUTH_KEY_STORE) === "1";
+const showApp = () => { authGate.hidden = true; document.body.classList.remove("auth-locked"); };
+const showGate = () => { authGate.hidden = false; document.body.classList.add("auth-locked"); };
+const submitAccess = () => {
+  const value = document.getElementById("auth-key").value.trim();
+  if (value === ACCESS_KEY) { sessionStorage.setItem(AUTH_KEY_STORE, "1"); showApp(); render(); document.getElementById("auth-error").hidden = true; }
+  else { document.getElementById("auth-error").hidden = false; }
+};
+document.getElementById("auth-submit").addEventListener("click", submitAccess);
+document.getElementById("auth-key").addEventListener("keydown", (event) => { if (event.key === "Enter") submitAccess(); });
+if (!isAuthorized()) { showGate(); } else { showApp(); }
 
 if (!weeks || !weeks.length) {
   document.querySelector(".page").innerHTML = `<section class="module"><div class="module-body"><p>数据加载失败，请确认和 index.html 在同一目录。</p></div></section>`;
