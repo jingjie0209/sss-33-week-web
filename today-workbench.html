@@ -45,6 +45,7 @@ button { cursor: pointer; }
 .brand-mark { width: 42px; height: 42px; flex: none; display: grid; place-items: center; border-radius: 14px; background: linear-gradient(145deg, #5548e6, #8271ff); color: #fff; font-weight: 900; font-size: 12.5px; box-shadow: 0 8px 18px #3b2ff222, inset 0 1px 0 #ffffff66; }
 .brand-copy strong { display: block; font-size: 17px; letter-spacing: .01em; color: var(--ink); }
 .brand-copy small { display: block; margin-top: 2px; color: var(--muted-2); font-size: 11.5px; }
+.auth-owner { display: inline-block; margin-left: 8px; padding: 2px 7px; border-radius: 999px; background: var(--brand-soft); color: #5850d0; font-size: 10px; font-weight: 900; vertical-align: 1px; }
 .site-link { flex: none; padding: 10px 14px; border: 1px solid #ffffff; border-radius: 14px; background: linear-gradient(180deg,#ffffff,#f6f5ff); color: #554dca; font-size: 12.5px; font-weight: 800; text-decoration: none; box-shadow: 0 7px 16px #221b8318, inset 0 1px 0 #ffffff; }
 .site-link:hover { background: #fff; box-shadow: 0 8px 18px #221b8326; }
 
@@ -465,7 +466,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <div class="topbar-inner">
     <div class="brand">
       <span class="brand-mark">SSS</span>
-      <div class="brand-copy"><strong>今日学习工作台</strong><small>每天 12 分钟 · 把一句话说出来</small></div>
+      <div class="brand-copy"><strong>今日学习工作台</strong><small>每天 12 分钟 · 把一句话说出来<span id="auth-owner" class="auth-owner"></span></small></div>
     </div>
     <a class="site-link" href="index.html" target="_blank" rel="noopener">打开完整学习站 ↗</a>
   </div>
@@ -610,21 +611,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793006294"></script>
-<script src="pattern-data.js?v=1793006294"></script>
-<script src="grammar-links-data.js?v=1793006294"></script>
-<script src="grammar-content-data.js?v=1793006294"></script>
-<script src="noun-detail-data.js?v=1793006294"></script>
-<script src="noun-card-data.js?v=1793006294"></script>
-<script src="checkin-data.js?v=1793006294"></script>
-<script src="games-data.js?v=1793006294"></script>
-<script src="rhyme-data.js?v=1793006294"></script>
-<script src="card-extensions.js?v=1793006294"></script>
-<script src="noun-repeat-data.js?v=1793006294"></script>
-<script src="guess-proper-data.js?v=1793006294"></script>
-<script src="things-card-data.js?v=1793006294"></script>
-<script src="verb-card-data.js?v=1793006294"></script>
-<script src="adjective-card-data.js?v=1793006294"></script>
+<script src="data.js?v=1793006853"></script>
+<script src="pattern-data.js?v=1793006853"></script>
+<script src="grammar-links-data.js?v=1793006853"></script>
+<script src="grammar-content-data.js?v=1793006853"></script>
+<script src="noun-detail-data.js?v=1793006853"></script>
+<script src="noun-card-data.js?v=1793006853"></script>
+<script src="checkin-data.js?v=1793006853"></script>
+<script src="games-data.js?v=1793006853"></script>
+<script src="rhyme-data.js?v=1793006853"></script>
+<script src="card-extensions.js?v=1793006853"></script>
+<script src="noun-repeat-data.js?v=1793006853"></script>
+<script src="guess-proper-data.js?v=1793006853"></script>
+<script src="things-card-data.js?v=1793006853"></script>
+<script src="verb-card-data.js?v=1793006853"></script>
+<script src="adjective-card-data.js?v=1793006853"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -2583,15 +2584,23 @@ window.addEventListener("storage", (event) => {
   render();
 });
 
-const ACCESS_KEY = "SUSAN-2026";
+const ACCESS_KEYS = {
+  "SUSAN-A": "A 家庭",
+  "SUSAN-B": "B 家庭",
+  "SUSAN-C": "C 家庭",
+  "SUSAN-2026": "试用密钥"
+};
+
 const AUTH_KEY_STORE = "sss-workbench-access-v1";
 const authGate = document.getElementById("auth-gate");
-const isAuthorized = () => sessionStorage.getItem(AUTH_KEY_STORE) === "1";
-const showApp = () => { authGate.hidden = true; document.body.classList.remove("auth-locked"); };
+const readAuth = () => { try { const auth = JSON.parse(sessionStorage.getItem(AUTH_KEY_STORE) || "null"); return auth?.ok ? auth : null; } catch { return null; } };
+const isAuthorized = () => Boolean(readAuth());
+const showApp = () => { authGate.hidden = true; document.body.classList.remove("auth-locked"); const owner = readAuth()?.owner; document.getElementById("auth-owner").textContent = owner ? `当前密钥：${owner}` : ""; };
 const showGate = () => { authGate.hidden = false; document.body.classList.add("auth-locked"); };
 const submitAccess = () => {
   const value = document.getElementById("auth-key").value.trim();
-  if (value === ACCESS_KEY) { sessionStorage.setItem(AUTH_KEY_STORE, "1"); showApp(); render(); document.getElementById("auth-error").hidden = true; }
+  const owner = ACCESS_KEYS[value];
+  if (owner) { sessionStorage.setItem(AUTH_KEY_STORE, JSON.stringify({ ok: true, owner })); showApp(); render(); document.getElementById("auth-error").hidden = true; }
   else { document.getElementById("auth-error").hidden = false; }
 };
 document.getElementById("auth-submit").addEventListener("click", submitAccess);
