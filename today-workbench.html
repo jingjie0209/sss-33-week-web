@@ -3,7 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="theme-color" content="#176b70">
+<meta name="theme-color" content="#6154e8">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="SSS工作台">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/icons/icon-192.png">
 <meta name="description" content="今日学习工作台：一句话把今天的英语启蒙说出来。">
 <title>今日学习工作台</title>
 <link rel="icon" href="data:,">
@@ -2606,6 +2611,8 @@ const submitAccess = () => {
 document.getElementById("auth-submit").addEventListener("click", submitAccess);
 document.getElementById("auth-key").addEventListener("keydown", (event) => { if (event.key === "Enter") submitAccess(); });
 if (!isAuthorized()) { showGate(); } else { showApp(); }
+
+if ("serviceWorker" in navigator) { navigator.serviceWorker.register("service-worker.js").catch(() => {}); }
 
 if (!weeks || !weeks.length) {
   document.querySelector(".page").innerHTML = `<section class="module"><div class="module-body"><p>数据加载失败，请确认和 index.html 在同一目录。</p></div></section>`;
