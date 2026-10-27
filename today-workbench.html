@@ -58,7 +58,7 @@ button { cursor: pointer; }
 .page { max-width: 480px; margin: 0 auto; padding: 18px 16px 140px; }
 
 /* ===== Hero / 周计划选择 ===== */
-.hero { position: relative; overflow: hidden; padding: 25px 24px 30px; border-radius: 28px; background: linear-gradient(145deg, #5148d9, #7564e4 54%, #9d8bff 100%); color: #fff; box-shadow: 0 20px 42px #4f46e535, inset 0 1px 0 #ffffff66; }
+.hero { position: sticky; top: 69px; z-index: 24; height: 120px; overflow: hidden; display: flex; flex-direction: column; justify-content: center; padding: 0 24px; border-radius: 26px; background: linear-gradient(145deg, #5148d9, #7564e4 54%, #9d8bff 100%); color: #fff; box-shadow: 0 20px 42px #4f46e535, inset 0 1px 0 #ffffff66; }
 .hero::before { content: ""; position: absolute; right: -50px; top: -60px; width: 190px; height: 190px; border-radius: 50%; background: #ffffff18; pointer-events: none; }
 .hero::after { content: ""; position: absolute; left: -40px; bottom: -60px; width: 170px; height: 170px; border-radius: 50%; background: #ffffff0f; pointer-events: none; }
 .hero-kicker { margin: 0; color: #e3e0ff; font-size: 11px; font-weight: 900; letter-spacing: .14em; position: relative; z-index: 1; }
@@ -229,7 +229,10 @@ button { cursor: pointer; }
 .status-badge.done { background: var(--green-soft); color: var(--green); }
 
 /* ===== 卡库筛选 Hero（参考"北京必游榜"样式） ===== */
-.filter-hero { padding: 17px 15px 46px; border-radius: 26px 26px 30px 30px; margin-bottom: 10px; color: #fff; background: linear-gradient(145deg, #5148d9, #7564e4 56%, #9d8bff); box-shadow: 0 20px 42px #4f46e530; position: relative; overflow: hidden; }
+.filter-hero { position: sticky; top: 69px; z-index: 24; height: 120px; margin-bottom: 10px; border-radius: 26px; color: #fff; background: linear-gradient(145deg, #5148d9, #7564e4 56%, #9d8bff); box-shadow: 0 20px 42px #4f46e530; position: sticky; overflow: hidden; }
+.filter-hero .filter-line { position: absolute; left: 15px; right: 15px; top: 12px; }
+.filter-hero .filter-line-sub { top: 52px; }
+.filter-hero .filter-hero-bottombar { top: auto; bottom: 0; }
 .filter-hero::before { content: ""; position: absolute; left: -30px; top: -40px; width: 150px; height: 150px; border-radius: 50%; background: #ffffff17; pointer-events: none; }
 .filter-hero::after { content: ""; position: absolute; right: -40px; top: 30%; width: 180px; height: 180px; border-radius: 50%; background: #ffffff0d; pointer-events: none; }
 .filter-hero-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; position: relative; z-index: 2; }
@@ -256,7 +259,9 @@ button { cursor: pointer; }
 .card-seg button.active:hover { color: #fff; }
 
 /* ===== 儿歌 ===== */
-.rhyme-hero { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; padding: 20px 22px 48px; border-radius: 26px; background: linear-gradient(145deg, #5148d9, #7564e4 62%, #9d8bff); color: #fff; box-shadow: 0 20px 42px #4f46e530; position: relative; overflow: hidden; }
+.rhyme-hero { position: sticky; top: 69px; z-index: 24; height: 120px; display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 0 22px; border-radius: 26px; background: linear-gradient(145deg, #5148d9, #7564e4 62%, #9d8bff); color: #fff; box-shadow: 0 20px 42px #4f46e530; overflow: hidden; }
+.rhyme-hero .rhyme-hero-actions { position: absolute; right: 20px; top: 18px; margin: 0; }
+.rhyme-hero .rhyme-hero-bottombar { position: absolute; left: 0; right: 0; bottom: 0; }
 .rhyme-hero-actions { justify-content: flex-end; }
 .rhyme-hero span { display: block; font-size: 11.5px; font-weight: 800; letter-spacing: .08em; color: #dcd9ff; }
 .rhyme-hero strong { display: block; margin-top: 4px; font-size: 20px; }
@@ -277,7 +282,7 @@ button { cursor: pointer; }
 .rhyme-global-copy { min-width: 0; display: grid; gap: 2px; }
 .rhyme-global-copy b { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rhyme-global-copy small { color: var(--muted-2); font-size: 11px; }
-.rhyme-subtabs { position: sticky; top: 69px; z-index: 25; display: flex; gap: 6px; margin: 12px 0; overflow-x: auto; padding: 8px 2px; background: transparent; min-height: 44px; align-items: center; }
+.rhyme-subtabs { position: sticky; top: 195px; z-index: 25; display: flex; gap: 6px; margin: 12px 0; overflow-x: auto; padding: 8px 2px; background: transparent; min-height: 44px; align-items: center; }
 @media (max-width: 559px) { .rhyme-subtabs { top: 69px; margin: 0; border-radius: 0; } }
 .rhyme-subtabs button { flex: none; padding: 8px 15px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12.5px; font-weight: 800; }
 .rhyme-subtabs button:not(.active):hover { border-color: var(--line); color: var(--ink); }
@@ -615,21 +620,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793072911"></script>
-<script src="pattern-data.js?v=1793072911"></script>
-<script src="grammar-links-data.js?v=1793072911"></script>
-<script src="grammar-content-data.js?v=1793072911"></script>
-<script src="noun-detail-data.js?v=1793072911"></script>
-<script src="noun-card-data.js?v=1793072911"></script>
-<script src="checkin-data.js?v=1793072911"></script>
-<script src="games-data.js?v=1793072911"></script>
-<script src="rhyme-data.js?v=1793072911"></script>
-<script src="card-extensions.js?v=1793072911"></script>
-<script src="noun-repeat-data.js?v=1793072911"></script>
-<script src="guess-proper-data.js?v=1793072911"></script>
-<script src="things-card-data.js?v=1793072911"></script>
-<script src="verb-card-data.js?v=1793072911"></script>
-<script src="adjective-card-data.js?v=1793072911"></script>
+<script src="data.js?v=1793073369"></script>
+<script src="pattern-data.js?v=1793073369"></script>
+<script src="grammar-links-data.js?v=1793073369"></script>
+<script src="grammar-content-data.js?v=1793073369"></script>
+<script src="noun-detail-data.js?v=1793073369"></script>
+<script src="noun-card-data.js?v=1793073369"></script>
+<script src="checkin-data.js?v=1793073369"></script>
+<script src="games-data.js?v=1793073369"></script>
+<script src="rhyme-data.js?v=1793073369"></script>
+<script src="card-extensions.js?v=1793073369"></script>
+<script src="noun-repeat-data.js?v=1793073369"></script>
+<script src="guess-proper-data.js?v=1793073369"></script>
+<script src="things-card-data.js?v=1793073369"></script>
+<script src="verb-card-data.js?v=1793073369"></script>
+<script src="adjective-card-data.js?v=1793073369"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
