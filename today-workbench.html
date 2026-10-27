@@ -277,9 +277,10 @@ button { cursor: pointer; }
 .rhyme-global-copy { min-width: 0; display: grid; gap: 2px; }
 .rhyme-global-copy b { font-size: 13px; color: var(--ink); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .rhyme-global-copy small { color: var(--muted-2); font-size: 11px; }
-.rhyme-subtabs { position: sticky; top: 69px; z-index: 25; display: flex; gap: 6px; margin: 12px 0; overflow-x: auto; padding: 8px 2px; background: var(--canvas); border-bottom: 1px solid var(--line); min-height: 44px; align-items: center; }
+.rhyme-subtabs { position: sticky; top: 69px; z-index: 25; display: flex; gap: 6px; margin: 12px 0; overflow-x: auto; padding: 8px 2px; background: transparent; min-height: 44px; align-items: center; }
 @media (max-width: 559px) { .rhyme-subtabs { top: 69px; margin: 0; border-radius: 0; } }
 .rhyme-subtabs button { flex: none; padding: 8px 15px; border: 1px solid var(--line); border-radius: 999px; background: #fff; color: var(--muted); font-size: 12.5px; font-weight: 800; }
+.rhyme-subtabs button:not(.active):hover { border-color: var(--line); color: var(--ink); }
 .rhyme-subtabs button.active { background: linear-gradient(145deg, #4d45cc, #7566e3); border-color: transparent; color: #fff; box-shadow: 0 6px 16px #2c248c26; }
 .rhyme-subtab-count { flex: none; margin-left: auto; padding: 6px 10px; border-radius: 999px; background: var(--brand-soft); color: var(--brand); font-size: 11.5px; font-weight: 800; white-space: nowrap; }
 .rhyme-group { margin-bottom: 12px; padding: 14px 15px; border: 1px solid var(--line); border-radius: 18px; background: #fff; box-shadow: var(--shadow-sm); }
@@ -541,7 +542,6 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
       <button data-rhyme-section="plan">打卡计划</button>
       <button data-rhyme-section="scene">场景儿歌</button>
       <button data-rhyme-section="tpr">TPR儿歌</button>
-      <span class="rhyme-subtab-count" id="rhyme-subtab-count"></span>
     </nav>
     <div id="rhyme-body"></div>
   </div>
@@ -615,21 +615,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793069254"></script>
-<script src="pattern-data.js?v=1793069254"></script>
-<script src="grammar-links-data.js?v=1793069254"></script>
-<script src="grammar-content-data.js?v=1793069254"></script>
-<script src="noun-detail-data.js?v=1793069254"></script>
-<script src="noun-card-data.js?v=1793069254"></script>
-<script src="checkin-data.js?v=1793069254"></script>
-<script src="games-data.js?v=1793069254"></script>
-<script src="rhyme-data.js?v=1793069254"></script>
-<script src="card-extensions.js?v=1793069254"></script>
-<script src="noun-repeat-data.js?v=1793069254"></script>
-<script src="guess-proper-data.js?v=1793069254"></script>
-<script src="things-card-data.js?v=1793069254"></script>
-<script src="verb-card-data.js?v=1793069254"></script>
-<script src="adjective-card-data.js?v=1793069254"></script>
+<script src="data.js?v=1793069744"></script>
+<script src="pattern-data.js?v=1793069744"></script>
+<script src="grammar-links-data.js?v=1793069744"></script>
+<script src="grammar-content-data.js?v=1793069744"></script>
+<script src="noun-detail-data.js?v=1793069744"></script>
+<script src="noun-card-data.js?v=1793069744"></script>
+<script src="checkin-data.js?v=1793069744"></script>
+<script src="games-data.js?v=1793069744"></script>
+<script src="rhyme-data.js?v=1793069744"></script>
+<script src="card-extensions.js?v=1793069744"></script>
+<script src="noun-repeat-data.js?v=1793069744"></script>
+<script src="guess-proper-data.js?v=1793069744"></script>
+<script src="things-card-data.js?v=1793069744"></script>
+<script src="verb-card-data.js?v=1793069744"></script>
+<script src="adjective-card-data.js?v=1793069744"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1896,8 +1896,6 @@ const sectionSongCounts = () => ({
 
 function renderRhyme() {
   const counts = sectionSongCounts();
-  const countLabel = document.getElementById("rhyme-subtab-count");
-  if (countLabel) countLabel.textContent = `${counts[rhymeSection]} 首`;
   const allSongs = rhymeAllSongs();
   const total = allSongs.length;
   const done = allSongs.filter((song) => isRhymeDone(song.id)).length;
