@@ -139,13 +139,13 @@ button { cursor: pointer; }
 .flashcards { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
 .flashcards-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
 .flashcards-3 .flashcard-body { padding: 7px 8px 8px; }
-.flashcards-3 .flashcard-body small { font-size: 9px; }
+.plan-flashcard .plan-flash-state { position: absolute; left: 6px; bottom: 6px; z-index: 2; display: inline-block; margin: 0; padding: 3px 7px; border-radius: 999px; font-size: 9px; background: #ffffffe8; color: var(--muted-2); box-shadow: 0 2px 6px #1f265118; }
+.plan-flashcard.learned .plan-flash-state { background: #e8f8f1f0; color: #16815b; }
+.plan-flashcard.output .plan-flash-state { background: #efeefff0; color: #5850d0; }
+.flashcards-3 .flashcard-body strong { margin-top: 3px; }
 .flashcards-3 .flashcard-body strong { font-size: 12px; }
 .flashcards-3 .flashcard img { height: 92px; }
-.plan-flash-state { display: inline-block; margin-top: 3px; padding: 2px 6px; border-radius: 999px; font-size: 9px; font-weight: 900; background: #f1f2f6; color: var(--muted-2); }
-.plan-flashcard.learned .plan-flash-state { background: #e8f8f1; color: #16815b; }
-.plan-flashcard.output .plan-flash-state { background: #efeeff; color: #5850d0; }
-.plan-flash-state { display: block; width: fit-content; margin: 4px auto 0; text-align: center; }
+
 .flashcards-3 .flashcard-body { text-align: center; }
 .module-icon { display: inline-grid; place-items: center; flex: none; width: 24px; height: 24px; border-radius: 8px; background: var(--brand-soft); color: #5a4ee0; font-size: 12.5px; font-weight: 900; }
 .step.compact { grid-template-columns: 34px minmax(0,1fr) auto; align-items: center; }
@@ -471,9 +471,8 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <div class="topbar-inner">
     <div class="brand">
       <span class="brand-mark">SSS</span>
-      <div class="brand-copy"><strong>今日学习工作台</strong><small>每天 12 分钟 · 把一句话说出来<span id="auth-owner" class="auth-owner"></span></small></div>
+      <div class="brand-copy"><strong>今日学习工作台</strong><small>每天 12 分钟 · 把一句话说出来<span id="auth-owner" class="auth-owner" hidden></span></small></div>
     </div>
-    <a class="site-link" href="index.html" target="_blank" rel="noopener">打开完整学习站 ↗</a>
   </div>
 </header>
 
@@ -616,21 +615,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793067879"></script>
-<script src="pattern-data.js?v=1793067879"></script>
-<script src="grammar-links-data.js?v=1793067879"></script>
-<script src="grammar-content-data.js?v=1793067879"></script>
-<script src="noun-detail-data.js?v=1793067879"></script>
-<script src="noun-card-data.js?v=1793067879"></script>
-<script src="checkin-data.js?v=1793067879"></script>
-<script src="games-data.js?v=1793067879"></script>
-<script src="rhyme-data.js?v=1793067879"></script>
-<script src="card-extensions.js?v=1793067879"></script>
-<script src="noun-repeat-data.js?v=1793067879"></script>
-<script src="guess-proper-data.js?v=1793067879"></script>
-<script src="things-card-data.js?v=1793067879"></script>
-<script src="verb-card-data.js?v=1793067879"></script>
-<script src="adjective-card-data.js?v=1793067879"></script>
+<script src="data.js?v=1793069254"></script>
+<script src="pattern-data.js?v=1793069254"></script>
+<script src="grammar-links-data.js?v=1793069254"></script>
+<script src="grammar-content-data.js?v=1793069254"></script>
+<script src="noun-detail-data.js?v=1793069254"></script>
+<script src="noun-card-data.js?v=1793069254"></script>
+<script src="checkin-data.js?v=1793069254"></script>
+<script src="games-data.js?v=1793069254"></script>
+<script src="rhyme-data.js?v=1793069254"></script>
+<script src="card-extensions.js?v=1793069254"></script>
+<script src="noun-repeat-data.js?v=1793069254"></script>
+<script src="guess-proper-data.js?v=1793069254"></script>
+<script src="things-card-data.js?v=1793069254"></script>
+<script src="verb-card-data.js?v=1793069254"></script>
+<script src="adjective-card-data.js?v=1793069254"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1179,7 +1178,7 @@ function renderPlanFlashcards(cards) {
     const label = ["未学", "已学未输出", "已学已输出"][stage];
     const stageClass = ["", "learned", "output"][stage];
     const name = cardName(card, type);
-    return `<button class="flashcard plan-flashcard ${stageClass}" data-plan-card-state="${type}:${card.number}" type="button">${card.image ? `<img src="${escapeHtml(card.image)}" alt="${escapeHtml(name)}" loading="lazy">` : ""}<div class="flashcard-body"><small>${escapeHtml({noun:"名词卡",verb:"动词卡",adjective:"形容词卡"}[type] || "卡片")} ${card.number}</small><strong>${escapeHtml(name)}</strong><span class="plan-flash-state">${escapeHtml(label)}</span></div></button>`;
+    return `<button class="flashcard plan-flashcard ${stageClass}" data-plan-card-state="${type}:${card.number}" type="button">${card.image ? `<span class="plan-flash-state">${escapeHtml(label)}</span><img src="${escapeHtml(card.image)}" alt="${escapeHtml(name)}" loading="lazy">` : `<span class="plan-flash-state">${escapeHtml(label)}</span>`}<div class="flashcard-body"><strong>${escapeHtml(name)}</strong></div></button>`;
   }).join("")}</div>`;
 }
 
