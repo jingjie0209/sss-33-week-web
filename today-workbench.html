@@ -623,21 +623,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793074188"></script>
-<script src="pattern-data.js?v=1793074188"></script>
-<script src="grammar-links-data.js?v=1793074188"></script>
-<script src="grammar-content-data.js?v=1793074188"></script>
-<script src="noun-detail-data.js?v=1793074188"></script>
-<script src="noun-card-data.js?v=1793074188"></script>
-<script src="checkin-data.js?v=1793074188"></script>
-<script src="games-data.js?v=1793074188"></script>
-<script src="rhyme-data.js?v=1793074188"></script>
-<script src="card-extensions.js?v=1793074188"></script>
-<script src="noun-repeat-data.js?v=1793074188"></script>
-<script src="guess-proper-data.js?v=1793074188"></script>
-<script src="things-card-data.js?v=1793074188"></script>
-<script src="verb-card-data.js?v=1793074188"></script>
-<script src="adjective-card-data.js?v=1793074188"></script>
+<script src="data.js?v=1793074641"></script>
+<script src="pattern-data.js?v=1793074641"></script>
+<script src="grammar-links-data.js?v=1793074641"></script>
+<script src="grammar-content-data.js?v=1793074641"></script>
+<script src="noun-detail-data.js?v=1793074641"></script>
+<script src="noun-card-data.js?v=1793074641"></script>
+<script src="checkin-data.js?v=1793074641"></script>
+<script src="games-data.js?v=1793074641"></script>
+<script src="rhyme-data.js?v=1793074641"></script>
+<script src="card-extensions.js?v=1793074641"></script>
+<script src="noun-repeat-data.js?v=1793074641"></script>
+<script src="guess-proper-data.js?v=1793074641"></script>
+<script src="things-card-data.js?v=1793074641"></script>
+<script src="verb-card-data.js?v=1793074641"></script>
+<script src="adjective-card-data.js?v=1793074641"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -2280,9 +2280,9 @@ function renderGamesTab() {
           const match = String(nounCard.translation).match(/“([^”]+)”/);
           if (match?.[1]) { SENTENCE_WORD_CN2[word] = match[1]; return match[1]; }
         }
-        const verbCard = (window.SUSAN_VERB_CARDS || []).find(card => String(card.word || "").toLowerCase() === word);
+        const verbCard = (window.SUSAN_VERB_CARDS || []).find(card => String(card.word || "").toLowerCase().includes(word));
         if (verbCard?.text) {
-          const zhMatches = String(verbCard.text).match(/[\u4e00-\u9fff][^\n]{1,12}/g);
+          const zhMatches = String(verbCard.text).match(/[\u4e00-\u9fff][\u4e00-\u9fff，。！？、]{0,11}/g);
           if (zhMatches?.length) { SENTENCE_WORD_CN2[word] = zhMatches[zhMatches.length - 1]; return zhMatches[zhMatches.length - 1]; }
         }
         const adjCard = (window.SUSAN_ADJECTIVE_CARDS || []).find(card => String(card.name || "").toLowerCase() === word);
