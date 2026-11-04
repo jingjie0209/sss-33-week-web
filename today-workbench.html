@@ -467,6 +467,11 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .cal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
 .cal-head strong { font-size: 14px; }
 .cal-head button { width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font-size: 15px; }
+#checkin-motto.checkin-motto, .checkin-motto { margin: 0 2px 12px; color: var(--muted-2); font-size: 12.5px; line-height: 1.6; }
+.cal-toggle { flex: 1; padding: 8px 12px; border: 1px solid var(--line); border-radius: 12px; background: #fff; color: var(--ink); font-size: 12.5px; font-weight: 800; cursor: pointer; }
+.cal-body { margin-top: 8px; }
+.checkin-calendar.collapsed .cal-body { display: none; }
+
 .cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
 .cal-dow { color: var(--muted-2); font-size: 10.5px; text-align: center; font-weight: 800; }
 .cal-cell { position: relative; min-height: 40px; border-radius: 10px; background: #f6f7fc; color: var(--ink); border: 0; font-size: 12px; font-weight: 800; display: grid; place-items: center; cursor: pointer; }
@@ -516,16 +521,20 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 <div class="app-phone">
 <main class="page">
   <div id="view-today" class="tab-view active">
+    <p class="checkin-motto" id="checkin-motto"></p>
     <section class="module">
       <div class="module-head"><div><h2><span class="module-icon">📆</span>打卡库</h2></div><span id="checkin-month-label"></span></div>
       <div class="module-body checkin-wrap">
         <div class="checkin-calendar">
           <div class="cal-head">
-            <button type="button" id="cal-prev">‹</button>
+            <button type="button" id="cal-prev" hidden>‹</button>
+            <button type="button" id="cal-toggle" class="cal-toggle">展开日历</button>
             <strong id="cal-title"></strong>
-            <button type="button" id="cal-next">›</button>
+            <button type="button" id="cal-next" hidden>›</button>
           </div>
+          <div id="cal-body" class="cal-body" hidden>
           <div class="cal-grid" id="cal-grid"></div>
+          </div>
         </div>
         <div class="checkin-form">
           <div class="checkin-form-title" id="checkin-form-date"></div>
@@ -647,21 +656,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793764330"></script>
-<script src="pattern-data.js?v=1793764330"></script>
-<script src="grammar-links-data.js?v=1793764330"></script>
-<script src="grammar-content-data.js?v=1793764330"></script>
-<script src="noun-detail-data.js?v=1793764330"></script>
-<script src="noun-card-data.js?v=1793764330"></script>
-<script src="checkin-data.js?v=1793764330"></script>
-<script src="games-data.js?v=1793764330"></script>
-<script src="rhyme-data.js?v=1793764330"></script>
-<script src="card-extensions.js?v=1793764330"></script>
-<script src="noun-repeat-data.js?v=1793764330"></script>
-<script src="guess-proper-data.js?v=1793764330"></script>
-<script src="things-card-data.js?v=1793764330"></script>
-<script src="verb-card-data.js?v=1793764330"></script>
-<script src="adjective-card-data.js?v=1793764330"></script>
+<script src="data.js?v=1793780048"></script>
+<script src="pattern-data.js?v=1793780048"></script>
+<script src="grammar-links-data.js?v=1793780048"></script>
+<script src="grammar-content-data.js?v=1793780048"></script>
+<script src="noun-detail-data.js?v=1793780048"></script>
+<script src="noun-card-data.js?v=1793780048"></script>
+<script src="checkin-data.js?v=1793780048"></script>
+<script src="games-data.js?v=1793780048"></script>
+<script src="rhyme-data.js?v=1793780048"></script>
+<script src="card-extensions.js?v=1793780048"></script>
+<script src="noun-repeat-data.js?v=1793780048"></script>
+<script src="guess-proper-data.js?v=1793780048"></script>
+<script src="things-card-data.js?v=1793780048"></script>
+<script src="verb-card-data.js?v=1793780048"></script>
+<script src="adjective-card-data.js?v=1793780048"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1141,6 +1150,21 @@ let checkinLibraryState = loadState(CHECKIN_LIBRARY_KEY, {});
 let pendingMedia = [];
 let calCursor = new Date();
 let selectedCheckinDate = new Date().toISOString().slice(0,10);
+let calendarExpanded = false;
+const motivationList = [
+  "还没打卡也没关系，今天就是最好的开始。",
+  "坚持打卡的第 N 天，你做得很好。",
+  "连续打卡让宝宝越来越敢说。",
+  "每天一小步，语言在悄悄发芽。",
+  "继续保持，宝宝的表达会越来越多。"
+];
+const mottoOf = () => {
+  const dates = Object.keys(checkinLibraryState).filter(k=>checkinLibraryState[k] && (checkinLibraryState[k].medias?.length || checkinLibraryState[k].note)).sort();
+  if (!dates.length) return motivationList[0];
+  const todayKey = new Date().toISOString().slice(0,10);
+  if (dates.includes(todayKey)) return "今天已打卡，坚持很棒！";
+  return motivationList[1];
+};
 
 const dateKeyOf = (date) => {
   const d = new Date(date);
@@ -1163,20 +1187,41 @@ function renderCheckinLibrary() {
   const monthLabel = document.getElementById("checkin-month-label");
   if (!grid) return;
   const year = calCursor.getFullYear(), month = calCursor.getMonth();
-  calTitle.textContent = `${year} 年 ${month + 1} 月`;
+  calTitle.textContent = document.getElementById("cal-body").hidden
+    ? (()=>{const current=new Date(selectedCheckinDate || new Date());const dow=(current.getDay()+6)%7;const monday=new Date(current);monday.setDate(current.getDate()-dow);const sunday=new Date(monday);sunday.setDate(monday.getDate()+6);return `${monday.getMonth()+1}/${monday.getDate()} - ${sunday.getMonth()+1}/${sunday.getDate()}`;})()
+    : `${year} 年 ${month + 1} 月`;
   const entryCount = Object.keys(checkinLibraryState).filter(k=>checkinLibraryState[k] && (checkinLibraryState[k].medias?.length || checkinLibraryState[k].note)).length;
   if (monthLabel) monthLabel.textContent = `${entryCount} 条记录`;
-  const startDow = (new Date(year, month, 1).getDay() + 6) % 7;
-  const days = new Date(year, month + 1, 0).getDate();
+  const isCollapsed = document.getElementById("cal-body").hidden;
+  const baseDate = isCollapsed ? (selectedCheckinDate ? new Date(selectedCheckinDate) : new Date()) : new Date(year,month,1);
+  if (isCollapsed) calCursor = new Date(baseDate.getFullYear(), baseDate.getMonth(), 1);
   let html = ["一","二","三","四","五","六","日"].map(d=>`<span class="cal-dow">${d}</span>`).join("");
-  for(let i=0;i<startDow;i++) html += `<span class="cal-cell empty"></span>`;
-  for(let day=1;day<=days;day++){
-    const key = dateKeyOf(new Date(year,month,day));
-    const has = Boolean(checkinLibraryState[key]);
-    const selected = key === selectedCheckinDate;
-    html += `<button type="button" class="cal-cell${has?" has-checkin":""}${selected?" selected":""}" data-cal-date="${key}">${day}</button>`;
+  if (isCollapsed) {
+    const current = new Date(selectedCheckinDate || new Date());
+    const dow = (current.getDay() + 6) % 7;
+    const monday = new Date(current); monday.setDate(current.getDate() - dow);
+    const weekDays = Array.from({length:7},(_,i)=>{const d=new Date(monday);d.setDate(monday.getDate()+i);return d;});
+    for(const d of weekDays){
+      const key = dateKeyOf(d);
+      const has = Boolean(checkinLibraryState[key]);
+      const selected = key === selectedCheckinDate;
+      const isToday = key === new Date().toISOString().slice(0,10);
+      html += `<button type="button" class="cal-cell${has?" has-checkin":""}${selected?" selected":""}" data-cal-date="${key}">${d.getDate()}</button>`;
+    }
+  } else {
+    const startDow = (new Date(year, month, 1).getDay() + 6) % 7;
+    const days = new Date(year, month + 1, 0).getDate();
+    for(let i=0;i<startDow;i++) html += `<span class="cal-cell empty"></span>`;
+    for(let day=1;day<=days;day++){
+      const key = dateKeyOf(new Date(year,month,day));
+      const has = Boolean(checkinLibraryState[key]);
+      const selected = key === selectedCheckinDate;
+      html += `<button type="button" class="cal-cell${has?" has-checkin":""}${selected?" selected":""}" data-cal-date="${key}">${day}</button>`;
+    }
   }
   grid.innerHTML = html;
+  const motto = document.getElementById("checkin-motto");
+  if (motto) motto.textContent = mottoOf();
   const noteEl = document.getElementById("checkin-note");
   const mediaEl = document.getElementById("checkin-media");
   if (noteEl && document.activeElement !== noteEl) noteEl.value = checkinLibraryState[selectedCheckinDate]?.note || "";
@@ -1194,7 +1239,7 @@ function renderCheckinLibrary() {
       ? `<img src="${item.url}" alt="">`
       : `<video src="${item.url}" controls muted></video>`).join("");
     return `<div class="checkin-entry" data-entry-date="${key}">
-      <div class="checkin-entry-head"><span class="checkin-entry-date">${formatDateCN(key)}</span><div style="display:flex;gap:8px"><button class="tiny-action" data-checkin-edit="${key}">编辑</button><button class="tiny-action" data-checkin-delete="${key}">删除</button></div></div>
+      <div class="checkin-entry-head"><span class="checkin-entry-date">${formatDateCN(key)}</span><button class="tiny-action" data-checkin-delete="${key}">删除</button></div>
       ${e.note ? `<div class="checkin-entry-note">${escapeHtml(e.note)}</div>` : ""}
       ${medias ? `<div class="checkin-entry-media">${medias}</div>` : ""}
     </div>`;
@@ -2458,6 +2503,16 @@ document.getElementById("auth-key").addEventListener("keydown", (event) => { if 
 if (!isAuthorized()) { showGate(); } else { showApp(); }
 
 // ---------- 打卡库交互 ----------
+document.getElementById("cal-toggle").addEventListener("click", () => {
+  const body = document.getElementById("cal-body");
+  const toggle = document.getElementById("cal-toggle");
+  body.hidden = !body.hidden;
+  calendarExpanded = !body.hidden;
+  toggle.textContent = body.hidden ? "展开日历" : "收起日历";
+  document.getElementById("cal-prev").hidden = body.hidden;
+  document.getElementById("cal-next").hidden = body.hidden;
+  renderCheckinLibrary();
+});
 document.getElementById("cal-prev").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1); renderCheckinLibrary(); });
 document.getElementById("cal-next").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1); renderCheckinLibrary(); });
 document.getElementById("cal-grid").addEventListener("click", (event) => {
