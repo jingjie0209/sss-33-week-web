@@ -461,6 +461,33 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 .auth-error { display: block; margin-top: 10px; color: #b42318; font-size: 11.5px; font-weight: 800; }
 .auth-error[hidden] { display: none; }
 
+/* ===== 打卡库 ===== */
+.checkin-wrap { display: grid; gap: 15px; }
+.checkin-calendar { padding: 12px; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+.cal-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.cal-head strong { font-size: 14px; }
+.cal-head button { width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 10px; background: #fff; color: var(--ink); font-size: 15px; }
+.cal-grid { display: grid; grid-template-columns: repeat(7,1fr); gap: 4px; }
+.cal-dow { color: var(--muted-2); font-size: 10.5px; text-align: center; font-weight: 800; }
+.cal-cell { position: relative; min-height: 40px; border-radius: 10px; background: #f6f7fc; color: var(--ink); border: 0; font-size: 12px; font-weight: 800; display: grid; place-items: center; cursor: pointer; }
+.cal-cell.empty { background: transparent; cursor: default; }
+.cal-cell.selected { outline: 2px solid var(--brand); }
+.cal-cell.has-checkin::after { content: ""; position: absolute; right: 6px; bottom: 5px; width: 7px; height: 7px; border-radius: 50%; background: var(--green); }
+.checkin-form { display: grid; gap: 9px; padding: 12px; border: 1px solid var(--line); border-radius: 18px; background: #fff; }
+.checkin-form-title { font-weight: 900; font-size: 13.5px; }
+.checkin-form input[type=file] { font-size: 12px; }
+.checkin-form textarea { width: 100%; border: 1px solid var(--line); border-radius: 12px; padding: 9px 12px; font-size: 12.5px; background: #fbfbff; }
+.checkin-media-previews { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.checkin-media-previews:empty { display: none; }
+.checkin-media-previews img, .checkin-media-previews video { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; }
+.checkin-entry { padding: 12px; border: 1px solid var(--line); border-radius: 16px; background: #fff; display: grid; gap: 8px; }
+.checkin-entry-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.checkin-entry-date { font-weight: 900; font-size: 13px; }
+.checkin-entry-note { font-size: 12.5px; line-height: 1.6; white-space: pre-wrap; }
+.checkin-entry-media { display: grid; grid-template-columns: repeat(3,1fr); gap: 6px; }
+.checkin-entry-media img, .checkin-entry-media video { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; }
+.checkin-entry-actions { display: flex; justify-content: flex-end; gap: 8px; }
+
 /* ===== 底部 Tab（毛玻璃白底 + 渐变激活态） ===== */
 .tabbar { position: fixed; left: 50%; transform: translateX(-50%); bottom: 0; z-index: 50; width: 100%; max-width: 480px; display: flex; justify-content: space-around; gap: 2px; padding: 8px 9px calc(9px + env(safe-area-inset-bottom)); background: #ffffffee; backdrop-filter: blur(20px) saturate(1.25); border-top: 1px solid #f0f1fa; box-shadow: 0 -10px 26px #1f265112; }
 .tabbar button { flex: 1; display: grid; justify-items: center; gap: 3px; padding: 7px 2px; border: 0; border-radius: 14px; background: none; color: #8b90a9; font-size: 10.5px; font-weight: 850; }
@@ -489,30 +516,27 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 <div class="app-phone">
 <main class="page">
   <div id="view-today" class="tab-view active">
-  <section class="hero">
-    <p class="hero-kicker">SUSAN LEARNING DESK · TODAY</p>
-    <p class="hero-encourage" id="hero-encourage">今天开口，就是进步。</p>
-    <div class="hero-progress"><i id="hero-bar"></i></div>
-  </section>
-
-  <div id="plan-collapsed" class="plan-collapsed" hidden>
-    <div class="plan-collapsed-head"><h2>📅 本周计划</h2><span id="plan-collapsed-status">已生成</span></div>
-    <div class="plan-progress" id="plan-collapsed-summary"></div>
-    <button class="tiny-action" id="plan-edit" type="button">✏️ 编辑本周计划</button>
-  </div>
-  <div class="plan-select-title" id="plan-select-title"><h2>开始执行周计划</h2><span>4 项选完，生成执行面板</span></div>
-  <div class="plan-select-list" id="plan-select-list">
-    <div class="plan-select"><div class="plan-select-head"><b>1</b><span>句型</span><small id="plan-pattern-meta">自动加载理论与笔记</small></div><select id="plan-pattern-select"></select></div>
-    <div class="plan-select"><div class="plan-select-head"><b>2</b><span>闪卡</span><small id="plan-word-count">已选 0 张</small></div><div id="plan-word-tabs" class="plan-word-tabs"><button type="button" class="active" data-plan-word-type="noun">名词</button><button type="button" data-plan-word-type="verb">动词</button><button type="button" data-plan-word-type="adjective">形容词</button></div><div id="plan-word-grid" class="plan-word-pages"></div><div id="plan-word-dots" class="plan-word-dots"></div></div>
-    <div class="plan-select"><div class="plan-select-head"><b>3</b><span>儿歌</span><small id="plan-song-count">已选 1 首</small></div><div id="plan-song-list" class="plan-card-pages"></div><div id="plan-song-dots" class="plan-card-dots"></div></div>
-    <div class="plan-select"><div class="plan-select-head"><b>4</b><span>游戏</span><small id="plan-game-count">已选 1 个</small></div><div id="plan-game-list" class="plan-card-pages"></div><div id="plan-game-dots" class="plan-card-dots"></div></div>
-    <button class="button" id="plan-generate" type="button" style="width:100%;justify-content:center;margin-top:4px">确认生成本周计划</button>
-  </div>
-
-  <div id="week-plan-root"></div>
-
-  <div id="steps-root"></div>
-
+    <section class="module">
+      <div class="module-head"><div><h2><span class="module-icon">📆</span>打卡库</h2></div><span id="checkin-month-label"></span></div>
+      <div class="module-body checkin-wrap">
+        <div class="checkin-calendar">
+          <div class="cal-head">
+            <button type="button" id="cal-prev">‹</button>
+            <strong id="cal-title"></strong>
+            <button type="button" id="cal-next">›</button>
+          </div>
+          <div class="cal-grid" id="cal-grid"></div>
+        </div>
+        <div class="checkin-form">
+          <div class="checkin-form-title" id="checkin-form-date"></div>
+          <input id="checkin-media" type="file" accept="image/*,video/*" multiple>
+          <div id="checkin-media-previews" class="checkin-media-previews"></div>
+          <textarea id="checkin-note" rows="3" placeholder="记录今天的学习内容…"></textarea>
+          <button class="button" id="checkin-save" type="button" style="width:100%;justify-content:center">保存打卡</button>
+        </div>
+        <div id="checkin-list"></div>
+      </div>
+    </section>
   </div>
 
   <div id="view-cards" class="tab-view">
@@ -616,28 +640,28 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
 </div>
 
 <nav class="tabbar" id="tabbar">
-  <button class="active" data-tab="today"><i></i>今日</button>
+  <button class="active" data-tab="today"><i></i>打卡库</button>
   <button data-tab="cards"><i></i>卡库</button>
   <button data-tab="rhyme"><i></i>儿歌</button>
   <button data-tab="games"><i></i>小工具</button>
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793085842"></script>
-<script src="pattern-data.js?v=1793085842"></script>
-<script src="grammar-links-data.js?v=1793085842"></script>
-<script src="grammar-content-data.js?v=1793085842"></script>
-<script src="noun-detail-data.js?v=1793085842"></script>
-<script src="noun-card-data.js?v=1793085842"></script>
-<script src="checkin-data.js?v=1793085842"></script>
-<script src="games-data.js?v=1793085842"></script>
-<script src="rhyme-data.js?v=1793085842"></script>
-<script src="card-extensions.js?v=1793085842"></script>
-<script src="noun-repeat-data.js?v=1793085842"></script>
-<script src="guess-proper-data.js?v=1793085842"></script>
-<script src="things-card-data.js?v=1793085842"></script>
-<script src="verb-card-data.js?v=1793085842"></script>
-<script src="adjective-card-data.js?v=1793085842"></script>
+<script src="data.js?v=1793763173"></script>
+<script src="pattern-data.js?v=1793763173"></script>
+<script src="grammar-links-data.js?v=1793763173"></script>
+<script src="grammar-content-data.js?v=1793763173"></script>
+<script src="noun-detail-data.js?v=1793763173"></script>
+<script src="noun-card-data.js?v=1793763173"></script>
+<script src="checkin-data.js?v=1793763173"></script>
+<script src="games-data.js?v=1793763173"></script>
+<script src="rhyme-data.js?v=1793763173"></script>
+<script src="card-extensions.js?v=1793763173"></script>
+<script src="noun-repeat-data.js?v=1793763173"></script>
+<script src="guess-proper-data.js?v=1793763173"></script>
+<script src="things-card-data.js?v=1793763173"></script>
+<script src="verb-card-data.js?v=1793763173"></script>
+<script src="adjective-card-data.js?v=1793763173"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1112,63 +1136,69 @@ const dailyEncouragement = () => {
   return encouragementList[((dayNumber % encouragementList.length) + encouragementList.length) % encouragementList.length];
 };
 
+const CHECKIN_LIBRARY_KEY = "sss-workbench-checkin-library-v1";
+let checkinLibraryState = loadState(CHECKIN_LIBRARY_KEY, {});
+let pendingMedia = [];
+let calCursor = new Date();
+let selectedCheckinDate = new Date().toISOString().slice(0,10);
+
+const dateKeyOf = (date) => {
+  const d = new Date(date);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+};
+const formatDateCN = (key) => {
+  const [y,m,d] = key.split("-").map(Number);
+  return `${y} 年 ${m} 月 ${d} 日`;
+};
+const saveCheckins = () => saveState(CHECKIN_LIBRARY_KEY, checkinLibraryState);
+
 function render() {
-  const { dayIndex, week, songItem } = todayInfo();
-  const song = songBySheet.get(songItem.sheet) || {};
-  const pattern = patternForWeek(week);
-  const flashcards = flashcardsForToday();
-  const games = gamesForToday();
-  const weekSongs = week.songs.map((item) => songBySheet.get(item.sheet)).filter(Boolean);
+  renderCheckinLibrary();
+}
 
-  const checkedCards = flashcards.filter((card) => cardState[String(card.number)]).length;
-  const doneGames = games.filter((game) => gameState.includes(game.id)).length;
-  const weekDone = weekSongs.filter((item) => isDone(item.sheet)).length;
-  const totalDone = songs.filter((item) => isDone(item.sheet)).length;
-
-  renderPlanSelector();
-  renderWeekPlanUpdater();
-  document.getElementById("hero-bar").style.width = `${songs.length ? Math.round(totalDone / songs.length * 100) : 0}%`;
-  document.getElementById("hero-encourage").textContent = dailyEncouragement();
-
-  const cover = youtubeThumbnail(song.videoUrl);
-  const openSongHref = `index.html?song=${encodeURIComponent(song.sheet || "")}`;
-
-  const plan = loadWeekPlan();
-  const planFlashcards = (plan?.words || []).map((value) => {
-    const [type, numberText] = String(value).split(":");
-    return { ...(cardSources()[type] || []).find((card) => card.number === Number(numberText)) || {}, type, number: Number(numberText) };
-  }).filter(card => card.number);
-  const planGames = (plan?.gameIds || []).map(id => (window.SUSAN_GAMES_DATA || []).find(game => game.id === id)).filter(Boolean);
-  const theoryDone = Boolean(plan?.theoryDone || stepState.theory);
-    const icons = { theory: "1", flashcards: "2", games: "3" };
-    const stepDefs = [
-    {
-      key: "theory", num: 1, title: "理论学习", time: "", desc: "", patternText: plan?.pattern || pattern.pattern || "It's a/an ...",
-      action: `<button class="tiny-action${theoryDone ? " done" : ""}" data-theory-open>${theoryDone ? "已完成 ✓" : "去学习"}</button>`,
-      compact: true,
-    },
-    {
-      key: "flashcards", num: 2, title: `本周闪卡 ${planFlashcards.length}`, time: "", desc: "",
-      custom: renderPlanFlashcards(planFlashcards),
-      compact: true,
-    },
-    {
-      key: "games", num: 3, title: `本周游戏 ${planGames.length}`, time: "", desc: "",
-      custom: renderGames(planGames.length ? planGames : games),
-      compact: true,
-    },
-  ];
-  document.getElementById("steps-root").innerHTML = stepDefs.map((step) => {
-    const done = step.key === "theory" ? theoryDone
-      : step.key === "flashcards" ? checkedCards === flashcards.length
-      : step.key === "games" ? doneGames > 0
-      : step.key === "sentence" ? Boolean(stepState[step.key])
-      : Boolean(stepState[step.key]);
-    const actions = step.custom ? "" : (step.action || "");
-    return `<section class="module"><div class="module-head"><div><h2><span class="module-icon">${icons[step.key]}</span>${escapeHtml(step.title)}</h2></div><span>${step.time}</span></div><div class="module-body">${step.compact && !step.custom ? `<div class="theory-line ${done ? "done" : ""}"><strong data-open-noun-pattern="${plan?.patternNumber ?? (window.SSS_NOUN_DETAILS || []).find(item => item.pattern === step.patternText)?.number ?? 1}">${escapeHtml(step.patternText)}</strong><button class="tiny-action${done ? " done" : ""}" data-theory-open>${done ? "已完成 ✓" : "去学习"}</button></div>` : ""}${step.custom ? `<div>${step.custom}</div>` : ""}</div></section>`;
-  }).join("");
-
-  document.getElementById("steps-root").insertAdjacentHTML("beforeend", `<section class="module"><div class="module-head"><div><h2><span class="module-icon">4</span>本周儿歌 ${weekSongs.length}</h2></div><span>${weekDone}/${weekSongs.length} 已完成</span></div><div class="module-body"><div class="song-list">${weekSongs.map((item, index) => `<div class="song-item ${isDone(item.sheet) ? "done" : ""}"><div><strong><span class="song-no">${String(index + 1).padStart(2, "0")}</span>${escapeHtml(item.title)}</strong></div><div style="display:flex;align-items:center;gap:8px"><button class="tiny-action${isDone(item.sheet) ? " done" : ""}" data-toggle-song="${escapeHtml(item.sheet)}">${isDone(item.sheet) ? "已完成 ✓" : "完成"}</button></div></div>`).join("")}</div></div></section>`);
+function renderCheckinLibrary() {
+  const calTitle = document.getElementById("cal-title");
+  const grid = document.getElementById("cal-grid");
+  const list = document.getElementById("checkin-list");
+  const monthLabel = document.getElementById("checkin-month-label");
+  if (!grid) return;
+  const year = calCursor.getFullYear(), month = calCursor.getMonth();
+  calTitle.textContent = `${year} 年 ${month + 1} 月`;
+  const entryCount = Object.keys(checkinLibraryState).filter(k=>checkinLibraryState[k] && (checkinLibraryState[k].medias?.length || checkinLibraryState[k].note)).length;
+  if (monthLabel) monthLabel.textContent = `${entryCount} 条记录`;
+  const startDow = (new Date(year, month, 1).getDay() + 6) % 7;
+  const days = new Date(year, month + 1, 0).getDate();
+  let html = ["一","二","三","四","五","六","日"].map(d=>`<span class="cal-dow">${d}</span>`).join("");
+  for(let i=0;i<startDow;i++) html += `<span class="cal-cell empty"></span>`;
+  for(let day=1;day<=days;day++){
+    const key = dateKeyOf(new Date(year,month,day));
+    const has = Boolean(checkinLibraryState[key]);
+    const selected = key === selectedCheckinDate;
+    html += `<button type="button" class="cal-cell${has?" has-checkin":""}${selected?" selected":""}" data-cal-date="${key}">${day}</button>`;
+  }
+  grid.innerHTML = html;
+  const noteEl = document.getElementById("checkin-note");
+  const mediaEl = document.getElementById("checkin-media");
+  if (noteEl && document.activeElement !== noteEl) noteEl.value = checkinLibraryState[selectedCheckinDate]?.note || "";
+  if (mediaEl && document.activeElement !== mediaEl) mediaEl.value = "";
+  const previews = document.getElementById("checkin-media-previews");
+  if (previews) previews.innerHTML = pendingMedia.map(item => item.kind === "image"
+    ? `<img src="${item.url}" alt="">`
+    : `<video src="${item.url}" muted></video>`).join("");
+  const formDate = document.getElementById("checkin-form-date");
+  if (formDate) formDate.textContent = formatDateCN(selectedCheckinDate);
+  const dates = Object.keys(checkinLibraryState).filter(k=>checkinLibraryState[k] && (checkinLibraryState[k].medias?.length || checkinLibraryState[k].note)).sort((a,b)=>b.localeCompare(a));
+  list.innerHTML = dates.length ? dates.map(key => {
+    const e = checkinLibraryState[key];
+    const medias = (e.medias||[]).map(item => item.kind === "image"
+      ? `<img src="${item.url}" alt="">`
+      : `<video src="${item.url}" controls muted></video>`).join("");
+    return `<div class="checkin-entry" data-entry-date="${key}">
+      <div class="checkin-entry-head"><span class="checkin-entry-date">${formatDateCN(key)}</span><div style="display:flex;gap:8px"><button class="tiny-action" data-checkin-edit="${key}">编辑</button><button class="tiny-action" data-checkin-delete="${key}">删除</button></div></div>
+      ${e.note ? `<div class="checkin-entry-note">${escapeHtml(e.note)}</div>` : ""}
+      ${medias ? `<div class="checkin-entry-media">${medias}</div>` : ""}
+    </div>`;
+  }).join("") : `<div class="empty-inline">还没有打卡记录，选个日期开始记录吧。</div>`;
 }
 
 function renderFlashcards(cards) {
@@ -1295,211 +1325,11 @@ const loadWeekPlan = () => loadState(WEEK_PLAN_KEY, null);
 const saveWeekPlan = (plan) => saveState(WEEK_PLAN_KEY, plan);
 const SENTENCE_WORD_CN2 = {};
 
-function renderWeekPlan() {
-  const root = document.getElementById("week-plan-root");
-  if (!root) return;
-  const plan = loadWeekPlan();
-  root.innerHTML = "";
-}
 
-function renderWeekPlanUpdater() {
-  const plan = loadWeekPlan();
-  if (!plan) return;
-  plan.wordDone = Object.values(cardState).filter(Boolean).length;
-  plan.gameDone = gameState.length;
-  plan.taskDone = (plan.theoryDone ? 1 : 0) + ((plan.wordDone || 0) > 0 ? 1 : 0) + ((plan.gameDone || 0) > 0 ? 1 : 0);
-  plan.progressPct = Math.min(100, Math.round(((plan.wordDone || 0) / (plan.wordTotal || 15)) * 70 + (plan.theoryDone ? 15 : 0) + ((plan.gameDone || 0) / 3) * 15));
-  saveWeekPlan(plan);
-}
 
-function renderPlanSelector() {
-  const root = document.getElementById("plan-select-list");
-  if (!root) return;
-  const plan = loadWeekPlan();
-  const editMode = root.dataset.editMode === "1";
-  const collapsed = document.getElementById("plan-collapsed");
-  const collapsedSummary = document.getElementById("plan-collapsed-summary");
-  document.getElementById("plan-select-title").hidden = Boolean(plan) && !editMode;
-  collapsed.hidden = !(plan && !editMode);
-  root.classList.toggle("collapsed", Boolean(plan) && !editMode);
-  if (plan && !editMode) {
-    const selectedFlashcards = (plan.words || []).map((value) => {
-      const [type, numberText] = String(value).split(":");
-      const key = `output:${type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin"}:${numberText}`;
-      return Number(loadState("sss-workbench-card-output-v1", {})[key] || 0) >= 1;
-    });
-    const learnedCount = selectedFlashcards.filter(Boolean).length;
-    const checkedSongs = (plan.songSheets || []).filter(sheet => isDone(sheet)).length;
-    const playedGames = (plan.gameIds || []).filter(id => gameState.includes(id)).length;
-    const progressRows = [
-      { label: "理论", count: plan.theoryDone ? 1 : 0, total: 1 },
-      { label: "闪卡", count: learnedCount, total: plan.words?.length || 0 },
-      { label: "儿歌", count: checkedSongs, total: plan.songSheets?.length || 0 },
-      { label: "游戏", count: playedGames, total: plan.gameIds?.length || 0 }
-    ];
-    collapsedSummary.innerHTML = progressRows.map(row => {
-      const percent = row.total ? Math.round(row.count / row.total * 100) : 0;
-      return `<div class="progress-row"><span>${escapeHtml(row.label)}</span><span class="progress-bar"><i style="width:${percent}%"></i></span><span class="progress-count">${row.count}/${row.total}</span></div>`;
-    }).join("");
-    return;
-  }
-  const selectorKey = `${todayInfo().weekIndex}:${plan?.createdAt || "new"}`;
-  if (root.dataset.selectorKey === selectorKey) return;
-  root.dataset.selectorKey = selectorKey;
-  document.getElementById("plan-generate").textContent = plan ? "重新生成本周计划" : "确认生成本周计划";
-  const patternSelect = document.getElementById("plan-pattern-select");
-  const wordGrid = document.getElementById("plan-word-grid");
-  let planWordType = "noun";
-  const wordSources = () => ({
-    noun: window.SSS_NOUN_CARDS || [],
-    verb: window.SUSAN_VERB_CARDS || [],
-    adjective: window.SUSAN_ADJECTIVE_CARDS || [],
-  });
-  const validTypedWords = new Set();
-  Object.entries(wordSources()).forEach(([type, cards]) => cards.forEach(card => validTypedWords.add(`${type}:${card.number}`)));
-  const savedTypedWords = (plan?.words || []).map(String).filter(value => validTypedWords.has(value));
-  const selectedWords = new Set(savedTypedWords.length ? savedTypedWords : (window.SSS_NOUN_CARDS || []).slice(0, 10).map(card => `noun:${card.number}`));
-  const allSongs = (window.SSS_WEB_DATA?.songs || []).slice().sort((a, b) => String(a.title || "").localeCompare(String(b.title || ""), "en", { sensitivity: "base" }));
-  const allGames = (window.SUSAN_GAMES_DATA || []).slice().sort((a, b) => String(a.name || "").localeCompare(String(b.name || ""), "zh-Hans-CN", { sensitivity: "base" }));
-  const details = window.SSS_NOUN_DETAILS || [];
-  const currentWeek = (window.SSS_WEB_DATA?.weeks || [])[todayInfo().weekIndex] || {};
-  const weekPattern = patternForWeek(currentWeek);
-  const wantedPattern = plan?.patternNumber ? details.findIndex(item => item.number === Number(plan.patternNumber)) : details.findIndex(item => item.pattern === weekPattern.pattern);
-  const defaultPatternIndex = Math.max(0, wantedPattern);
-  const ensureDefault = (select) => { if (select && select.options.length && select.selectedIndex < 0) select.selectedIndex = 0; };
-  if (patternSelect) {
-    patternSelect.innerHTML = details.map((item, index) => `<option value="${index}"${index === defaultPatternIndex ? " selected" : ""}>${escapeHtml(item.pattern)} · ${escapeHtml(item.code || "")}</option>`).join("");
-    patternSelect.onchange = () => document.getElementById("plan-pattern-meta").textContent = `${details[Number(patternSelect.value)]?.code || ""} · 自动加载理论与笔记`;
-    patternSelect.dispatchEvent(new Event("change"));
-  }
-  const planStageFor = (type, number) => {
-    const outputState = loadState("sss-workbench-card-output-v1", {});
-    return Number(outputState[`output:${type === "noun" ? "noun-checkin" : type === "verb" ? "verb-checkin" : "adjective-checkin"}:${number}`] || 0);
-  };
-  const selectedSongs = new Set(plan?.songSheets?.length ? plan.songSheets : [allSongs[0]?.sheet].filter(Boolean));
-  const selectedGames = new Set(plan?.gameIds?.length ? plan.gameIds : [allGames[0]?.id].filter(Boolean));
-  const renderCardPicker = (items, selected, listEl, dotsEl, key) => {
-    const pages = [];
-    for (let index = 0; index < items.length; index += 9) pages.push(items.slice(index, index + 9));
-    listEl.innerHTML = pages.map(page => `<div class="plan-card-page">${page.map(item => `<button type="button" class="plan-multi-item${selected.has(item[key]) ? " active" : ""}" data-plan-multi="${key}" data-plan-value="${escapeHtml(item[key])}">${escapeHtml(item.title || item.name)}</button>`).join("")}</div>`).join("");
-    dotsEl.innerHTML = pages.map((_, index) => `<button type="button" class="${index === 0 ? "active" : ""}" data-plan-picker-dot="${key}:${index}" aria-label="第${index + 1}页"></button>`).join("");
-  };
-  const renderMulti = (items, selected, listEl, triggerEl, countEl, key, unit) => {
-    const countElText = `已选 ${items.filter(item => selected.has(item[key])).length} ${unit}`;
-    countEl.textContent = `已选 ${labels.length} ${unit}`;
-  };
-  const songList = document.getElementById("plan-song-list");
-  const gameList = document.getElementById("plan-game-list");
-  const renderAllMulti = () => {
-    renderCardPicker(allSongs, selectedSongs, songList, document.getElementById("plan-song-dots"), "sheet");
-    renderCardPicker(allGames, selectedGames, gameList, document.getElementById("plan-game-dots"), "id");
-    document.getElementById("plan-song-count").textContent = `已选 ${selectedSongs.size} 首`;
-    document.getElementById("plan-game-count").textContent = `已选 ${selectedGames.size} 个`;
-  };
-  renderAllMulti();
-  const renderWords = () => {
-    const cards = wordSources()[planWordType] || [];
-    const pages = [];
-    for (let index = 0; index < cards.length; index += 20) {
-      pages.push(cards.slice(index, index + 20).map(card => {
-        const mastered = planStageFor(planWordType, card.number) >= 1;
-        const label = cardName(card, planWordType);
-        return `<button type="button" class="wp-word${selectedWords.has(`${planWordType}:${card.number}`) ? " active" : ""}${mastered ? " mastered" : ""}" data-plan-word="${planWordType}:${card.number}">${escapeHtml(label)}</button>`;
-      }).join(""));
-    }
-    wordGrid.innerHTML = pages.map(page => `<div class="wp-word-page">${page}</div>`).join("");
-    document.getElementById("plan-word-dots").innerHTML = pages.map((_, index) => `<button type="button" class="${index === 0 ? "active" : ""}" data-plan-word-page="${index}" aria-label="第${index + 1}页"></button>`).join("");
-    document.getElementById("plan-word-count").textContent = `已选 ${selectedWords.size} 张`;
-  };
-  if (wordGrid) {
-    renderWords();
-  }
-  root.onclick = (event) => {
-    const typeButton = event.target.closest("[data-plan-word-type]");
-    if (typeButton) {
-      planWordType = typeButton.dataset.planWordType;
-      root.querySelectorAll("#plan-word-tabs button").forEach(item => item.classList.toggle("active", item === typeButton));
-      renderWords();
-      return;
-    }
-    const wordButton = event.target.closest("[data-plan-word]");
-    if (wordButton) {
-      const number = wordButton.dataset.planWord;
-      if (selectedWords.has(number)) { selectedWords.delete(number); wordButton.classList.remove("active"); }
-      else if (selectedWords.size < 15) { selectedWords.add(number); wordButton.classList.add("active"); }
-      else toast("最多选择 15 张");
-      document.getElementById("plan-word-count").textContent = `已选 ${selectedWords.size} 张`;
-      return;
-    }
-    if (event.target.closest("#plan-word-grid") || event.target.closest("#plan-word-dots")) return;
-    const pickerDot = event.target.closest("[data-plan-picker-dot]");
-    if (pickerDot) {
-      const [pickerKey, pageText] = pickerDot.dataset.planPickerDot.split(":");
-      const picker = pickerKey === "sheet" ? songList : gameList;
-      const pageIndex = Number(pageText);
-      picker.scrollTo({ left: picker.clientWidth * pageIndex, behavior: "smooth" });
-      document.querySelectorAll(`[data-plan-picker-dot^="${pickerKey}:"]`).forEach((item, index) => item.classList.toggle("active", index === pageIndex));
-      return;
-    }
-    if (event.target.closest("#plan-song-list")) {
-      const pageIndex = Math.round(songList.scrollLeft / Math.max(1, songList.clientWidth));
-      document.querySelectorAll('[data-plan-picker-dot^="sheet:"]').forEach((item, index) => item.classList.toggle("active", index === pageIndex));
-    }
-    if (event.target.closest("#plan-game-list")) {
-      const pageIndex = Math.round(gameList.scrollLeft / Math.max(1, gameList.clientWidth));
-      document.querySelectorAll('[data-plan-picker-dot^="id:"]').forEach((item, index) => item.classList.toggle("active", index === pageIndex));
-    }
-    const dotButton = event.target.closest("[data-plan-word-page]");
-    if (dotButton) {
-      const pageIndex = Number(dotButton.dataset.planWordPage);
-      wordGrid.scrollTo({ left: wordGrid.clientWidth * pageIndex, behavior: "smooth" });
-      root.querySelectorAll("#plan-word-dots button").forEach((item, index) => item.classList.toggle("active", index === pageIndex));
-      return;
-    }
-    const multiItem = event.target.closest("[data-plan-multi]");
-    if (multiItem) {
-      const value = multiItem.dataset.planValue;
-      const selected = multiItem.dataset.planMulti === "sheet" ? selectedSongs : selectedGames;
-      if (selected.has(value)) selected.delete(value);
-      else selected.add(value);
-      renderAllMulti();
-      return;
-    }
-    if (!event.target.closest("#plan-generate")) return;
-    const detail = details[Number(patternSelect?.value || 0)];
-    const chosenSongs = allSongs.filter(item => selectedSongs.has(item.sheet));
-    const chosenGames = allGames.filter(item => selectedGames.has(item.id));
-    if (!detail || !selectedWords.size || !chosenSongs.length || !chosenGames.length) { toast("请完成 4 项选择"); return; }
-    saveWeekPlan({
-      weekNumber: todayInfo().weekIndex + 1,
-      pattern: detail.pattern, patternNumber: detail.number,
-      patternLearned: false, theoryDone: false,
-      wordTotal: selectedWords.size, wordDone: 0,
-      stagePct: 0, gameDone: 0, taskDone: 0, progressPct: 0, reviewCount: 5,
-      tools: chosenGames.map(item => item.name).join("、"), gameIds: chosenGames.map(item => item.id), gameType: chosenGames[0].type,
-      song: chosenSongs.map(item => item.title).join("、"), songSheets: chosenSongs.map(item => item.sheet),
-      words: [...selectedWords],
-      createdAt: Date.now()
-    });
-    saveState(GAME_KEY, []);
-    gameState = [];
-    delete root.dataset.editMode;
-    render();
-    document.getElementById("week-plan-root")?.scrollIntoView({ behavior: "smooth", block: "start" });
-    toast("本周计划已生成 🎉");
-  };
-  wordGrid?.addEventListener("scroll", () => {
-    const pageIndex = Math.min(document.querySelectorAll("#plan-word-dots button").length - 1, Math.max(0, Math.round(wordGrid.scrollLeft / Math.max(1, wordGrid.clientWidth))));
-    root.querySelectorAll("#plan-word-dots button").forEach((item, index) => item.classList.toggle("active", index === pageIndex));
-  }, { passive: true });
-  [ [songList, "sheet"], [gameList, "id"] ].forEach(([picker, key]) => {
-    picker?.addEventListener("scroll", () => {
-      const dots = document.querySelectorAll(`[data-plan-picker-dot^="${key}:"]`);
-      const pageIndex = Math.min(dots.length - 1, Math.max(0, Math.round(picker.scrollLeft / Math.max(1, picker.clientWidth))));
-      dots.forEach((item, index) => item.classList.toggle("active", index === pageIndex));
-    }, { passive: true });
-  });
-}
+
+
+
 
 document.getElementById("plan-edit").addEventListener("click", () => {
   const root = document.getElementById("plan-select-list");
@@ -2633,6 +2463,66 @@ const submitAccess = () => {
 document.getElementById("auth-submit").addEventListener("click", submitAccess);
 document.getElementById("auth-key").addEventListener("keydown", (event) => { if (event.key === "Enter") submitAccess(); });
 if (!isAuthorized()) { showGate(); } else { showApp(); }
+
+// ---------- 打卡库交互 ----------
+document.getElementById("cal-prev").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()-1, 1); renderCheckinLibrary(); });
+document.getElementById("cal-next").addEventListener("click", () => { calCursor = new Date(calCursor.getFullYear(), calCursor.getMonth()+1, 1); renderCheckinLibrary(); });
+document.getElementById("cal-grid").addEventListener("click", (event) => {
+  const cell = event.target.closest("[data-cal-date]");
+  if (!cell) return;
+  selectedCheckinDate = cell.dataset.calDate;
+  pendingMedia = [];
+  renderCheckinLibrary();
+});
+document.getElementById("checkin-media").addEventListener("change", (event) => {
+  pendingMedia = [];
+  for (const file of event.target.files || []) {
+    pendingMedia.push({ kind: file.type.startsWith("video") ? "video" : "image", url: URL.createObjectURL(file), name: file.name, type: file.type, data: file });
+  }
+  renderCheckinLibrary();
+});
+document.getElementById("checkin-save").addEventListener("click", () => {
+  const note = document.getElementById("checkin-note").value.trim();
+  const existing = checkinLibraryState[selectedCheckinDate] || { medias: [], note: "" };
+  const medias = existing.medias || [];
+  pendingMedia.forEach(item => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      medias.push({ kind: item.kind, url: reader.result, name: item.name });
+      checkinLibraryState[selectedCheckinDate] = { medias, note };
+      saveCheckins();
+      pendingMedia = [];
+      renderCheckinLibrary();
+      toast("打卡已保存 ✓");
+    };
+    reader.readAsDataURL(item.data);
+  });
+  if (!pendingMedia.length) {
+    checkinLibraryState[selectedCheckinDate] = { medias, note };
+    saveCheckins();
+    renderCheckinLibrary();
+    toast("打卡已保存 ✓");
+  }
+});
+document.getElementById("checkin-list").addEventListener("click", (event) => {
+  const editBtn = event.target.closest("[data-checkin-edit]");
+  if (editBtn) {
+    selectedCheckinDate = editBtn.dataset.checkinEdit;
+    pendingMedia = [];
+    const calDate = new Date(selectedCheckinDate);
+    calCursor = new Date(calDate.getFullYear(), calDate.getMonth(), 1);
+    renderCheckinLibrary();
+    document.querySelector(".checkin-form").scrollIntoView({ behavior: "smooth", block: "start" });
+    return;
+  }
+  const delBtn = event.target.closest("[data-checkin-delete]");
+  if (delBtn) {
+    delete checkinLibraryState[delBtn.dataset.checkinDelete];
+    saveCheckins();
+    renderCheckinLibrary();
+    toast("记录已删除");
+  }
+});
 
 if ("serviceWorker" in navigator) { navigator.serviceWorker.register("service-worker.js").catch(() => {}); }
 
