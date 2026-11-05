@@ -653,21 +653,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793863294"></script>
-<script src="pattern-data.js?v=1793863294"></script>
-<script src="grammar-links-data.js?v=1793863294"></script>
-<script src="grammar-content-data.js?v=1793863294"></script>
-<script src="noun-detail-data.js?v=1793863294"></script>
-<script src="noun-card-data.js?v=1793863294"></script>
-<script src="checkin-data.js?v=1793863294"></script>
-<script src="games-data.js?v=1793863294"></script>
-<script src="rhyme-data.js?v=1793863294"></script>
-<script src="card-extensions.js?v=1793863294"></script>
-<script src="noun-repeat-data.js?v=1793863294"></script>
-<script src="guess-proper-data.js?v=1793863294"></script>
-<script src="things-card-data.js?v=1793863294"></script>
-<script src="verb-card-data.js?v=1793863294"></script>
-<script src="adjective-card-data.js?v=1793863294"></script>
+<script src="data.js?v=1793863766"></script>
+<script src="pattern-data.js?v=1793863766"></script>
+<script src="grammar-links-data.js?v=1793863766"></script>
+<script src="grammar-content-data.js?v=1793863766"></script>
+<script src="noun-detail-data.js?v=1793863766"></script>
+<script src="noun-card-data.js?v=1793863766"></script>
+<script src="checkin-data.js?v=1793863766"></script>
+<script src="games-data.js?v=1793863766"></script>
+<script src="rhyme-data.js?v=1793863766"></script>
+<script src="card-extensions.js?v=1793863766"></script>
+<script src="noun-repeat-data.js?v=1793863766"></script>
+<script src="guess-proper-data.js?v=1793863766"></script>
+<script src="things-card-data.js?v=1793863766"></script>
+<script src="verb-card-data.js?v=1793863766"></script>
+<script src="adjective-card-data.js?v=1793863766"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1515,17 +1515,21 @@ function renderPatternsTable() {
   document.getElementById("filter-hero-badge").style.display = "none";
   document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
   document.querySelector("#view-cards .filter-hero").style.display = "";
-  const typeLabel = { noun: "名词卡", verb: "动词卡", adjective: "形容词卡" }[activeCardType] || "名词卡";
-  const allowedTypes = ["名词卡", "动词卡"];
-  const items = (patterns || []).filter((item) => allowedTypes.includes(item.type));
-  panel.innerHTML = `<section class="module"><div class="module-head"><h2>基础句型</h2><span>${items.length} 条</span></div><div class="module-body" style="padding:0"><table class="detail-table patterns-table"><thead><tr><th>序号</th><th>句型</th><th>操作</th></tr></thead><tbody>${items.map((item) => {
-    const done = patternIsDone(typeLabel, item.number);
-    const clickable = activeCardType === "noun" && (window.SSS_NOUN_DETAILS || []).some((entry) => entry.number === item.number);
-    const patternCell = clickable
+  const items = (patterns || []).filter((item) => item.type === "名词卡" || item.type === "动词卡");
+  const sectionRows = [
+    { label: "名词句型", type: "名词卡", items: items.filter((item) => item.type === "名词卡"), start: 1, detail: true },
+    { label: "动词句型", type: "动词卡", items: items.filter((item) => item.type === "动词卡"), start: 1 + items.filter((item) => item.type === "名词卡").length, detail: false },
+  ];
+  const renderRows = (section) => section.items.map((item, index) => {
+    const done = patternIsDone(section.type, item.number);
+    const patternCell = section.detail
       ? `<button class="pattern-detail-link" data-noun-pattern="${item.number}">${escapeHtml(item.pattern)}</button>`
       : `<strong>${escapeHtml(item.pattern)}</strong>`;
-    return `<tr><td>${item.number}</td><td><span class="pattern-cell">${patternCell}</span></td><td><button class="tiny-action" data-toggle-pattern="${escapeHtml(typeLabel)}:${item.number}">${done ? "取消完成" : "完成"}</button></td></tr>`;
-  }).join("")}</tbody></table></div></section>`;
+    return `<tr><td>${section.start + index}</td><td><span class="pattern-cell">${patternCell}</span></td><td><button class="tiny-action" data-toggle-pattern="${escapeHtml(section.type)}:${item.number}">${done ? "取消完成" : "完成"}</button></td></tr>`;
+  }).join("");
+  const heroBadge = document.getElementById("filter-hero-badge");
+  if (heroBadge) heroBadge.textContent = `${items.length} 条句型`;
+  panel.innerHTML = `<section class="module"><div class="module-head"><h2>基础句型</h2><span>${items.length} 条</span></div><div class="module-body" style="padding:0"><table class="detail-table patterns-table"><thead><tr><th>序号</th><th>句型</th><th>操作</th></tr></thead><tbody>${sectionRows.map((section) => renderRows(section)).join("")}</tbody></table></div></section>`;
 }
 
 function renderNounPatternDetail(number) {
