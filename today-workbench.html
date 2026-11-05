@@ -656,21 +656,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793847138"></script>
-<script src="pattern-data.js?v=1793847138"></script>
-<script src="grammar-links-data.js?v=1793847138"></script>
-<script src="grammar-content-data.js?v=1793847138"></script>
-<script src="noun-detail-data.js?v=1793847138"></script>
-<script src="noun-card-data.js?v=1793847138"></script>
-<script src="checkin-data.js?v=1793847138"></script>
-<script src="games-data.js?v=1793847138"></script>
-<script src="rhyme-data.js?v=1793847138"></script>
-<script src="card-extensions.js?v=1793847138"></script>
-<script src="noun-repeat-data.js?v=1793847138"></script>
-<script src="guess-proper-data.js?v=1793847138"></script>
-<script src="things-card-data.js?v=1793847138"></script>
-<script src="verb-card-data.js?v=1793847138"></script>
-<script src="adjective-card-data.js?v=1793847138"></script>
+<script src="data.js?v=1793859149"></script>
+<script src="pattern-data.js?v=1793859149"></script>
+<script src="grammar-links-data.js?v=1793859149"></script>
+<script src="grammar-content-data.js?v=1793859149"></script>
+<script src="noun-detail-data.js?v=1793859149"></script>
+<script src="noun-card-data.js?v=1793859149"></script>
+<script src="checkin-data.js?v=1793859149"></script>
+<script src="games-data.js?v=1793859149"></script>
+<script src="rhyme-data.js?v=1793859149"></script>
+<script src="card-extensions.js?v=1793859149"></script>
+<script src="noun-repeat-data.js?v=1793859149"></script>
+<script src="guess-proper-data.js?v=1793859149"></script>
+<script src="things-card-data.js?v=1793859149"></script>
+<script src="verb-card-data.js?v=1793859149"></script>
+<script src="adjective-card-data.js?v=1793859149"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -2219,20 +2219,21 @@ function renderGamesTab() {
       </div>
       <div id="games-full-list" class="game-list"></div>
     </div></section>`;
-    const listEl = document.getElementById("games-full-list");
-    const renderList = (filter) => {
-      const filtered = games.filter((game) => filter === "all" || game.type === filter);
-      listEl.innerHTML = filtered.map((game, i) => gameCardHtml(game, i)).join("");
-    };
-    renderList(activeGameFilter);
-    document.getElementById("game-filter-row").onclick = (event) => {
-      const button = event.target.closest("[data-game-filter]");
-      if (!button) return;
-      activeGameFilter = button.dataset.gameFilter;
-      document.querySelectorAll("#game-filter-row button").forEach((item) => item.classList.toggle("active", item === button));
-      renderList(activeGameFilter);
-    };
   } else allEl.hidden = true;
+
+  const listEl = document.getElementById("games-full-list");
+  const renderList = (filter) => {
+    const filtered = games.filter((game) => filter === "all" || game.type === filter);
+    listEl.innerHTML = filtered.map((game, i) => gameCardHtml(game, i)).join("");
+  };
+  renderList(activeGameFilter);
+  document.getElementById("game-filter-row").onclick = (event) => {
+    const button = event.target.closest("[data-game-filter]");
+    if (!button) return;
+    activeGameFilter = button.dataset.gameFilter;
+    document.querySelectorAll("#game-filter-row button").forEach((item) => item.classList.toggle("active", item === button));
+    renderList(activeGameFilter);
+  };
 
   const reportEl = document.getElementById("games-section-report");
   if (gamesSection === "report") {
