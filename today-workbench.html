@@ -544,6 +544,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
           <button class="button" id="checkin-save" type="button" style="width:100%;justify-content:center">保存打卡</button>
         </div>
         <div id="checkin-list"></div>
+        <div id="checkin-patterns"></div>
       </div>
     </section>
   </div>
@@ -652,21 +653,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793862620"></script>
-<script src="pattern-data.js?v=1793862620"></script>
-<script src="grammar-links-data.js?v=1793862620"></script>
-<script src="grammar-content-data.js?v=1793862620"></script>
-<script src="noun-detail-data.js?v=1793862620"></script>
-<script src="noun-card-data.js?v=1793862620"></script>
-<script src="checkin-data.js?v=1793862620"></script>
-<script src="games-data.js?v=1793862620"></script>
-<script src="rhyme-data.js?v=1793862620"></script>
-<script src="card-extensions.js?v=1793862620"></script>
-<script src="noun-repeat-data.js?v=1793862620"></script>
-<script src="guess-proper-data.js?v=1793862620"></script>
-<script src="things-card-data.js?v=1793862620"></script>
-<script src="verb-card-data.js?v=1793862620"></script>
-<script src="adjective-card-data.js?v=1793862620"></script>
+<script src="data.js?v=1793862816"></script>
+<script src="pattern-data.js?v=1793862816"></script>
+<script src="grammar-links-data.js?v=1793862816"></script>
+<script src="grammar-content-data.js?v=1793862816"></script>
+<script src="noun-detail-data.js?v=1793862816"></script>
+<script src="noun-card-data.js?v=1793862816"></script>
+<script src="checkin-data.js?v=1793862816"></script>
+<script src="games-data.js?v=1793862816"></script>
+<script src="rhyme-data.js?v=1793862816"></script>
+<script src="card-extensions.js?v=1793862816"></script>
+<script src="noun-repeat-data.js?v=1793862816"></script>
+<script src="guess-proper-data.js?v=1793862816"></script>
+<script src="things-card-data.js?v=1793862816"></script>
+<script src="verb-card-data.js?v=1793862816"></script>
+<script src="adjective-card-data.js?v=1793862816"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1229,6 +1230,17 @@ function renderCheckinLibrary() {
   const formDate = document.getElementById("checkin-form-date");
   if (formDate) formDate.textContent = formatDateCN(selectedCheckinDate);
   const dates = Object.keys(checkinLibraryState).filter(k=>checkinLibraryState[k] && (checkinLibraryState[k].medias?.length || checkinLibraryState[k].note)).sort((a,b)=>b.localeCompare(a));
+  const patternHost = document.getElementById("checkin-patterns");
+  if (patternHost) {
+    patternHost.innerHTML = `<section class="module"><div class="module-head"><div><h2><span class="module-icon">🧩</span>基础句型</h2></div><span>${(window.SSS_NOUN_DETAILS || []).length} 条名词 + ${(window.SSS_PATTERN_LIBRARY || []).filter(p=>p.type==="动词卡").length} 条动词</span></div><div class="module-body" style="padding:0" id="checkin-pattern-table"></div></section>`;
+    const tableHost = document.getElementById("checkin-pattern-table");
+    const nounItems = (window.SSS_NOUN_DETAILS || []).map(item=>({type:"名词卡",number:item.number,pattern:item.pattern}));
+    const verbItems = (window.SSS_PATTERN_LIBRARY || []).filter(p=>p.type==="动词卡").map(item=>({type:"动词卡",number:item.number,pattern:item.pattern}));
+    tableHost.innerHTML = `<table class="detail-table patterns-table"><thead><tr><th>序号</th><th>句型</th><th>操作</th></tr></thead><tbody>${[...nounItems,...verbItems].map((item,index)=>{
+      const done = patternIsDone(item.type, item.number);
+      return `<tr><td>${index+1}</td><td><span class="pattern-cell"><button class="pattern-detail-link" data-noun-pattern="${item.number}" data-noun-type="${item.type}">${escapeHtml(item.pattern)}</button></span></td><td><button class="tiny-action" data-toggle-pattern="${escapeHtml(item.type)}:${item.number}">${done ? "取消完成" : "完成"}</button></td></tr>`;
+    }).join("")}</tbody></table>`;
+  }
   list.innerHTML = dates.length ? dates.map(key => {
     const e = checkinLibraryState[key];
     const medias = (e.medias||[]).map(item => item.kind === "image"
