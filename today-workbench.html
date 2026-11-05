@@ -656,21 +656,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793859149"></script>
-<script src="pattern-data.js?v=1793859149"></script>
-<script src="grammar-links-data.js?v=1793859149"></script>
-<script src="grammar-content-data.js?v=1793859149"></script>
-<script src="noun-detail-data.js?v=1793859149"></script>
-<script src="noun-card-data.js?v=1793859149"></script>
-<script src="checkin-data.js?v=1793859149"></script>
-<script src="games-data.js?v=1793859149"></script>
-<script src="rhyme-data.js?v=1793859149"></script>
-<script src="card-extensions.js?v=1793859149"></script>
-<script src="noun-repeat-data.js?v=1793859149"></script>
-<script src="guess-proper-data.js?v=1793859149"></script>
-<script src="things-card-data.js?v=1793859149"></script>
-<script src="verb-card-data.js?v=1793859149"></script>
-<script src="adjective-card-data.js?v=1793859149"></script>
+<script src="data.js?v=1793859413"></script>
+<script src="pattern-data.js?v=1793859413"></script>
+<script src="grammar-links-data.js?v=1793859413"></script>
+<script src="grammar-content-data.js?v=1793859413"></script>
+<script src="noun-detail-data.js?v=1793859413"></script>
+<script src="noun-card-data.js?v=1793859413"></script>
+<script src="checkin-data.js?v=1793859413"></script>
+<script src="games-data.js?v=1793859413"></script>
+<script src="rhyme-data.js?v=1793859413"></script>
+<script src="card-extensions.js?v=1793859413"></script>
+<script src="noun-repeat-data.js?v=1793859413"></script>
+<script src="guess-proper-data.js?v=1793859413"></script>
+<script src="things-card-data.js?v=1793859413"></script>
+<script src="verb-card-data.js?v=1793859413"></script>
+<script src="adjective-card-data.js?v=1793859413"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -2102,6 +2102,7 @@ function renderGamesTab() {
     const done = gameState.includes(game.id);
     const typeLabel = { intro: "引入", review: "复习", challenge: "闯关" };
     const dialogue = (game.dialogue || []).map((line) => `<div class="${line.who}"><b>${line.who === "mom" ? "👩 妈妈" : "🧒 宝宝"}</b>${escapeHtml(line.text)}</div>`).join("");
+    const props = (game.props || []).filter(Boolean);
     return `<article class="game-card" data-game-card="${escapeHtml(game.id)}"><button class="game-card-head" type="button" data-game-collapse="${escapeHtml(game.id)}" style="width:100%;border:0;background:transparent;text-align:left;padding:12px 12px;display:flex;align-items:center;gap:10px;cursor:pointer"><span class="game-no" style="flex:none;min-width:26px;padding:3px 6px;border-radius:8px;background:#f1f2f6;color:var(--muted-2);font-size:10.5px;font-weight:800;text-align:center;box-sizing:border-box">${String(gameIndex + 1).padStart(2, "0")}</span><h3 style="margin:0;flex:1;min-width:0;font-size:13.5px">${escapeHtml(game.name)}</h3><small style="flex:none;display:flex;align-items:center;gap:8px;color:var(--muted-2);font-size:10.5px"><span style="white-space:nowrap">${escapeHtml(typeLabel[game.type] || game.type)} · ${escapeHtml(game.scene || "")} · ${escapeHtml(game.age || "")}岁</span><span class="game-collapse-arrow" style="flex:none;display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:1px solid var(--line);background:#fff;color:var(--muted);font-size:10px;transition:transform .2s;box-sizing:border-box">▾</span></small></button><div class="game-card-body" hidden><p>${escapeHtml(game.how || "")}</p>${props.length ? `<div class="game-props">${props.map((prop) => `<span>${escapeHtml(prop)}</span>`).join("")}</div>` : ""}<div class="dialogue">${dialogue}</div></div><button class="tiny-action${gameState.includes(game.id) ? " done" : ""}" data-game-complete="${escapeHtml(game.id)}" style="width:calc(100% - 24px);margin:0 12px 12px">${gameState.includes(game.id) ? "已完成 ✓" : "标记完成"}</button></article>`;
   };
 
