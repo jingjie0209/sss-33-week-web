@@ -653,21 +653,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1793863766"></script>
-<script src="pattern-data.js?v=1793863766"></script>
-<script src="grammar-links-data.js?v=1793863766"></script>
-<script src="grammar-content-data.js?v=1793863766"></script>
-<script src="noun-detail-data.js?v=1793863766"></script>
-<script src="noun-card-data.js?v=1793863766"></script>
-<script src="checkin-data.js?v=1793863766"></script>
-<script src="games-data.js?v=1793863766"></script>
-<script src="rhyme-data.js?v=1793863766"></script>
-<script src="card-extensions.js?v=1793863766"></script>
-<script src="noun-repeat-data.js?v=1793863766"></script>
-<script src="guess-proper-data.js?v=1793863766"></script>
-<script src="things-card-data.js?v=1793863766"></script>
-<script src="verb-card-data.js?v=1793863766"></script>
-<script src="adjective-card-data.js?v=1793863766"></script>
+<script src="data.js?v=1793867057"></script>
+<script src="pattern-data.js?v=1793867057"></script>
+<script src="grammar-links-data.js?v=1793867057"></script>
+<script src="grammar-content-data.js?v=1793867057"></script>
+<script src="noun-detail-data.js?v=1793867057"></script>
+<script src="noun-card-data.js?v=1793867057"></script>
+<script src="checkin-data.js?v=1793867057"></script>
+<script src="games-data.js?v=1793867057"></script>
+<script src="rhyme-data.js?v=1793867057"></script>
+<script src="card-extensions.js?v=1793867057"></script>
+<script src="noun-repeat-data.js?v=1793867057"></script>
+<script src="guess-proper-data.js?v=1793867057"></script>
+<script src="things-card-data.js?v=1793867057"></script>
+<script src="verb-card-data.js?v=1793867057"></script>
+<script src="adjective-card-data.js?v=1793867057"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1512,9 +1512,10 @@ function renderSpeaking() {
 function renderPatternsTable() {
   const panel = document.getElementById("card-subtab-panel");
   document.getElementById("card-grid").style.display = "none";
-  document.getElementById("filter-hero-badge").style.display = "none";
+  document.getElementById("filter-hero-badge").style.display = "";
   document.getElementById("card-category-seg")?.style && (document.getElementById("card-category-seg").style.display = "none");
   document.querySelector("#view-cards .filter-hero").style.display = "";
+  document.getElementById("card-subtab-panel").style.display = "";
   const items = (patterns || []).filter((item) => item.type === "名词卡" || item.type === "动词卡");
   const sectionRows = [
     { label: "名词句型", type: "名词卡", items: items.filter((item) => item.type === "名词卡"), start: 1, detail: true },
