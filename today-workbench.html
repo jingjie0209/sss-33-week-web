@@ -549,7 +549,7 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
     </section>
   </div>
 
-  <div id="view-cards" class="tab-view">
+  <div id="view-cards" class="tab-view" data-alias="patterns">
     <div class="filter-hero">
       <div class="filter-hero-bottombar"><div class="filter-hero-bar"><i id="filter-hero-fill" style="width:0%"></i></div><span class="filter-hero-count" id="filter-hero-badge">0/100</span></div>
       <div class="filter-line filter-line-main" id="card-type-seg">
@@ -653,21 +653,21 @@ button#sentence-roll.active, button#sentence-roll-learned.active { background: l
   <button data-tab="parent"><i></i>家长</button>
 </nav>
 
-<script src="data.js?v=1794205830"></script>
-<script src="pattern-data.js?v=1794205830"></script>
-<script src="grammar-links-data.js?v=1794205830"></script>
-<script src="grammar-content-data.js?v=1794205830"></script>
-<script src="noun-detail-data.js?v=1794205830"></script>
-<script src="noun-card-data.js?v=1794205830"></script>
-<script src="checkin-data.js?v=1794205830"></script>
-<script src="games-data.js?v=1794205830"></script>
-<script src="rhyme-data.js?v=1794205830"></script>
-<script src="card-extensions.js?v=1794205830"></script>
-<script src="noun-repeat-data.js?v=1794205830"></script>
-<script src="guess-proper-data.js?v=1794205830"></script>
-<script src="things-card-data.js?v=1794205830"></script>
-<script src="verb-card-data.js?v=1794205830"></script>
-<script src="adjective-card-data.js?v=1794205830"></script>
+<script src="data.js?v=1794206041"></script>
+<script src="pattern-data.js?v=1794206041"></script>
+<script src="grammar-links-data.js?v=1794206041"></script>
+<script src="grammar-content-data.js?v=1794206041"></script>
+<script src="noun-detail-data.js?v=1794206041"></script>
+<script src="noun-card-data.js?v=1794206041"></script>
+<script src="checkin-data.js?v=1794206041"></script>
+<script src="games-data.js?v=1794206041"></script>
+<script src="rhyme-data.js?v=1794206041"></script>
+<script src="card-extensions.js?v=1794206041"></script>
+<script src="noun-repeat-data.js?v=1794206041"></script>
+<script src="guess-proper-data.js?v=1794206041"></script>
+<script src="things-card-data.js?v=1794206041"></script>
+<script src="verb-card-data.js?v=1794206041"></script>
+<script src="adjective-card-data.js?v=1794206041"></script>
 <script>
 const STORAGE_KEY = "sss-33-week-progress-v1";
 const WORD_KEY = "sss-workbench-flashcards-v1";
@@ -1387,7 +1387,7 @@ const SENTENCE_WORD_CN2 = {};
 /* ---------- Tab navigation ---------- */
 const switchTab = (tab) => {
   document.querySelectorAll(".tabbar button").forEach((button) => button.classList.toggle("active", button.dataset.tab === tab));
-  document.querySelectorAll(".tab-view").forEach((view) => view.classList.toggle("active", view.id === `view-${tab}`));
+  document.querySelectorAll(".tab-view").forEach((view) => view.classList.toggle("active", view.id === `view-${tab}` || view.dataset.alias === tab));
   if (tab === "cards") { activeCardSubtab = "cards"; renderCardSubtab(); window.scrollTo({ top: 0, behavior: "auto" }); }
   if (tab === "patterns") { activeCardSubtab = "patterns"; document.getElementById("card-subtab-panel").style.display = ""; document.querySelector("#view-cards .filter-hero").style.display = ""; renderCardSubtab(); window.scrollTo({ top: 0, behavior: "auto" }); }
   if (tab === "rhyme") { renderRhyme(); window.scrollTo({ top: 0, behavior: "auto" }); }
